@@ -227,7 +227,31 @@ function App() {
 
   const handleUpdateProfile = (updates: Partial<User>) => {
     if (profile) {
-      updateProfile(updates as any).then(() => {
+      // Map the camelCase UI shape onto the table's snake_case columns and
+      // drop keys that aren't columns at all (id, username, joinDate, ...).
+      // Sending the raw form object made every profile save fail.
+      const toDateString = (value: unknown) =>
+        value instanceof Date ? value.toISOString().split('T')[0] : (value as string | undefined);
+
+      const columnPatch: Record<string, unknown> = {
+        name: updates.name,
+        email: updates.email,
+        bio: updates.bio,
+        school: updates.school,
+        grade: updates.grade,
+        interests: updates.interests,
+        avatar_url: updates.avatar,
+        study_field: updates.studyField,
+        is_public: updates.isPublic,
+        date_of_birth: toDateString(updates.dateOfBirth),
+        graduation_date: toDateString(updates.graduationDate),
+      };
+
+      const patch = Object.fromEntries(
+        Object.entries(columnPatch).filter(([, value]) => value !== undefined)
+      );
+
+      updateProfile(patch as any).then(() => {
         alert('Profile updated successfully!');
       }).catch((error) => {
         console.error('Profile update failed:', error);
@@ -487,8 +511,12 @@ function App() {
         is_completed: updates.isCompleted
       });
 
-      // Update calendar event if due date changed
+      // Update calendar event if due date changed.
+      // Note: a partial update (e.g. ticking a todo complete) has no dueDate
+      // key at all, which is NOT the same as the user clearing the due date.
+      // Only treat it as cleared when the key is present and falsy.
       const existingCalendarEvent = calendarEvents.find(e => e.todoId === id);
+      const dueDateProvided = 'dueDate' in updates;
 
       if (updates.dueDate && existingCalendarEvent) {
         await updateEvent(existingCalendarEvent.id, {
@@ -507,7 +535,7 @@ function App() {
           color: '#EC4899',
           todoId: id
         });
-      } else if (!updates.dueDate && existingCalendarEvent) {
+      } else if (dueDateProvided && !updates.dueDate && existingCalendarEvent) {
         await deleteEvent(existingCalendarEvent.id);
       }
     } catch (error) {
@@ -762,9 +790,34 @@ function App() {
             events={calendarEvents}
             reminders={reminders}
             meetings={meetings}
-            onCreateEvent={(event) => setCalendarEvents(prev => [...prev, event])}
+            onCreateEvent={(event) => {
+              createEvent({
+                title: event.title,
+                description: event.description,
+                date: event.date,
+                type: event.type,
+                color: event.color,
+                hasReminder: event.hasReminder,
+                reminderMinutes: event.reminderMinutes,
+              }).catch((error) => {
+                console.error('Failed to create calendar event:', error);
+                alert('Failed to create event. Please try again.');
+              });
+            }}
             onCreateReminder={(reminder) => setReminders(prev => [...prev, reminder])}
-            onCreateMeeting={(meeting) => setMeetings(prev => [...prev, meeting])}
+            onCreateMeeting={(meeting) => {
+              handleCreateMeeting({
+                title: meeting.title,
+                description: meeting.description,
+                scheduledTime: meeting.scheduledTime,
+                duration: meeting.duration,
+                participants: meeting.participants || [],
+                invitees: [],
+                inviteeEmails: [],
+                meetingType: 'video',
+                reminders: [],
+              });
+            }}
             currentUser={legacyUser}
             onJoinMeeting={handleJoinMeeting}
             onOpenChat={handleOpenChatFromMeeting}

@@ -209,6 +209,11 @@ export const Calendar: React.FC<CalendarProps> = ({
       duration: meetingForm.duration,
       hostId: currentUser.id,
       participants: [currentUser.id],
+      invitees: [],
+      inviteeEmails: [],
+      meetingType: 'video',
+      reminders: [],
+      createdAt: new Date(),
       status: 'scheduled'
     };
 
@@ -238,15 +243,14 @@ export const Calendar: React.FC<CalendarProps> = ({
   };
 
   const navigateMonth = (direction: 'prev' | 'next') => {
-    setCurrentDate(prev => {
-      const newDate = new Date(prev);
-      if (direction === 'prev') {
-        newDate.setMonth(prev.getMonth() - 1);
-      } else {
-        newDate.setMonth(prev.getMonth() + 1);
-      }
-      return newDate;
-    });
+    // Anchor to the 1st. Keeping the current day-of-month makes setMonth
+    // overflow into the following month (31 Aug + 1 month = 1 Oct), which
+    // skipped September entirely for anyone browsing on the 29th-31st.
+    setCurrentDate(prev => new Date(
+      prev.getFullYear(),
+      prev.getMonth() + (direction === 'next' ? 1 : -1),
+      1
+    ));
   };
 
   const days = getDaysInMonth(currentDate);
@@ -825,7 +829,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                 <div>
                   <p className="text-sm font-medium text-gray-700 mb-2">Invited People:</p>
                   <div className="space-y-1">
-                    {selectedEvent.meetingData.invitees?.map(inviteeId => {
+                    {selectedEvent.meetingData.invitees?.map((inviteeId: string) => {
                       const friend = friends.find(f => f.id === inviteeId);
                       return friend ? (
                         <div key={inviteeId} className="flex items-center space-x-2 text-sm text-gray-600">
@@ -838,7 +842,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                         </div>
                       ) : null;
                     })}
-                    {selectedEvent.meetingData.inviteeEmails?.map(email => (
+                    {selectedEvent.meetingData.inviteeEmails?.map((email: string) => (
                       <div key={email} className="flex items-center space-x-2 text-sm text-gray-600">
                         <div className="w-4 h-4 rounded-full bg-gray-400 flex items-center justify-center">
                           <span className="text-white text-xs">@</span>

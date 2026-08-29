@@ -1,9 +1,32 @@
 import { useState, useEffect, useRef } from 'react';
 import { TimerState } from '../types';
 
+export interface CompletedSession {
+  duration: number; // minutes
+  subject: string;
+  startTime: Date;
+  endTime: Date;
+}
+
+const DEFAULT_TIMER_STATE: TimerState = {
+  isActive: false,
+  isPaused: false,
+  isOnBreak: false,
+  timeElapsed: 0,
+  targetDuration: 25 * 60, // Default 25 minutes
+  currentSubject: '',
+  breakCount: 0,
+  breakDuration: 5 * 60, // Default 5 minutes
+  currentBreak: 0,
+  breakTimeElapsed: 0,
+};
+
 // Notification utility functions
 const requestNotificationPermission = async () => {
-  if ('Notification' in window && Notification.permission === 'default') {
+  if (!('Notification' in window)) {
+    return false;
+  }
+  if (Notification.permission === 'default') {
     const permission = await Notification.requestPermission();
     return permission === 'granted';
   }
@@ -37,25 +60,23 @@ export const useTimer = () => {
     try {
       const saved = localStorage.getItem('studysphere-timer-state');
       if (saved) {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        return {
+          ...DEFAULT_TIMER_STATE,
+          ...parsed,
+          // A persisted targetDuration of 0 would complete the timer instantly.
+          targetDuration: parsed.targetDuration > 0
+            ? parsed.targetDuration
+            : DEFAULT_TIMER_STATE.targetDuration,
+        };
       }
     } catch (e) {
       console.error('Failed to load timer state:', e);
     }
-    return {
-      isActive: false,
-      isPaused: false,
-      isOnBreak: false,
-      timeElapsed: 0,
-      targetDuration: 25 * 60, // Default 25 minutes
-      currentSubject: '',
-      breakCount: 0,
-      breakDuration: 5 * 60, // Default 5 minutes
-      currentBreak: 0,
-      breakTimeElapsed: 0,
-    };
+    return { ...DEFAULT_TIMER_STATE };
   });
   const [showCelebration, setShowCelebration] = useState(false);
+  const [completedSession, setCompletedSession] = useState<CompletedSession | null>(null);
   const workerRef = useRef<Worker | null>(null);
   const lastStateRef = useRef<TimerState | null>(null);
 
@@ -78,9 +99,14 @@ export const useTimer = () => {
         
         switch (type) {
           case 'STATE_UPDATE':
-            setTimer(data);
-            lastStateRef.current = data;
-            persistTimerState(data);
+            // Merge, don't replace: a bare GET_STATE reply must not clobber
+            // fields the UI owns (e.g. a duration the user just chose).
+            setTimer(prev => {
+              const merged = { ...prev, ...data };
+              lastStateRef.current = merged;
+              persistTimerState(merged);
+              return merged;
+            });
             break;
 
           case 'PERSIST_STATE':
@@ -104,8 +130,21 @@ export const useTimer = () => {
             break;
             
           case 'SESSION_COMPLETE':
+            // Keep the worker's session payload — it carries the duration,
+            // subject and real start/end times the caller needs to save it.
+            setCompletedSession({
+              duration: data.duration,
+              subject: data.subject,
+              startTime: new Date(data.startTime),
+              endTime: new Date(data.endTime),
+            });
             setShowCelebration(true);
-            setTimer(prev => ({ ...prev, isActive: false }));
+            setTimer(prev => {
+              const finished = { ...prev, isActive: false, isPaused: false };
+              lastStateRef.current = finished;
+              persistTimerState(finished);
+              return finished;
+            });
             break;
             
           case 'BREAK_STARTED':
@@ -190,7 +229,12 @@ export const useTimer = () => {
   };
 
   const setTargetDuration = (minutes: number) => {
-    setTimer(prev => ({ ...prev, targetDuration: minutes * 60 }));
+    const targetDuration = minutes * 60;
+    setTimer(prev => ({ ...prev, targetDuration }));
+    // Tell the worker too, or its next STATE_UPDATE reverts the choice.
+    if (workerRef.current) {
+      workerRef.current.postMessage({ type: 'SET_DURATION', data: { targetDuration } });
+    }
   };
 
   const pauseTimer = () => {
@@ -211,7 +255,8 @@ export const useTimer = () => {
     }
 
     const currentState = lastStateRef.current || timer;
-    const durationInMinutes = Math.floor(currentState.timeElapsed / 60);
+    // Round rather than floor, and never record a session as 0 minutes.
+    const durationInMinutes = Math.max(1, Math.round(currentState.timeElapsed / 60));
 
     const actualStartTime = currentState.startTime
       ? new Date(currentState.startTime)
@@ -237,6 +282,7 @@ export const useTimer = () => {
 
   const hideCelebration = () => {
     setShowCelebration(false);
+    setCompletedSession(null);
   };
 
   const formatTime = (seconds: number) => {
@@ -272,5 +318,6 @@ export const useTimer = () => {
     formatTime,
     showCelebration,
     hideCelebration,
+    completedSession,
   };
 };

@@ -261,6 +261,7 @@ class GroupService {
           filter: `group_id=eq.${groupId}`
         },
         async (payload) => {
+          if (!supabase) return;
           const { data: messageWithProfile } = await supabase
             .from('chat_messages')
             .select('*, user_profiles!inner(name, avatar_url)')

@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { User, Lock, Globe, Bell, Palette, Save, Paintbrush } from 'lucide-react';
 import { ThemeCustomizer } from './ThemeCustomizer';
 
+interface UserProfileSummary {
+  name: string;
+  email: string;
+  isPublic: boolean;
+  interests: string[];
+}
+
 interface SettingsProps {
-  userProfile: {
-    name: string;
-    email: string;
-    isPublic: boolean;
-    interests: string[];
-  };
-  onUpdateProfile: (updates: Partial<typeof userProfile>) => void;
+  userProfile: UserProfileSummary;
+  onUpdateProfile: (updates: Partial<UserProfileSummary>) => void;
 }
 
 export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile }) => {

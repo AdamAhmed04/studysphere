@@ -33,7 +33,8 @@ export const Timer: React.FC<TimerProps> = ({
     formatTime,
     reset,
     showCelebration,
-    hideCelebration
+    hideCelebration,
+    completedSession
   } = useTimer();
   const [subject, setSubject] = useState('');
   const { currentTheme } = useTheme();
@@ -87,10 +88,19 @@ export const Timer: React.FC<TimerProps> = ({
   };
 
   const handleCelebrationComplete = () => {
-    hideCelebration();
-    if (timer.timeElapsed > 0) {
-      onSessionComplete(timer.timeElapsed, timer.currentSubject);
+    // Use the worker's session payload. Passing timer.timeElapsed here sent
+    // seconds where minutes were expected, and omitted the start/end times
+    // entirely — so every naturally-completed session failed to save.
+    if (completedSession) {
+      onSessionComplete(
+        completedSession.duration,
+        completedSession.subject,
+        completedSession.startTime,
+        completedSession.endTime
+      );
     }
+    hideCelebration();
+    setSubject('');
   };
 
   const handleDurationChange = () => {
@@ -523,7 +533,7 @@ export const Timer: React.FC<TimerProps> = ({
             <span className="text-blue-700 font-medium">Break Notifications:</span>
             <span className="text-blue-600">{getNotificationStatus()}</span>
           </div>
-          {Notification.permission !== 'granted' && (
+          {'Notification' in window && Notification.permission !== 'granted' && (
             <p className="text-xs text-blue-600 mt-1">Enable notifications to get break reminders when away from the app.</p>
           )}
         </div>

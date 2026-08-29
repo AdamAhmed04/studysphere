@@ -87,8 +87,9 @@ class UserService {
       )
       .subscribe();
 
+    const client = supabase;
     return () => {
-      supabase.removeChannel(subscription);
+      client.removeChannel(subscription);
     };
   }
 
