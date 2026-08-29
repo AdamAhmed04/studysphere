@@ -1,0 +1,287 @@
+import React, { useState, useEffect } from 'react';
+import { Search, UserPlus, Users, BookOpen, Filter, X } from 'lucide-react';
+import type { User, Friend } from '../types';
+import { searchService, SearchResult } from '../services/searchService';
+import { useDebounce } from '../hooks/useDebounce';
+
+interface SearchPageProps {
+  onAddFriend: (email: string) => void;
+  currentUser: User;
+  friends: Friend[];
+}
+
+export const SearchPage: React.FC<SearchPageProps> = ({ onAddFriend, currentUser, friends }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchFilter, setSearchFilter] = useState<'all' | 'subject'>('all');
+  const [selectedSubject, setSelectedSubject] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
+  useEffect(() => {
+    if (debouncedSearchQuery.trim().length >= 2) {
+      performSearch(debouncedSearchQuery);
+    } else {
+      setSearchResults([]);
+      setIsSearching(false);
+    }
+  }, [debouncedSearchQuery, searchFilter, selectedSubject]);
+
+  const subjects = [
+    'Mathematics', 'Physics', 'Chemistry', 'Biology', 'Computer Science',
+    'History', 'English', 'Psychology', 'Economics', 'Art', 'Music',
+    'Engineering', 'Medicine', 'Law', 'Business', 'Philosophy'
+  ];
+
+  const performSearch = async (query: string) => {
+    setIsSearching(true);
+
+    try {
+      const filters: any = {};
+      if (searchFilter === 'subject' && selectedSubject) {
+        filters.studyField = selectedSubject;
+      }
+
+      const results = await searchService.searchUsers(query, filters);
+      setSearchResults(results);
+    } catch (error) {
+      console.error('Search failed:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleAddFromSearch = (userEmail: string) => {
+    onAddFriend(userEmail);
+    // Remove from search results
+    setSearchResults(prev => prev.filter(user => user.email !== userEmail));
+  };
+
+  const clearSearch = () => {
+    setSearchQuery('');
+    setSearchResults([]);
+    setIsSearching(false);
+  };
+
+  const formatTime = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    return hours > 0 ? `${hours}h ${minutes % 60}m` : `${minutes}m`;
+  };
+
+  const getMatchingInterests = (userInterests: string[]) => {
+    return currentUser.interests.filter(interest => 
+      userInterests.some(ui => ui.toLowerCase().includes(interest.toLowerCase()))
+    );
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-6">
+      {/* Search Header */}
+      <div className="bg-white rounded-2xl shadow-xl p-6">
+        <div className="flex items-center space-x-3 mb-6">
+          <Search className="text-blue-500" size={28} />
+          <h2 className="text-2xl font-bold text-gray-800">Find Study Buddies</h2>
+        </div>
+
+        {/* Search Controls */}
+        <div className="space-y-4">
+          <div className="flex space-x-4">
+            <div className="flex-1 relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search by name, email, school, or subject..."
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+                className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              {searchQuery && (
+                <button
+                  onClick={clearSearch}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                >
+                  <X className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                </button>
+              )}
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Filter className="h-5 w-5 text-gray-400" />
+              <select
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value as 'all' | 'subject')}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="all">All Users</option>
+                <option value="subject">By Subject</option>
+              </select>
+            </div>
+          </div>
+
+          {searchFilter === 'subject' && (
+            <div>
+              <select
+                value={selectedSubject}
+                onChange={(e) => setSelectedSubject(e.target.value)}
+                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent theme-textbox"
+              >
+                <option value="">Select a subject...</option>
+                {subjects.map(subject => (
+                  <option key={subject} value={subject}>{subject}</option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Search Results */}
+      {isSearching && (
+        <div className="bg-white rounded-2xl shadow-xl p-6">
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span className="ml-3 text-gray-600">Searching for study buddies...</span>
+          </div>
+        </div>
+      )}
+
+      {searchResults.length > 0 && (
+        <div className="bg-white rounded-2xl shadow-xl p-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">
+            Found {searchResults.length} study buddies
+          </h3>
+          <div className="grid gap-4">
+            {searchResults.map(user => {
+              const matchingInterests = getMatchingInterests(user.interests);
+              const isAlreadyFriend = user.is_friend;
+              
+              return (
+                <div key={user.user_id} className="border border-gray-200 rounded-xl p-6 hover:border-blue-300 transition-colors">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start space-x-4 flex-1">
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-400 to-blue-500 flex items-center justify-center flex-shrink-0">
+                        <span className="text-white font-bold text-xl">
+                          {user.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <h4 className="text-lg font-semibold text-gray-800">{user.name}</h4>
+                          {!user.is_public && (
+                            <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full">
+                              Private
+                            </span>
+                          )}
+                        </div>
+                        
+                        <p className="text-gray-600 mb-2">{user.email}</p>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                          <div className="flex items-center space-x-2">
+                            <BookOpen className="h-4 w-4 text-blue-500" />
+                            <span className="text-sm text-gray-600">{user.study_field || 'Not specified'}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Users className="h-4 w-4 text-green-500" />
+                            <span className="text-sm text-gray-600">{user.school}</span>
+                          </div>
+                        </div>
+                        
+                        <p className="text-sm text-gray-600 mb-3">{user.bio}</p>
+                        
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm text-gray-500">
+                              Study time: {formatTime(user.total_study_time)}
+                            </p>
+                            {matchingInterests.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-2">
+                                <span className="text-xs text-green-600 font-medium">Shared interests:</span>
+                                {matchingInterests.slice(0, 3).map(interest => (
+                                  <span
+                                    key={interest}
+                                    className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full"
+                                  >
+                                    {interest}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-col space-y-2">
+                      <button
+                        onClick={() => handleAddFromSearch(user.email)}
+                        disabled={!user.is_public || isAlreadyFriend}
+                        className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          user.is_public && !isAlreadyFriend
+                            ? 'bg-blue-600 text-white hover:bg-blue-700'
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
+                      >
+                        <UserPlus size={16} />
+                        <span>
+                          {isAlreadyFriend ? 'Friends' : !user.is_public ? 'Private' : 'Add Friend'}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {searchQuery && !isSearching && searchResults.length === 0 && (
+        <div className="bg-white rounded-2xl shadow-xl p-6">
+          <div className="text-center py-8">
+            <Search size={48} className="mx-auto mb-4 text-gray-400" />
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">No results found</h3>
+            <p className="text-gray-600">
+              No users found matching "{searchQuery}". Try different keywords or check your filters.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {!searchQuery && (
+        <div className="bg-white rounded-2xl shadow-xl p-6">
+          <div className="text-center py-12">
+            <Search size={64} className="mx-auto mb-4 text-gray-400" />
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">Find Your Study Community</h3>
+            <p className="text-gray-600 mb-6">
+              Search for study buddies by name, school, subject, or interests. Connect with like-minded students!
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+              {subjects.slice(0, 8).map(subject => (
+                <button
+                  key={subject}
+                  onClick={() => {
+                    setSearchFilter('subject');
+                    setSelectedSubject(subject);
+                    handleSearch(subject);
+                  }}
+                  className="px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm secondary-btn"
+                >
+                  {subject}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
