@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { User, Lock, Globe, Bell, Palette, Save, Paintbrush } from 'lucide-react';
+import { User, Lock, Globe, Bell, Palette, Save, Paintbrush, LogOut } from 'lucide-react';
 import { ThemeCustomizer } from './ThemeCustomizer';
+import { useAuthContext } from '../contexts/AuthContext';
 
 interface UserProfileSummary {
   name: string;
@@ -18,6 +19,21 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
   const [formData, setFormData] = useState(userProfile);
   const [newInterest, setNewInterest] = useState('');
   const [activeSection, setActiveSection] = useState<'profile' | 'privacy' | 'theme'>('profile');
+
+  const { signOut } = useAuthContext();
+  const [confirmingSignOut, setConfirmingSignOut] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Sign out failed:', error);
+      setSigningOut(false);
+      setConfirmingSignOut(false);
+    }
+  };
 
   const handleSave = () => {
     onUpdateProfile(formData);
@@ -216,6 +232,52 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
         </button>
       </div>
       )}
+
+      {/*
+        Account section.
+
+        signOut existed in useAuth from the start but nothing in the app ever
+        called it — there was no way to leave a session, which matters most on
+        a shared or school computer. Shown on every tab so it is findable
+        without knowing which one to look under.
+      */}
+      <div className="theme-secondary-bg rounded-2xl shadow-xl p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-1 flex items-center">
+          <LogOut className="mr-2 text-gray-600" size={20} />
+          Account
+        </h3>
+        <p className="text-sm text-gray-600 mb-4">
+          Signed in as {userProfile.email}
+        </p>
+
+        {confirmingSignOut ? (
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm text-gray-700">Sign out of StudySphere?</span>
+            <button
+              onClick={handleSignOut}
+              disabled={signingOut}
+              className="px-4 py-2 rounded-lg text-sm font-medium bg-red-600 text-white hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            >
+              {signingOut ? 'Signing out…' : 'Yes, sign out'}
+            </button>
+            <button
+              onClick={() => setConfirmingSignOut(false)}
+              disabled={signingOut}
+              className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setConfirmingSignOut(true)}
+            className="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium border border-red-300 text-red-700 hover:bg-red-50 transition-colors"
+          >
+            <LogOut size={16} />
+            <span>Sign out</span>
+          </button>
+        )}
+      </div>
     </div>
   );
 };

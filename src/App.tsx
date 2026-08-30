@@ -744,12 +744,15 @@ function App() {
               onAddFriend={handleAddFriend}
               onStartChat={handleStartChat}
             />
-            <Leaderboard 
-              friends={[...friends, { 
-                id: user?.id || '', 
-                name: legacyUser.name + ' (You)', 
+            <Leaderboard
+              friends={[...friends, {
+                id: user?.id || '',
+                // Not `name + ' (You)'` — Leaderboard already appends "(You)"
+                // for whoever matches currentUserId, and doing both produced
+                // "Adam Ahmed (You) (You)".
+                name: legacyUser.name,
                 totalStudyTime: legacyUser.totalStudyTime,
-                isOnline: true 
+                isOnline: true
               }]}
               currentUserId={user?.id || ''}
               onCallOut={handleCallOut}
