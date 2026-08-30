@@ -14,7 +14,20 @@ export interface MeetingData {
 }
 
 class MeetingService {
-  async getMeetings(userId: string, limit: number = 50, offset: number = 0) {
+  /**
+   * No client-side visibility filter, deliberately.
+   *
+   * This used to filter with
+   * `.or('host_id.eq.X,meeting_participants.user_id.eq.X')`, but PostgREST
+   * cannot reference an embedded table inside a top-level .or() — it rejects
+   * the whole request with a 400.
+   *
+   * The `can_see_meeting` RLS policy already restricts rows to meetings the
+   * caller hosts, is a participant of, or whose group they belong to, so the
+   * filter was duplicating the database's own rule. Letting RLS do it is both
+   * correct and the convention in this codebase.
+   */
+  async getMeetings(_userId: string, limit: number = 50, offset: number = 0) {
     try {
       if (!supabase) {
         throw new Error('Supabase is not configured');
@@ -23,7 +36,6 @@ class MeetingService {
       const { data, error } = await supabase
         .from('meetings')
         .select('*, meeting_participants(*)')
-        .or(`host_id.eq.${userId},meeting_participants.user_id.eq.${userId}`)
         .order('scheduled_time', { ascending: true })
         .range(offset, offset + limit - 1);
 
@@ -148,7 +160,9 @@ class MeetingService {
     }
   }
 
-  async getUpcomingMeetings(userId: string, limit: number = 10) {
+  // Same as getMeetings: visibility is enforced by the can_see_meeting policy,
+  // not by a client filter PostgREST cannot parse.
+  async getUpcomingMeetings(_userId: string, limit: number = 10) {
     try {
       if (!supabase) {
         throw new Error('Supabase is not configured');
@@ -159,7 +173,6 @@ class MeetingService {
       const { data, error } = await supabase
         .from('meetings')
         .select('*, meeting_participants(*)')
-        .or(`host_id.eq.${userId},meeting_participants.user_id.eq.${userId}`)
         .gte('scheduled_time', now)
         .eq('status', 'scheduled')
         .order('scheduled_time', { ascending: true })

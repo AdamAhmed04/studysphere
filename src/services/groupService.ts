@@ -13,6 +13,19 @@ export interface GroupMessage {
   user_avatar?: string;
 }
 
+/** A raw `study_groups` row, as returned by the create_study_group RPC. */
+export interface StudyGroupRow {
+  id: string;
+  name: string;
+  description: string;
+  subject?: string;
+  created_by: string;
+  is_private: boolean;
+  avatar_url?: string;
+  created_at: string;
+  last_activity: string;
+}
+
 export interface StudyGroupData {
   id: string;
   name: string;
@@ -41,36 +54,35 @@ class GroupService {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    const { data: group, error: groupError } = await supabase
-      .from('study_groups')
-      .insert({
-        name: groupData.name,
-        description: groupData.description,
-        subject: groupData.subject,
-        is_private: groupData.isPrivate,
-        created_by: user.id
+    /*
+     * One RPC, one transaction.
+     *
+     * This used to be two statements — insert the group, then insert the
+     * members — with nothing rolling the first back if the second failed. That
+     * stranded a group row with no members, invisible in the UI and impossible
+     * to remove from it. The function also deduplicates the member list, which
+     * is what previously collided with the creator's admin row and violated
+     * UNIQUE(group_id, user_id).
+     */
+    const { data, error: groupError } = await supabase
+      .rpc('create_study_group', {
+        p_name: groupData.name,
+        p_description: groupData.description,
+        p_subject: groupData.subject ?? null,
+        p_is_private: groupData.isPrivate,
+        p_member_ids: groupData.memberIds,
       })
-      .select()
       .single();
 
     if (groupError) throw groupError;
 
-    const members = [
-      { group_id: group.id, user_id: user.id, role: 'admin' },
-      ...groupData.memberIds.map(memberId => ({
-        group_id: group.id,
-        user_id: memberId,
-        role: 'member'
-      }))
-    ];
+    // The RPC returns a study_groups row. Without generated database types
+    // supabase-js types rpc() results as unknown, so name the shape here.
+    const group = data as StudyGroupRow;
 
-    const { error: membersError } = await supabase
-      .from('study_group_members')
-      .insert(members);
+    const otherMemberIds = groupData.memberIds.filter(id => id !== user.id);
 
-    if (membersError) throw membersError;
-
-    for (const memberId of groupData.memberIds) {
+    for (const memberId of otherMemberIds) {
       await supabase
         .from('notifications')
         .insert({
@@ -92,8 +104,10 @@ class GroupService {
       avatar_url: group.avatar_url,
       created_at: group.created_at,
       last_activity: group.last_activity,
-      member_count: members.length,
-      members: members.map(m => m.user_id)
+      // The function deduplicates, so the membership is the creator plus the
+      // distinct others — not the raw list the caller passed in.
+      member_count: otherMemberIds.length + 1,
+      members: [user.id, ...otherMemberIds]
     };
   }
 

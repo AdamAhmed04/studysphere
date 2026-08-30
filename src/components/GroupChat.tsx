@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Send, Paperclip, Video, Calendar, Users, ArrowLeft } from 'lucide-react';
 import { ChatMessage } from '../types';
 
@@ -26,11 +26,46 @@ export const GroupChat: React.FC<GroupChatProps> = ({
   const [newMessage, setNewMessage] = useState('');
   const [messageType, setMessageType] = useState<'text' | 'note' | 'resource'>('text');
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+  // Whether the view is currently following the newest message. Set false as
+  // soon as the reader scrolls up, so arriving messages don't yank them away
+  // from older ones they are reading, and true again when they return.
+  const pinnedToBottom = useRef(true);
+
+  const scrollToBottom = () => {
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  };
+
+  const handleScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    // A small tolerance keeps this true through sub-pixel rounding and the
+    // brief moment while a new message is being laid out.
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    pinnedToBottom.current = distanceFromBottom < 40;
+  };
+
+  // Jump to the newest message when messages arrive, and whenever the chat
+  // itself changes — opening a conversation should show its latest, not its
+  // oldest, message.
+  useEffect(() => {
+    if (pinnedToBottom.current) scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    pinnedToBottom.current = true;
+    scrollToBottom();
+  }, [groupName]);
+
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (newMessage.trim()) {
       onSendMessage(newMessage.trim(), messageType);
       setNewMessage('');
+      // Sending is an explicit intent to be at the bottom, even if the reader
+      // had scrolled up before typing.
+      pinnedToBottom.current = true;
     }
   };
 
@@ -86,7 +121,7 @@ export const GroupChat: React.FC<GroupChatProps> = ({
         </div>
       </div>
 
-      <div className="h-96 overflow-y-auto p-4 space-y-4">
+      <div ref={scrollRef} onScroll={handleScroll} className="h-96 overflow-y-auto p-4 space-y-4">
         {messages.map(message => (
           <div key={message.id} className={`p-3 rounded-lg ${getMessageStyle(message.type)}`}>
             <div className="flex items-start space-x-3">
