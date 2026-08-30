@@ -716,6 +716,18 @@ function App() {
           <div className="max-w-4xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-6">
               <h3 className="text-2xl font-bold text-gray-800 mb-4">Recent Sessions</h3>
+
+              {/* Without this a new account sees a bare heading over nothing,
+                  which reads as a page that failed to load. */}
+              {sessions.length === 0 && (
+                <div className="text-center py-10 text-gray-500">
+                  <p className="font-medium text-gray-700">No sessions yet</p>
+                  <p className="text-sm mt-1">
+                    Finish a study session on the Home tab and it will show up here.
+                  </p>
+                </div>
+              )}
+
               <div className="space-y-3">
                 {sessions.slice(0, 5).map(session => (
                   <div key={session.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
