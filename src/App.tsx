@@ -29,6 +29,7 @@ import { useTodos } from './hooks/useTodos';
 import { useMeetings } from './hooks/useMeetings';
 import { useCalendar } from './hooks/useCalendar';
 import { useTimerContext } from './contexts/TimerContext';
+import { useToast } from './contexts/ToastContext';
 import { NotificationsDropdown } from './components/NotificationsDropdown';
 import { FriendRequestsModal } from './components/FriendRequestsModal';
 import { groupService } from './services/groupService';
@@ -63,6 +64,7 @@ function App() {
   const { events: calendarEvents, createEvent, updateEvent, deleteEvent } = useCalendar(user?.id);
   usePresence(user?.id, isAuthenticated);
   const { timer: globalTimerState, formatTime } = useTimerContext();
+  const toast = useToast();
 
   const [showFriendRequests, setShowFriendRequests] = useState(false);
 
@@ -183,23 +185,24 @@ function App() {
         totalFocusMinutes: duration,
       });
 
-      alert(`Great job! You studied ${subject} for ${duration} minutes. 🎉`);
+      toast.success(`Saved ${duration} minute${duration === 1 ? '' : 's'} of ${subject}.`);
     } catch (error) {
-      console.error('Failed to save study session:', error);
-      alert('Study session completed but failed to save. Please check your connection.');
+      toast.error('Your session finished but could not be saved.', error);
     }
   };
 
   // From search results, where we have a real user id.
   const handleAddFriendById = async (userId: string, name?: string) => {
     const result = await sendFriendRequestById(userId, name);
-    alert(result.message);
+    if (result.success) toast.success(result.message);
+    else toast.error(result.message);
   };
 
   // From the "add by email" box.
   const handleAddFriend = async (email: string) => {
     const result = await sendFriendReq(email);
-    alert(result.message);
+    if (result.success) toast.success(result.message);
+    else toast.error(result.message);
   };
 
   const handleSendMessage = (message: string, type: 'text' | 'note' | 'resource') => {
@@ -218,14 +221,14 @@ function App() {
   const handleCallOut = (friendId: string) => {
     const friend = friends.find(f => f.id === friendId);
     if (friend) {
-      alert(`Hey ${friend.name}! Time to hit the books! 📚 Your study buddies are counting on you!`);
+      toast.info(`Nudging ${friend.name} isn't wired up yet — they won't be notified.`);
     }
   };
 
   const handleSendStar = (friendId: string) => {
     const friend = friends.find(f => f.id === friendId);
     if (friend) {
-      alert(`⭐ Amazing work ${friend.name}! You're crushing your study goals! Keep up the fantastic effort! 🌟`);
+      toast.info(`Cheering ${friend.name} isn't wired up yet — they won't be notified.`);
     }
   };
 
@@ -256,10 +259,9 @@ function App() {
       );
 
       updateProfile(patch as any).then(() => {
-        alert('Profile updated successfully!');
+        toast.success('Profile updated.');
       }).catch((error) => {
-        console.error('Profile update failed:', error);
-        alert('Failed to update profile');
+        toast.error('Could not save your profile.', error);
       });
     }
   };
@@ -288,8 +290,8 @@ function App() {
     }
 
     const friend = friends.find(f => f.id === friendId);
-    alert(
-      `Direct messages aren't available yet. For now, create a study group with ${friend?.name || 'them'} to chat.`
+    toast.info(
+      `Direct messages aren't built yet. Create a study group with ${friend?.name || 'them'} to chat.`
     );
   };
 
@@ -300,7 +302,7 @@ function App() {
   };
 
   const handleStartVideoCall = () => {
-    alert('Starting video call... 📹 (Video calling feature coming soon!)');
+    toast.info("Video calling isn't built yet.");
   };
 
   const handleCreateGroup = async (groupData: {
@@ -318,10 +320,9 @@ function App() {
         isPrivate: groupData.isPrivate,
         memberIds: groupData.members
       });
-      alert(`Study group "${groupData.name}" created successfully!`);
+      toast.success(`Created the group "${groupData.name}".`);
     } catch (error) {
-      console.error('Failed to create group:', error);
-      alert('Failed to create group. Please try again.');
+      toast.error('Could not create the group.', error);
     }
   };
 
@@ -400,8 +401,7 @@ function App() {
     try {
       await groupService.sendMessage(selectedGroupId, message, type);
     } catch (error) {
-      console.error('Failed to send message:', error);
-      alert('Failed to send message. Please try again.');
+      toast.error('Message not sent.', error);
     }
   };
 
@@ -442,10 +442,9 @@ function App() {
 
       const inviteCount = meetingData.invitees.length + meetingData.inviteeEmails.length;
       const inviteText = inviteCount > 0 ? ` and ${inviteCount} people have been invited` : '';
-      alert(`Meeting "${meetingData.title}" scheduled successfully${inviteText}!`);
+      toast.success(`Scheduled "${meetingData.title}"${inviteText}.`);
     } catch (error) {
-      console.error('Failed to create meeting:', error);
-      alert('Failed to create meeting. Please try again.');
+      toast.error('Could not schedule the meeting.', error);
     }
   };
 
@@ -456,11 +455,11 @@ function App() {
         await updateMeeting(meetingId, { status: 'active' });
 
         if (meeting.meetingType === 'video') {
-          alert(`Joining video call for "${meeting.title}"...`);
+          toast.info(`Video calling isn't built yet — "${meeting.title}" is marked as active.`);
         } else if (meeting.meetingType === 'phone') {
-          alert(`Starting phone call for "${meeting.title}"...`);
+          toast.info(`Phone calls aren't built yet — "${meeting.title}" is marked as active.`);
         } else {
-          alert(`Meeting "${meeting.title}" is at: ${meeting.location}`);
+          toast.info(`"${meeting.title}" is at ${meeting.location}.`);
         }
       } catch (error) {
         console.error('Failed to join meeting:', error);
@@ -495,8 +494,7 @@ function App() {
         });
       }
     } catch (error) {
-      console.error('Failed to add todo:', error);
-      alert('Failed to add todo. Please try again.');
+      toast.error('Could not add that task.', error);
     }
   };
 
@@ -539,8 +537,7 @@ function App() {
         await deleteEvent(existingCalendarEvent.id);
       }
     } catch (error) {
-      console.error('Failed to update todo:', error);
-      alert('Failed to update todo. Please try again.');
+      toast.error('Could not update that task.', error);
     }
   };
 
@@ -554,8 +551,7 @@ function App() {
         await deleteEvent(calendarEvent.id);
       }
     } catch (error) {
-      console.error('Failed to delete todo:', error);
-      alert('Failed to delete todo. Please try again.');
+      toast.error('Could not delete that task.', error);
     }
   };
 
@@ -815,8 +811,7 @@ function App() {
                 hasReminder: event.hasReminder,
                 reminderMinutes: event.reminderMinutes,
               }).catch((error) => {
-                console.error('Failed to create calendar event:', error);
-                alert('Failed to create event. Please try again.');
+                toast.error('Could not create that event.', error);
               });
             }}
             onCreateReminder={(reminder) => setReminders(prev => [...prev, reminder])}
@@ -955,11 +950,11 @@ function App() {
         requests={pendingRequests}
         onAccept={async (requestId) => {
           await acceptFriendRequest(requestId);
-          alert('Friend request accepted!');
+          toast.success('Friend request accepted.');
         }}
         onReject={async (requestId) => {
           await rejectFriendRequest(requestId);
-          alert('Friend request rejected.');
+          toast.info('Friend request declined.');
         }}
       />
     </div>
