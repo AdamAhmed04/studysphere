@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import { todoService, TodoData } from '../services/todoService';
+import { orUndefined, orEmpty, orFalse, asOneOf } from '../utils/rows';
+
+const PRIORITIES = ['low', 'medium', 'high'] as const;
 
 export interface Todo {
   id: string;
@@ -38,14 +41,14 @@ export const useTodos = (userId: string | undefined) => {
       const mappedTodos: Todo[] = data.map(todo => ({
         id: todo.id,
         title: todo.title,
-        description: todo.description,
+        description: orUndefined(todo.description),
         dueDate: todo.due_date ? new Date(todo.due_date) : undefined,
-        priority: todo.priority,
-        isCompleted: todo.is_completed,
+        priority: asOneOf(todo.priority, PRIORITIES, 'medium'),
+        isCompleted: orFalse(todo.is_completed),
         createdBy: todo.user_id,
-        createdAt: new Date(todo.created_at),
+        createdAt: new Date(orEmpty(todo.created_at)),
         completedAt: todo.completed_at ? new Date(todo.completed_at) : undefined,
-        category: todo.category
+        category: orUndefined(todo.category)
       }));
       setTodos(mappedTodos);
       setError(null);
@@ -69,14 +72,14 @@ export const useTodos = (userId: string | undefined) => {
       const newTodo: Todo = {
         id: data.id,
         title: data.title,
-        description: data.description,
+        description: orUndefined(data.description),
         dueDate: data.due_date ? new Date(data.due_date) : undefined,
-        priority: data.priority,
-        isCompleted: data.is_completed,
+        priority: asOneOf(data.priority, PRIORITIES, 'medium'),
+        isCompleted: orFalse(data.is_completed),
         createdBy: data.user_id,
-        createdAt: new Date(data.created_at),
+        createdAt: new Date(orEmpty(data.created_at)),
         completedAt: data.completed_at ? new Date(data.completed_at) : undefined,
-        category: data.category
+        category: orUndefined(data.category)
       };
 
       setTodos(prev => [newTodo, ...prev]);
@@ -96,12 +99,12 @@ export const useTodos = (userId: string | undefined) => {
           return {
             ...todo,
             title: data.title,
-            description: data.description,
+            description: orUndefined(data.description),
             dueDate: data.due_date ? new Date(data.due_date) : undefined,
-            priority: data.priority,
-            isCompleted: data.is_completed,
+            priority: asOneOf(data.priority, PRIORITIES, 'medium'),
+            isCompleted: orFalse(data.is_completed),
             completedAt: data.completed_at ? new Date(data.completed_at) : undefined,
-            category: data.category
+            category: orUndefined(data.category)
           };
         }
         return todo;

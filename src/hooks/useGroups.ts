@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { groupService, StudyGroupData, GroupMessage } from '../services/groupService';
+import { groupService, StudyGroupData } from '../services/groupService';
 
 export const useGroups = (userId: string | undefined) => {
   const [groups, setGroups] = useState<StudyGroupData[]>([]);

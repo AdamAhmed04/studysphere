@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Calendar, Clock, Users, MapPin, Video, Phone, User } from 'lucide-react';
+import { X, Calendar, Users, MapPin, Video, Phone } from 'lucide-react';
 import type { User as UserType, Friend, StudyGroup } from '../types';
 import { toLocalDateString, todayLocalDateString } from '../utils/dates';
 
@@ -47,7 +47,6 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
     reminders: [15] as number[],
     selectedParticipants: [] as string[]
   });
-  const [newInviteeEmail, setNewInviteeEmail] = useState('');
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -151,7 +150,6 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
       inviteeEmails: []
     });
     setErrors({});
-    setNewInviteeEmail('');
     onClose();
   };
 
@@ -164,31 +162,8 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
     }));
   };
 
-  const toggleInvitee = (friendId: string) => {
-    setFormData(prev => ({
-      ...prev,
-      selectedInvitees: prev.selectedInvitees.includes(friendId)
-        ? prev.selectedInvitees.filter(id => id !== friendId)
-        : [...prev.selectedInvitees, friendId]
-    }));
-  };
 
-  const addInviteeEmail = () => {
-    if (newInviteeEmail.trim() && !formData.inviteeEmails.includes(newInviteeEmail.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        inviteeEmails: [...prev.inviteeEmails, newInviteeEmail.trim()]
-      }));
-      setNewInviteeEmail('');
-    }
-  };
 
-  const removeInviteeEmail = (email: string) => {
-    setFormData(prev => ({
-      ...prev,
-      inviteeEmails: prev.inviteeEmails.filter(e => e !== email)
-    }));
-  };
   const toggleReminder = (minutes: number) => {
     setFormData(prev => ({
       ...prev,
@@ -198,14 +173,6 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
     }));
   };
 
-  const getMeetingTypeIcon = (type: string) => {
-    switch (type) {
-      case 'video': return <Video size={20} />;
-      case 'phone': return <Phone size={20} />;
-      case 'in-person': return <MapPin size={20} />;
-      default: return <Video size={20} />;
-    }
-  };
 
   if (!isOpen) return null;
 

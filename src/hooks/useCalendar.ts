@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import { calendarService, CalendarEventData } from '../services/calendarService';
+import { orUndefined, orFalse, asOneOf } from '../utils/rows';
+
+const EVENT_TYPES = ['meeting', 'reminder', 'study', 'exam', 'class', 'todo'] as const;
 
 export interface CalendarEvent {
   id: string;
@@ -40,15 +43,15 @@ export const useCalendar = (userId: string | undefined) => {
       const mappedEvents: CalendarEvent[] = data.map(event => ({
         id: event.id,
         title: event.title,
-        description: event.description,
+        description: orUndefined(event.description),
         date: new Date(event.event_date),
-        type: event.event_type,
+        type: asOneOf(event.event_type, EVENT_TYPES, 'study'),
         color: event.color,
-        groupId: event.group_id,
+        groupId: orUndefined(event.group_id),
         createdBy: event.user_id,
-        hasReminder: event.has_reminder,
-        reminderMinutes: event.reminder_minutes,
-        todoId: event.todo_id
+        hasReminder: orFalse(event.has_reminder),
+        reminderMinutes: orUndefined(event.reminder_minutes),
+        todoId: orUndefined(event.todo_id)
       }));
 
       setEvents(mappedEvents);
@@ -92,15 +95,15 @@ export const useCalendar = (userId: string | undefined) => {
       const newEvent: CalendarEvent = {
         id: event.id,
         title: event.title,
-        description: event.description,
+        description: orUndefined(event.description),
         date: new Date(event.event_date),
-        type: event.event_type,
+        type: asOneOf(event.event_type, EVENT_TYPES, 'study'),
         color: event.color,
-        groupId: event.group_id,
+        groupId: orUndefined(event.group_id),
         createdBy: event.user_id,
-        hasReminder: event.has_reminder,
-        reminderMinutes: event.reminder_minutes,
-        todoId: event.todo_id
+        hasReminder: orFalse(event.has_reminder),
+        reminderMinutes: orUndefined(event.reminder_minutes),
+        todoId: orUndefined(event.todo_id)
       };
 
       setEvents(prev => [...prev, newEvent]);
@@ -120,12 +123,12 @@ export const useCalendar = (userId: string | undefined) => {
           return {
             ...event,
             title: data.title,
-            description: data.description,
+            description: orUndefined(data.description),
             date: new Date(data.event_date),
-            type: data.event_type,
+            type: asOneOf(data.event_type, EVENT_TYPES, 'study'),
             color: data.color,
-            hasReminder: data.has_reminder,
-            reminderMinutes: data.reminder_minutes
+            hasReminder: orFalse(data.has_reminder),
+            reminderMinutes: orUndefined(data.reminder_minutes)
           };
         }
         return event;
@@ -155,15 +158,15 @@ export const useCalendar = (userId: string | undefined) => {
       const mappedEvents: CalendarEvent[] = data.map(event => ({
         id: event.id,
         title: event.title,
-        description: event.description,
+        description: orUndefined(event.description),
         date: new Date(event.event_date),
-        type: event.event_type,
+        type: asOneOf(event.event_type, EVENT_TYPES, 'study'),
         color: event.color,
-        groupId: event.group_id,
+        groupId: orUndefined(event.group_id),
         createdBy: event.user_id,
-        hasReminder: event.has_reminder,
-        reminderMinutes: event.reminder_minutes,
-        todoId: event.todo_id
+        hasReminder: orFalse(event.has_reminder),
+        reminderMinutes: orUndefined(event.reminder_minutes),
+        todoId: orUndefined(event.todo_id)
       }));
 
       setEvents(mappedEvents);

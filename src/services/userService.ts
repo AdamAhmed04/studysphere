@@ -114,14 +114,16 @@ class UserService {
         throw new Error('Supabase is not configured. Please set up your environment variables.');
       }
 
-      const { data, error } = await supabase.rpc('increment_user_stats', {
-        p_sessions: payload.sessions ?? 0,
-        p_focus_minutes: payload.totalFocusMinutes ?? 0,
-        p_tasks_completed: payload.tasksCompleted ?? 0,
-      });
+      const { data, error } = await supabase
+        .rpc('increment_user_stats', {
+          p_sessions: payload.sessions ?? 0,
+          p_focus_minutes: payload.totalFocusMinutes ?? 0,
+          p_tasks_completed: payload.tasksCompleted ?? 0,
+        })
+        .single();
 
       if (error) throw error;
-      return data as UserStats;
+      return data;
     } catch (error) {
       console.error('Increment stats error:', error);
       throw error;

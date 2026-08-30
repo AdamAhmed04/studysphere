@@ -10,7 +10,7 @@ interface SearchPageProps {
   friends: Friend[];
 }
 
-export const SearchPage: React.FC<SearchPageProps> = ({ onAddFriend, currentUser, friends }) => {
+export const SearchPage: React.FC<SearchPageProps> = ({ onAddFriend, currentUser }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);

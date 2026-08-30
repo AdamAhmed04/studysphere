@@ -1,18 +1,16 @@
 import React from 'react';
-import { MessageCircle, Users, User, Clock } from 'lucide-react';
-import type { StudyGroup, ChatMessage, User as UserType } from '../types';
+import { MessageCircle, User, Clock } from 'lucide-react';
+import type { StudyGroup, ChatMessage } from '../types';
 
 interface SocialFeedProps {
   groups: StudyGroup[];
   messages: ChatMessage[];
-  currentUser: UserType;
   onOpenChat: (groupId: string) => void;
 }
 
 export const SocialFeed: React.FC<SocialFeedProps> = ({
   groups,
   messages,
-  currentUser,
   onOpenChat
 }) => {
   // Get recent messages from all groups, sorted by timestamp
@@ -32,9 +30,6 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
     return messageDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
-  const truncateMessage = (message: string, maxLength: number = 60) => {
-    return message.length > maxLength ? message.substring(0, maxLength) + '...' : message;
-  };
 
   const getGroupInfo = (groupId: string) => {
     return groups.find(g => g.id === groupId);
@@ -44,13 +39,6 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
     return group.members.length === 2;
   };
 
-  const getMessageTypeIcon = (type: string) => {
-    switch (type) {
-      case 'note': return '📝';
-      case 'resource': return '📎';
-      default: return '';
-    }
-  };
 
   if (recentMessages.length === 0) {
     return (
@@ -85,8 +73,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
           const group = getGroupInfo(message.groupId!);
           if (!group) return null;
 
-          const isCurrentUser = message.userId === currentUser.id;
-          const isIndividual = isIndividualChat(group);
+                const isIndividual = isIndividualChat(group);
 
           return (
             <div

@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import { orEmpty, orFalse } from '../utils/rows';
 
 export interface UserPresence {
   user_id: string;
@@ -96,9 +97,9 @@ class PresenceService {
 
     return {
       user_id: data.user_id,
-      is_online: data.is_online,
-      last_seen: new Date(data.last_seen),
-      updated_at: new Date(data.updated_at)
+      is_online: orFalse(data.is_online),
+      last_seen: new Date(orEmpty(data.last_seen)),
+      updated_at: new Date(orEmpty(data.updated_at))
     };
   }
 
@@ -119,9 +120,9 @@ class PresenceService {
     data?.forEach(p => {
       presenceMap.set(p.user_id, {
         user_id: p.user_id,
-        is_online: p.is_online,
-        last_seen: new Date(p.last_seen),
-        updated_at: new Date(p.updated_at)
+        is_online: orFalse(p.is_online),
+        last_seen: new Date(orEmpty(p.last_seen)),
+        updated_at: new Date(orEmpty(p.updated_at))
       });
     });
 
@@ -197,12 +198,14 @@ class PresenceService {
           filter: `user_id=in.(${userIds.join(',')})`
         },
         (payload) => {
-          const data = payload.new;
+          // Realtime payloads are not covered by the generated row types, so
+          // this one is asserted rather than inferred.
+          const data = payload.new as Partial<UserPresence & { last_seen: string; updated_at: string }>;
           callback({
-            user_id: data.user_id,
-            is_online: data.is_online,
-            last_seen: new Date(data.last_seen),
-            updated_at: new Date(data.updated_at)
+            user_id: orEmpty(data.user_id),
+            is_online: orFalse(data.is_online),
+            last_seen: new Date(orEmpty(data.last_seen)),
+            updated_at: new Date(orEmpty(data.updated_at))
           });
         }
       )

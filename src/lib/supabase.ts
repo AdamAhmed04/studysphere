@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import type { Database, Tables } from '../types/database';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -7,8 +8,16 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('Missing Supabase environment variables. Please configure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.');
 }
 
+/*
+ * Typed with the generated Database schema.
+ *
+ * This is what makes every .from(), .select(), .insert() and .rpc() call in
+ * the app check its table names, column names and argument shapes at compile
+ * time. Untyped, they all returned `any`, so a renamed column or a wrong RPC
+ * argument only failed at runtime.
+ */
 export const supabase = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey, {
+  ? createClient<Database>(supabaseUrl, supabaseAnonKey, {
       auth: {
         autoRefreshToken: true,
         persistSession: true,
@@ -17,30 +26,14 @@ export const supabase = supabaseUrl && supabaseAnonKey
     })
   : null;
 
-// Database types
-export interface UserProfile {
-  user_id: string;
-  name: string;
-  email: string;
-  avatar_url?: string;
-  bio?: string;
-  date_of_birth?: string;
-  school?: string;
-  study_field?: string;
-  graduation_date?: string;
-  grade?: string;
-  interests: string[];
-  is_public: boolean;
-  created_at: string;
-  updated_at: string;
-}
+/*
+ * These were hand-written duplicates of the table shapes, which meant they
+ * could drift from the real schema without anything noticing. They are now
+ * aliases of the generated row types, so a migration that changes a column
+ * changes these too.
+ */
+export type UserProfile = Tables<'user_profiles'>;
+export type UserStats = Tables<'user_stats'>;
 
-export interface UserStats {
-  user_id: string;
-  sessions: number;
-  total_focus_minutes: number;
-  streak_days: number;
-  tasks_completed: number;
-  last_session_date?: string;
-  updated_at: string;
-}
+/** Profile columns other users are allowed to read. */
+export type PublicProfile = Tables<'public_profiles'>;

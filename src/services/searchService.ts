@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import { orUndefined, orEmpty } from '../utils/rows';
 
 export interface SearchResult {
   user_id: string;
@@ -97,15 +98,15 @@ class SearchService {
       );
 
       return profiles.map(profile => ({
-        user_id: profile.user_id,
-        name: profile.name,
-        avatar_url: profile.avatar_url,
-        bio: profile.bio,
-        school: profile.school,
-        study_field: profile.study_field,
+        user_id: orEmpty(profile.user_id),
+        name: orEmpty(profile.name),
+        avatar_url: orUndefined(profile.avatar_url),
+        bio: orUndefined(profile.bio),
+        school: orUndefined(profile.school),
+        study_field: orUndefined(profile.study_field),
         interests: profile.interests || [],
         total_study_time: stats.find(s => s.user_id === profile.user_id)?.total_focus_minutes || 0,
-        is_friend: friendIds.has(profile.user_id),
+        is_friend: friendIds.has(orEmpty(profile.user_id)),
       }));
     } catch (error) {
       console.error('Error searching users:', error);
@@ -146,12 +147,12 @@ class SearchService {
       ]);
 
       return {
-        user_id: profile.user_id,
-        name: profile.name,
-        avatar_url: profile.avatar_url,
-        bio: profile.bio,
-        school: profile.school,
-        study_field: profile.study_field,
+        user_id: orEmpty(profile.user_id),
+        name: orEmpty(profile.name),
+        avatar_url: orUndefined(profile.avatar_url),
+        bio: orUndefined(profile.bio),
+        school: orUndefined(profile.school),
+        study_field: orUndefined(profile.study_field),
         interests: profile.interests || [],
         total_study_time: statsData.data?.total_focus_minutes || 0,
         is_friend: !!friendsData.data,

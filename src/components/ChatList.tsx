@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MessageCircle, Users, Plus, Search, MoreVertical, User as UserIcon } from 'lucide-react';
-import type { StudyGroup, ChatMessage, User, Friend } from '../types';
+import type { StudyGroup, User, Friend } from '../types';
 
 interface ChatListProps {
   groups: StudyGroup[];

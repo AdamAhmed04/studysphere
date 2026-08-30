@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Users, BookOpen, Lock, Globe } from 'lucide-react';
+import { X, Users, Lock, Globe } from 'lucide-react';
 import type { User, Friend } from '../types';
 
 interface CreateGroupModalProps {

@@ -212,7 +212,7 @@ class AuthService {
       return { data: { subscription: { unsubscribe: () => {} } } };
     }
 
-    return supabase.auth.onAuthStateChange((event, session) => {
+    return supabase.auth.onAuthStateChange((_event, session) => {
       // Use async block to avoid deadlocks
       (() => {
         callback(session?.user || null);

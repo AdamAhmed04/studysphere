@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Calendar as CalendarIcon, Plus, Clock, Users, MapPin, ChevronLeft, ChevronRight, X, Video, Phone, MessageCircle, User as UserIcon, Bell, Edit3 } from 'lucide-react';
+import { Calendar as CalendarIcon, Plus, Clock, Users, MapPin, ChevronLeft, ChevronRight, X, Video, Phone, MessageCircle, User as UserIcon, Bell } from 'lucide-react';
 import type { CalendarEvent, Meeting, User, Reminder } from '../types';
-import { eventTypeColors, eventTypeLabels, getEventTypeColor, formatEventTime, formatEventDate } from '../utils/calendarUtils';
+import { eventTypeColors, eventTypeLabels, getEventTypeColor } from '../utils/calendarUtils';
 import { parseLocalDate, todayLocalDateString } from '../utils/dates';
 
 interface CalendarProps {

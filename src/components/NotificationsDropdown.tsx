@@ -140,7 +140,7 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
                               </button>
                             </div>
                           </div>
-                          {onActionClick && notification.action_data && (
+                          {onActionClick && Boolean(notification.action_data) && (
                             <button
                               onClick={() => {
                                 onActionClick(notification);

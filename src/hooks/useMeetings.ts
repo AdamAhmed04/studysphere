@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 import { meetingService, MeetingData } from '../services/meetingService';
+import { orUndefined, asOneOf } from '../utils/rows';
+
+const MEETING_TYPES = ['video', 'in-person', 'phone'] as const;
+const MEETING_STATUSES = ['scheduled', 'active', 'completed', 'cancelled'] as const;
 
 export interface Meeting {
   id: string;
@@ -141,12 +145,12 @@ export const useMeetings = (userId: string | undefined) => {
           return {
             ...meeting,
             title: data.title,
-            description: data.description,
+            description: orUndefined(data.description),
             scheduledTime: new Date(data.scheduled_time),
             duration: data.duration,
-            location: data.location,
-            meetingType: data.meeting_type,
-            status: data.status
+            location: orUndefined(data.location),
+            meetingType: asOneOf(data.meeting_type, MEETING_TYPES, 'video'),
+            status: asOneOf(data.status, MEETING_STATUSES, 'scheduled')
           };
         }
         return meeting;

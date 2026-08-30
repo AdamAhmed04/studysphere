@@ -20,7 +20,7 @@ export const BubblePopGame: React.FC<BubblePopGameProps> = ({ isOpen, onClose })
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [score, setScore] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [gameTime, setGameTime] = useState(60); // 60 seconds game
+  const [gameTime] = useState(60); // 60 seconds game
   const [timeLeft, setTimeLeft] = useState(60);
   const [gameOver, setGameOver] = useState(false);
   const [highScore, setHighScore] = useState(() => {

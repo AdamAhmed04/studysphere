@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageCircle, Users, User, Clock, ChevronRight } from 'lucide-react';
+import { MessageCircle, User, Clock, ChevronRight } from 'lucide-react';
 import type { StudyGroup, ChatMessage, User as UserType, Friend } from '../types';
 
 interface SocialMessagesBoxProps {

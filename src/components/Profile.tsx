@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Calendar, BookOpen, Users, Trophy, Edit3, MapPin, GraduationCap, School } from 'lucide-react';
+import { Calendar, BookOpen, Users, Trophy, Edit3, GraduationCap, School } from 'lucide-react';
 import type { User as UserType, StudySession, Friend } from '../types';
 
 interface ProfileProps {

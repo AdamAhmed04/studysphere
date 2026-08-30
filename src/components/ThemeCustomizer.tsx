@@ -248,13 +248,6 @@ export const ThemeCustomizer: React.FC = () => {
   );
 };
 
-const darkenColor = (color: string, percent: number): string => {
-  const hex = color.replace('#', '');
-  const r = Math.max(0, parseInt(hex.substr(0, 2), 16) - Math.round(255 * percent / 100));
-  const g = Math.max(0, parseInt(hex.substr(2, 2), 16) - Math.round(255 * percent / 100));
-  const b = Math.max(0, parseInt(hex.substr(4, 2), 16) - Math.round(255 * percent / 100));
-  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-};
 // Helper function
 const getContrastTextColor = (backgroundColor: string): string => {
   const hex = backgroundColor.replace('#', '');

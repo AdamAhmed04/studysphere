@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { Clock } from 'lucide-react';
 import { AuthPage } from './components/AuthPage';
 import { ResetPassword } from './components/ResetPassword';
@@ -19,7 +19,6 @@ import { ScheduleMeetingModal } from './components/ScheduleMeetingModal';
 import { UpcomingMeetings } from './components/UpcomingMeetings';
 import { SocialFeed } from './components/SocialFeed';
 import { TodoList } from './components/TodoList';
-import { useLocalStorage } from './hooks/useLocalStorage';
 import { useTheme } from './hooks/useTheme';
 import { useFriends } from './hooks/useFriends';
 import { useGroups } from './hooks/useGroups';
@@ -33,22 +32,14 @@ import { useToast } from './contexts/ToastContext';
 import { NotificationsDropdown } from './components/NotificationsDropdown';
 import { FriendRequestsModal } from './components/FriendRequestsModal';
 import { groupService } from './services/groupService';
-import { meetingService } from './services/meetingService';
-import { todoService } from './services/todoService';
-import { calendarService } from './services/calendarService';
 const BubblePopGame = lazy(() => import('./components/BubblePopGame').then(module => ({ default: module.BubblePopGame })));
 const BlockDropGame = lazy(() => import('./components/BlockDropGame').then(module => ({ default: module.BlockDropGame })));
 import { studySessionService } from './services/studySessionService';
 import { toLocalDateString } from './utils/dates';
-import type { StudySession, ChatMessage, Friend, User, Meeting, CalendarEvent, StudyGroup, Reminder, TodoItem } from './types';
+import { orUndefined, orEmpty, orFalse } from './utils/rows';
+import type { StudySession, ChatMessage, Friend, User, StudyGroup, Reminder, TodoItem } from './types';
 
 // Date reviver function to convert ISO strings back to Date objects
-const dateReviver = (key: string, value: any) => {
-  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value)) {
-    return new Date(value);
-  }
-  return value;
-};
 
 function App() {
   const { user, profile, stats, loading, incrementStats, updateProfile, isAuthenticated } = useAuthContext();
@@ -57,10 +48,10 @@ function App() {
   const [isPasswordReset, setIsPasswordReset] = useState(false);
 
   const { friends, pendingRequests, sendFriendRequest: sendFriendReq, sendFriendRequestById, acceptFriendRequest, rejectFriendRequest } = useFriends(user?.id);
-  const { groups, createGroup, refreshGroups } = useGroups(user?.id);
+  const { groups, createGroup } = useGroups(user?.id);
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications(user?.id);
-  const { todos, addTodo, updateTodo, deleteTodo, toggleComplete } = useTodos(user?.id);
-  const { meetings, createMeeting, updateMeeting, deleteMeeting, getUpcomingMeetings } = useMeetings(user?.id);
+  const { todos, addTodo, updateTodo, deleteTodo } = useTodos(user?.id);
+  const { meetings, createMeeting, updateMeeting } = useMeetings(user?.id);
   const { events: calendarEvents, createEvent, updateEvent, deleteEvent } = useCalendar(user?.id);
   usePresence(user?.id, isAuthenticated);
   const { timer: globalTimerState, formatTime } = useTimerContext();
@@ -126,7 +117,7 @@ function App() {
           endTime: s.end_time ? new Date(s.end_time) : undefined,
           duration: s.duration,
           subject: s.subject,
-          notes: s.notes,
+          notes: orUndefined(s.notes),
         })));
       }
     } catch (error) {
@@ -205,18 +196,6 @@ function App() {
     else toast.error(result.message);
   };
 
-  const handleSendMessage = (message: string, type: 'text' | 'note' | 'resource') => {
-    const newMessage: ChatMessage = {
-      id: Date.now().toString(),
-      userId: user?.id || '',
-      userName: profile?.name || 'Unknown',
-      message,
-      timestamp: new Date(),
-      type,
-    };
-
-    setChatMessages(prev => [...prev, newMessage]);
-  };
 
   const handleCallOut = (friendId: string) => {
     const friend = friends.find(f => f.id === friendId);
@@ -419,7 +398,7 @@ function App() {
     reminders: number[];
   }) => {
     try {
-      const newMeeting = await createMeeting(meetingData);
+      await createMeeting(meetingData);
 
       // Add to calendar
       await createEvent({
@@ -603,18 +582,18 @@ function App() {
     username: profile.name,
     name: profile.name,
     email: profile.email,
-    avatar: profile.avatar_url,
-    bio: profile.bio,
+    avatar: orUndefined(profile.avatar_url),
+    bio: orUndefined(profile.bio),
     dateOfBirth: profile.date_of_birth ? new Date(profile.date_of_birth) : undefined,
-    school: profile.school,
-    studyField: profile.study_field,
+    school: orUndefined(profile.school),
+    studyField: orUndefined(profile.study_field),
     graduationDate: profile.graduation_date ? new Date(profile.graduation_date) : undefined,
-    grade: profile.grade,
-    isPublic: profile.is_public,
+    grade: orUndefined(profile.grade),
+    isPublic: orFalse(profile.is_public),
     totalStudyTime: stats?.total_focus_minutes || 0,
     currentStreak: stats?.streak_days || 0,
-    interests: profile.interests,
-    joinDate: new Date(profile.created_at),
+    interests: profile.interests ?? [],
+    joinDate: new Date(orEmpty(profile.created_at)),
   };
 
   const renderContent = () => {
@@ -625,14 +604,7 @@ function App() {
             <StudyStats sessions={sessions} stats={stats} />
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
               <div className="lg:col-span-2 space-y-4 md:space-y-6">
-                <Timer 
-                  onSessionComplete={handleSessionComplete}
-                  groups={studyGroups}
-                  messages={chatMessages}
-                  currentUser={legacyUser}
-                  friends={friends}
-                  onOpenChat={handleOpenChatFromSocial}
-                />
+                <Timer onSessionComplete={handleSessionComplete} />
                 <TodoList
                   todos={todos}
                   onAddTodo={handleAddTodo}
@@ -684,7 +656,6 @@ function App() {
                 <SocialFeed
                   groups={studyGroups}
                   messages={chatMessages}
-                  currentUser={legacyUser}
                   onOpenChat={handleOpenChatFromSocial}
                 />
                 <UpcomingMeetings

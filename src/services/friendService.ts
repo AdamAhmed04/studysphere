@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import { orUndefined, orEmpty } from '../utils/rows';
 
 export interface FriendRequest {
   id: string;
@@ -169,12 +170,12 @@ class FriendService {
       ]);
 
       return {
-        id: profile.user_id,
-        name: profile.name,
-        avatar: profile.avatar_url,
-        bio: profile.bio,
-        school: profile.school,
-        studyField: profile.study_field,
+        id: orEmpty(profile.user_id),
+        name: orEmpty(profile.name),
+        avatar: orUndefined(profile.avatar_url),
+        bio: orUndefined(profile.bio),
+        school: orUndefined(profile.school),
+        studyField: orUndefined(profile.study_field),
         totalStudyTime: statsRes.data?.total_focus_minutes || 0,
         isOnline: presenceRes.data?.is_online || false,
         lastSeen: presenceRes.data?.last_seen ? new Date(presenceRes.data.last_seen) : undefined
@@ -234,12 +235,12 @@ class FriendService {
         const userPresence = presence.find(p => p.user_id === profile.user_id);
 
         return {
-          id: profile.user_id,
-          name: profile.name,
-          avatar: profile.avatar_url,
-          bio: profile.bio,
-          school: profile.school,
-          studyField: profile.study_field,
+          id: orEmpty(profile.user_id),
+          name: orEmpty(profile.name),
+          avatar: orUndefined(profile.avatar_url),
+          bio: orUndefined(profile.bio),
+          school: orUndefined(profile.school),
+          studyField: orUndefined(profile.study_field),
           totalStudyTime: userStats?.total_focus_minutes || 0,
           isOnline: userPresence?.is_online || false,
           lastSeen: userPresence?.last_seen ? new Date(userPresence.last_seen) : undefined
@@ -283,9 +284,9 @@ class FriendService {
         return {
           id: req.id,
           senderId: req.user_id,
-          senderName: profile?.name || 'Unknown',
-          senderAvatar: profile?.avatar_url,
-          createdAt: new Date(req.created_at)
+          senderName: profile?.name ?? 'Unknown',
+          senderAvatar: orUndefined(profile?.avatar_url),
+          createdAt: new Date(orEmpty(req.created_at))
         };
       });
     } catch (error) {

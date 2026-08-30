@@ -1,5 +1,9 @@
 import { supabase } from '../lib/supabase';
 import { sanitizeInput } from '../utils/sanitize';
+import { orUndefined, orEmpty, orFalse, asOneOf } from '../utils/rows';
+
+/** Allowed chat message kinds, matching the CHECK constraint on the column. */
+const MESSAGE_TYPES = ['text', 'note', 'resource'] as const;
 
 export interface GroupMessage {
   id: string;
@@ -11,19 +15,6 @@ export interface GroupMessage {
   created_at: string;
   user_name?: string;
   user_avatar?: string;
-}
-
-/** A raw `study_groups` row, as returned by the create_study_group RPC. */
-export interface StudyGroupRow {
-  id: string;
-  name: string;
-  description: string;
-  subject?: string;
-  created_by: string;
-  is_private: boolean;
-  avatar_url?: string;
-  created_at: string;
-  last_activity: string;
 }
 
 export interface StudyGroupData {
@@ -64,21 +55,17 @@ class GroupService {
      * is what previously collided with the creator's admin row and violated
      * UNIQUE(group_id, user_id).
      */
-    const { data, error: groupError } = await supabase
+    const { data: group, error: groupError } = await supabase
       .rpc('create_study_group', {
         p_name: groupData.name,
         p_description: groupData.description,
-        p_subject: groupData.subject ?? null,
+        p_subject: groupData.subject,
         p_is_private: groupData.isPrivate,
         p_member_ids: groupData.memberIds,
       })
       .single();
 
     if (groupError) throw groupError;
-
-    // The RPC returns a study_groups row. Without generated database types
-    // supabase-js types rpc() results as unknown, so name the shape here.
-    const group = data as StudyGroupRow;
 
     const otherMemberIds = groupData.memberIds.filter(id => id !== user.id);
 
@@ -98,12 +85,12 @@ class GroupService {
       id: group.id,
       name: group.name,
       description: group.description,
-      subject: group.subject,
+      subject: orUndefined(group.subject),
       created_by: group.created_by,
-      is_private: group.is_private,
-      avatar_url: group.avatar_url,
-      created_at: group.created_at,
-      last_activity: group.last_activity,
+      is_private: orFalse(group.is_private),
+      avatar_url: orUndefined(group.avatar_url),
+      created_at: orEmpty(group.created_at),
+      last_activity: orEmpty(group.last_activity),
       // The function deduplicates, so the membership is the creator plus the
       // distinct others — not the raw list the caller passed in.
       member_count: otherMemberIds.length + 1,
@@ -154,19 +141,19 @@ class GroupService {
         const members = allMembers?.filter(m => m.group_id === group.id) || [];
         const groupMessages = lastMessages?.filter(m => m.group_id === group.id) || [];
         const lastMessage = groupMessages.sort((a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          new Date(orEmpty(b.created_at)).getTime() - new Date(orEmpty(a.created_at)).getTime()
         )[0];
 
         return {
           id: group.id,
           name: group.name,
           description: group.description,
-          subject: group.subject,
+          subject: orUndefined(group.subject),
           created_by: group.created_by,
-          is_private: group.is_private,
-          avatar_url: group.avatar_url,
-          created_at: group.created_at,
-          last_activity: group.last_activity,
+          is_private: orFalse(group.is_private),
+          avatar_url: orUndefined(group.avatar_url),
+          created_at: orEmpty(group.created_at),
+          last_activity: orEmpty(group.last_activity),
           member_count: members.length,
           members: members.map(m => m.user_id),
           last_message: lastMessage ? {
@@ -174,11 +161,11 @@ class GroupService {
             group_id: lastMessage.group_id,
             user_id: lastMessage.user_id,
             message: lastMessage.message,
-            type: lastMessage.type,
-            attachments: lastMessage.attachments,
-            created_at: lastMessage.created_at,
-            user_name: lastMessage.user_profiles?.name,
-            user_avatar: lastMessage.user_profiles?.avatar_url
+            type: asOneOf(lastMessage.type, MESSAGE_TYPES, 'text'),
+            attachments: orUndefined(lastMessage.attachments),
+            created_at: orEmpty(lastMessage.created_at),
+            user_name: orUndefined(lastMessage.user_profiles?.name),
+            user_avatar: orUndefined(lastMessage.user_profiles?.avatar_url)
           } : undefined
         };
       }) || [];
@@ -207,11 +194,11 @@ class GroupService {
         group_id: msg.group_id,
         user_id: msg.user_id,
         message: msg.message,
-        type: msg.type,
-        attachments: msg.attachments,
-        created_at: msg.created_at,
-        user_name: msg.user_profiles?.name,
-        user_avatar: msg.user_profiles?.avatar_url
+        type: asOneOf(msg.type, MESSAGE_TYPES, 'text'),
+        attachments: orUndefined(msg.attachments),
+        created_at: orEmpty(msg.created_at),
+        user_name: orUndefined(msg.user_profiles?.name),
+        user_avatar: orUndefined(msg.user_profiles?.avatar_url)
       })) || [];
     } catch (error) {
       console.error('Error fetching group messages:', error);
@@ -253,11 +240,11 @@ class GroupService {
       group_id: messageData.group_id,
       user_id: messageData.user_id,
       message: messageData.message,
-      type: messageData.type,
-      attachments: messageData.attachments,
-      created_at: messageData.created_at,
-      user_name: messageData.user_profiles?.name,
-      user_avatar: messageData.user_profiles?.avatar_url
+      type: asOneOf(messageData.type, MESSAGE_TYPES, 'text'),
+      attachments: orUndefined(messageData.attachments),
+      created_at: orEmpty(messageData.created_at),
+      user_name: orUndefined(messageData.user_profiles?.name),
+      user_avatar: orUndefined(messageData.user_profiles?.avatar_url)
     };
   }
 
@@ -288,11 +275,11 @@ class GroupService {
               group_id: messageWithProfile.group_id,
               user_id: messageWithProfile.user_id,
               message: messageWithProfile.message,
-              type: messageWithProfile.type,
-              attachments: messageWithProfile.attachments,
-              created_at: messageWithProfile.created_at,
-              user_name: messageWithProfile.user_profiles?.name,
-              user_avatar: messageWithProfile.user_profiles?.avatar_url
+              type: asOneOf(messageWithProfile.type, MESSAGE_TYPES, 'text'),
+              attachments: orUndefined(messageWithProfile.attachments),
+              created_at: orEmpty(messageWithProfile.created_at),
+              user_name: orUndefined(messageWithProfile.user_profiles?.name),
+              user_avatar: orUndefined(messageWithProfile.user_profiles?.avatar_url)
             });
           }
         }

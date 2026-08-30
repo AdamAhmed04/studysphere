@@ -1,19 +1,40 @@
 import { supabase } from '../lib/supabase';
+import { orEmpty, orFalse, asOneOf } from '../utils/rows';
+import type { Tables } from '../types/database';
 import {
   isNotificationSupported,
   showNotification,
 } from '../utils/safeNotification';
 
+/** Notification kinds, matching the CHECK constraint on the column. */
+export const NOTIFICATION_TYPES = [
+  'friend_request', 'meeting_reminder', 'study_callout',
+  'cheer', 'group_invite', 'meeting_invite',
+] as const;
+
 export interface Notification {
   id: string;
   user_id: string;
-  type: 'friend_request' | 'meeting_reminder' | 'study_callout' | 'cheer' | 'group_invite' | 'meeting_invite';
+  type: (typeof NOTIFICATION_TYPES)[number];
   title: string;
   message: string;
-  action_data: any;
+  /** jsonb, so genuinely unstructured — unknown rather than any. */
+  action_data: unknown;
   is_read: boolean;
   created_at: string;
 }
+
+/** Narrows a notifications row into the shape the UI uses. */
+const toNotification = (row: Tables<'notifications'>): Notification => ({
+  id: row.id,
+  user_id: row.user_id,
+  type: asOneOf(row.type, NOTIFICATION_TYPES, 'friend_request'),
+  title: row.title,
+  message: row.message,
+  action_data: row.action_data,
+  is_read: orFalse(row.is_read),
+  created_at: orEmpty(row.created_at),
+});
 
 class NotificationService {
   /**
@@ -49,7 +70,7 @@ class NotificationService {
         .limit(50);
 
       if (error) throw error;
-      return data || [];
+      return (data || []).map(toNotification);
     } catch (error) {
       console.error('Error fetching notifications:', error);
       return [];
@@ -160,7 +181,7 @@ class NotificationService {
           filter: `user_id=eq.${userId}`
         },
         async (payload) => {
-          const notification = payload.new as Notification;
+          const notification = toNotification(payload.new as Tables<'notifications'>);
           callback(notification);
           this.maybeShowBrowserNotification(notification);
         }

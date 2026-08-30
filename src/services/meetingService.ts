@@ -83,11 +83,11 @@ class MeetingService {
           p_title: meetingData.title,
           p_scheduled_time: meetingData.scheduled_time,
           p_duration: meetingData.duration,
-          p_description: meetingData.description ?? null,
-          p_group_id: meetingData.group_id ?? null,
-          p_location: meetingData.location ?? null,
+          p_description: meetingData.description,
+          p_group_id: meetingData.group_id,
+          p_location: meetingData.location,
           p_meeting_type: meetingData.meeting_type,
-          p_meeting_link: meetingData.meeting_link ?? null,
+          p_meeting_link: meetingData.meeting_link,
           p_participant_ids: participantIds,
         })
         .single();

@@ -53,15 +53,6 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
-  const getButtonHoverStyle = (isActive: boolean) => {
-    if (isActive) {
-      return {
-        backgroundColor: '#dbeafe',
-        color: '#1d4ed8'
-      };
-    }
-    return {};
-  };
 
   const getButtonFocusStyle = () => ({
     borderColor: currentTheme.buttonColor,

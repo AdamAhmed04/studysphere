@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Lock, Globe, Bell, Palette, Save, Paintbrush, LogOut } from 'lucide-react';
+import { User, Lock, Globe, Bell, Save, Paintbrush, LogOut } from 'lucide-react';
 import { ThemeCustomizer } from './ThemeCustomizer';
 import { useAuthContext } from '../contexts/AuthContext';
 import { isNotificationSupported, requestNotificationPermission } from '../utils/safeNotification';

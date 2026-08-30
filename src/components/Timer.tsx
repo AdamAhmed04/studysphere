@@ -4,25 +4,11 @@ import { useTimerContext } from '../contexts/TimerContext';
 import { Celebration } from './Celebration';
 import { colorThemes, getColorTheme } from '../utils/themes';
 import { useTheme } from '../hooks/useTheme';
-import type { StudyGroup, ChatMessage, User, Friend } from '../types';
-
 interface TimerProps {
   onSessionComplete: (duration: number, subject: string, startTime: Date, endTime: Date) => void;
-  groups?: StudyGroup[];
-  messages?: ChatMessage[];
-  currentUser?: User;
-  friends?: Friend[];
-  onOpenChat?: (groupId: string) => void;
 }
 
-export const Timer: React.FC<TimerProps> = ({ 
-  onSessionComplete, 
-  groups = [], 
-  messages = [], 
-  currentUser, 
-  friends = [], 
-  onOpenChat 
-}) => {
+export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
   const { 
     timer, 
     startTimer, 
@@ -136,7 +122,6 @@ export const Timer: React.FC<TimerProps> = ({
 
   const renderAnimatedBackground = () => {
     const baseColor = currentColorTheme.color;
-    const waveColor = currentColorTheme.waveColor;
 
     switch (backgroundStyle) {
       case 'bubbles':

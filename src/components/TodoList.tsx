@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckSquare, Plus, Calendar, Clock, AlertCircle, Trash2, Edit3, X, Check } from 'lucide-react';
+import { CheckSquare, Plus, Calendar, Clock, AlertCircle, Trash2, Edit3, Check } from 'lucide-react';
 import type { TodoItem } from '../types';
 import { parseLocalDate, toLocalDateString, todayLocalDateString } from '../utils/dates';
 
