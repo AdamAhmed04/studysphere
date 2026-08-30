@@ -1,6 +1,22 @@
 import { supabase } from '../lib/supabase';
 import { notificationService } from './notificationService';
 
+/** A raw `meetings` row, as returned by the create_meeting RPC. */
+export interface MeetingRow {
+  id: string;
+  title: string;
+  description?: string;
+  scheduled_time: string;
+  duration: number;
+  host_id: string;
+  group_id?: string;
+  location?: string;
+  meeting_type: 'video' | 'in-person' | 'phone';
+  meeting_link?: string;
+  status: 'scheduled' | 'active' | 'completed' | 'cancelled';
+  created_at: string;
+}
+
 export interface MeetingData {
   title: string;
   description?: string;
@@ -53,39 +69,44 @@ class MeetingService {
         throw new Error('Supabase is not configured');
       }
 
-      const { data: meeting, error: meetingError } = await supabase
-        .from('meetings')
-        .insert({
-          host_id: hostId,
-          ...meetingData,
+      /*
+       * One RPC, one transaction.
+       *
+       * This used to be two statements — insert the meeting, then insert the
+       * participants — with nothing rolling the first back if the second
+       * failed. That is the shape that stranded an orphaned study group during
+       * testing. The function also deduplicates the participant list and drops
+       * the host, who is identified by host_id and needs no participant row.
+       */
+      const { data, error: meetingError } = await supabase
+        .rpc('create_meeting', {
+          p_title: meetingData.title,
+          p_scheduled_time: meetingData.scheduled_time,
+          p_duration: meetingData.duration,
+          p_description: meetingData.description ?? null,
+          p_group_id: meetingData.group_id ?? null,
+          p_location: meetingData.location ?? null,
+          p_meeting_type: meetingData.meeting_type,
+          p_meeting_link: meetingData.meeting_link ?? null,
+          p_participant_ids: participantIds,
         })
-        .select()
         .single();
 
       if (meetingError) throw meetingError;
 
-      if (participantIds.length > 0) {
-        const participants = participantIds.map(userId => ({
-          meeting_id: meeting.id,
-          user_id: userId,
-          status: 'invited' as const,
-        }));
+      const meeting = data as MeetingRow;
 
-        const { error: participantsError } = await supabase
-          .from('meeting_participants')
-          .insert(participants);
-
-        if (participantsError) throw participantsError;
-
-        for (const participantId of participantIds) {
-          await notificationService.createNotification(
-            participantId,
-            'meeting_invite',
-            'Meeting Invitation',
-            `You've been invited to "${meetingData.title}" on ${new Date(meetingData.scheduled_time).toLocaleString()}`,
-            { meeting_id: meeting.id, meeting_title: meetingData.title }
-          );
-        }
+      // Notifications are deliberately outside the transaction: failing to
+      // tell someone about a meeting should not undo the meeting.
+      const invitees = participantIds.filter(id => id !== hostId);
+      for (const participantId of new Set(invitees)) {
+        await notificationService.createNotification(
+          participantId,
+          'meeting_invite',
+          'Meeting Invitation',
+          `You've been invited to "${meetingData.title}" on ${new Date(meetingData.scheduled_time).toLocaleString()}`,
+          { meeting_id: meeting.id, meeting_title: meetingData.title }
+        );
       }
 
       return meeting;
