@@ -136,17 +136,28 @@ class NotificationService {
     if (error) throw error;
   }
 
-  subscribeToNotifications(callback: (notification: Notification) => void) {
+  /**
+   * Subscribes to this user's incoming notifications.
+   *
+   * The channel used to be the bare literal 'notifications' with no filter, so
+   * two components subscribing in one client collided on the same name, and
+   * the client was woken for every insert rather than only its own. RLS meant
+   * you could not *read* someone else's row, but you were still being told
+   * something had happened.
+   */
+  subscribeToNotifications(userId: string, callback: (notification: Notification) => void) {
     if (!supabase) return { unsubscribe: () => {} };
+    if (!userId) return { unsubscribe: () => {} };
 
     const channel = supabase
-      .channel('notifications')
+      .channel(`notifications_${userId}`)
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'notifications'
+          table: 'notifications',
+          filter: `user_id=eq.${userId}`
         },
         async (payload) => {
           const notification = payload.new as Notification;

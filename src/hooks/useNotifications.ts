@@ -17,7 +17,7 @@ export const useNotifications = (userId: string | undefined) => {
     loadNotifications();
     loadUnreadCount();
 
-    const subscription = notificationService.subscribeToNotifications((newNotification) => {
+    const subscription = notificationService.subscribeToNotifications(userId, (newNotification) => {
       setNotifications(prev => [newNotification, ...prev]);
       if (!newNotification.is_read) {
         setUnreadCount(prev => prev + 1);
