@@ -1,5 +1,17 @@
 import { supabase } from '../lib/supabase';
-import type { UserProfile } from '../lib/supabase';
+
+/**
+ * Formats a Date as YYYY-MM-DD from its LOCAL calendar date.
+ *
+ * toISOString() converts to UTC first, so a date picked as local midnight west
+ * of UTC serialises as the previous day — the bug that made dates land a day
+ * early for anyone in the Americas.
+ */
+const toLocalDateString = (d?: Date): string | undefined => {
+  if (!d) return undefined;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
 
 export interface SignUpData {
   email: string;
@@ -33,8 +45,16 @@ class AuthService {
         email: userData.email,
         password: userData.password,
         options: {
+          // Everything the on_auth_user_created trigger needs to build the
+          // profile row server-side.
           data: {
             name: userData.name,
+            bio: userData.bio,
+            school: userData.school,
+            study_field: userData.studyField,
+            grade: userData.grade,
+            interests: userData.interests,
+            is_public: userData.isPublic,
           }
         }
       });
@@ -42,66 +62,57 @@ class AuthService {
       if (authError) throw authError;
       if (!authData.user) throw new Error('Failed to create user');
 
-      // Upload avatar if provided
-      let avatarUrl: string | undefined;
-      if (userData.avatar) {
-        try {
-          const fileExt = userData.avatar.name.split('.').pop();
-          const filePath = `${authData.user.id}/${authData.user.id}.${fileExt}`;
+      /*
+       * Avatar and the two date fields need an authenticated session: the
+       * storage policies and the profile UPDATE policy both key off auth.uid().
+       * When email confirmation is enabled signUp() returns no session, so
+       * these are skipped and the user sets them from Profile after confirming.
+       * Never fail signup over them.
+       */
+      if (authData.session) {
+        const patch: Record<string, unknown> = {
+          date_of_birth: toLocalDateString(userData.dateOfBirth),
+          graduation_date: toLocalDateString(userData.graduationDate),
+        };
 
-          // Delete existing avatar if any
-          await supabase.storage
-            .from('avatars')
-            .remove([filePath]);
+        if (userData.avatar) {
+          try {
+            const fileExt = userData.avatar.name.split('.').pop();
+            const filePath = `${authData.user.id}/${authData.user.id}.${fileExt}`;
 
-          const { error: uploadError, data: uploadData } = await supabase.storage
-            .from('avatars')
-            .upload(filePath, userData.avatar, {
-              cacheControl: '3600',
-              upsert: true
-            });
+            const { error: uploadError } = await supabase.storage
+              .from('avatars')
+              .upload(filePath, userData.avatar, { cacheControl: '3600', upsert: true });
 
-          if (uploadError) {
-            console.error('Avatar upload error:', uploadError);
-            throw new Error(`Failed to upload avatar: ${uploadError.message}`);
+            if (uploadError) throw uploadError;
+
+            const { data: urlData } = supabase.storage
+              .from('avatars')
+              .getPublicUrl(filePath);
+
+            patch.avatar_url = urlData.publicUrl;
+          } catch (avatarError) {
+            console.error('Avatar upload failed, continuing without it:', avatarError);
           }
+        }
 
-          const { data: urlData } = supabase.storage
-            .from('avatars')
-            .getPublicUrl(filePath);
+        const cleaned = Object.fromEntries(
+          Object.entries(patch).filter(([, v]) => v !== undefined)
+        );
 
-          avatarUrl = urlData.publicUrl;
-        } catch (avatarError) {
-          console.error('Avatar processing error:', avatarError);
-          // Don't fail signup if avatar upload fails, just log it
+        if (Object.keys(cleaned).length > 0) {
+          const { error: patchError } = await supabase
+            .from('user_profiles')
+            .update(cleaned)
+            .eq('user_id', authData.user.id);
+
+          if (patchError) console.error('Post-signup profile update failed:', patchError);
         }
       }
 
-      // Create user profile
-      const profileData: Omit<UserProfile, 'created_at' | 'updated_at'> = {
-        user_id: authData.user.id,
-        name: userData.name,
-        email: userData.email,
-        avatar_url: avatarUrl,
-        bio: userData.bio,
-        date_of_birth: userData.dateOfBirth?.toISOString().split('T')[0],
-        school: userData.school,
-        study_field: userData.studyField,
-        graduation_date: userData.graduationDate?.toISOString().split('T')[0],
-        grade: userData.grade,
-        interests: userData.interests,
-        is_public: userData.isPublic,
-      };
-
-      const { error: profileError } = await supabase
-        .from('user_profiles')
-        .insert(profileData);
-
-      if (profileError) throw profileError;
-
-      // Note: user_stats will be auto-created by trigger, no manual insert needed
-
-      return { user: authData.user, profile: profileData };
+      // The profile, stats and presence rows are all created by the
+      // on_auth_user_created trigger. Nothing to insert from here.
+      return { user: authData.user, session: authData.session };
     } catch (error) {
       console.error('Sign up error:', error);
       throw error;

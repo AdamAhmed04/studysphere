@@ -18,15 +18,15 @@ export const useFriends = (userId: string | undefined) => {
     loadFriends();
     loadPendingRequests();
 
-    const pendingSubscription = friendService.subscribeToPendingRequests((requests) => {
-      console.log('[useFriends] Pending requests updated:', requests.length);
-      setPendingRequests(requests);
-    });
+    const pendingSubscription = friendService.subscribeToPendingRequests(
+      userId,
+      (requests) => setPendingRequests(requests)
+    );
 
-    const friendsSubscription = friendService.subscribeToFriendsChanges((updatedFriends) => {
-      console.log('[useFriends] Friends list updated:', updatedFriends.length);
-      setFriends(updatedFriends);
-    });
+    const friendsSubscription = friendService.subscribeToFriendsChanges(
+      userId,
+      (updatedFriends) => setFriends(updatedFriends)
+    );
 
     return () => {
       pendingSubscription.unsubscribe();
@@ -37,12 +37,10 @@ export const useFriends = (userId: string | undefined) => {
   const loadFriends = async () => {
     try {
       setLoading(true);
-      const friendsList = await friendService.getFriends();
-      console.log('[useFriends] Loaded friends:', friendsList.length);
-      setFriends(friendsList);
+      setFriends(await friendService.getFriends());
       setError(null);
     } catch (err: any) {
-      console.error('[useFriends] Error loading friends:', err);
+      console.error('Error loading friends:', err);
       setError(err.message || 'Failed to load friends');
     } finally {
       setLoading(false);
@@ -51,22 +49,23 @@ export const useFriends = (userId: string | undefined) => {
 
   const loadPendingRequests = async () => {
     try {
-      const requests = await friendService.getPendingRequests();
-      console.log('[useFriends] Loaded pending requests:', requests.length);
-      setPendingRequests(requests);
+      setPendingRequests(await friendService.getPendingRequests());
     } catch (err) {
-      console.error('[useFriends] Error loading pending requests:', err);
+      console.error('Error loading pending requests:', err);
     }
   };
 
   const sendFriendRequest = async (email: string) => {
     try {
-      const result = await friendService.sendFriendRequest(email);
-      if (result.success) {
-        return { success: true, message: result.message };
-      } else {
-        return { success: false, message: result.message };
-      }
+      return await friendService.sendFriendRequest(email);
+    } catch (err: any) {
+      return { success: false, message: err.message || 'Failed to send friend request' };
+    }
+  };
+
+  const sendFriendRequestById = async (friendUserId: string, friendName?: string) => {
+    try {
+      return await friendService.sendFriendRequestById(friendUserId, friendName);
     } catch (err: any) {
       return { success: false, message: err.message || 'Failed to send friend request' };
     }
@@ -77,18 +76,14 @@ export const useFriends = (userId: string | undefined) => {
       const newFriend = await friendService.acceptFriendRequest(requestId);
 
       if (newFriend) {
-        console.log('[useFriends] Optimistic update - adding new friend:', newFriend.name);
-        setFriends(prev => {
-          const exists = prev.some(f => f.id === newFriend.id);
-          if (exists) return prev;
-          return [newFriend, ...prev];
-        });
+        setFriends(prev =>
+          prev.some(f => f.id === newFriend.id) ? prev : [newFriend, ...prev]
+        );
       }
 
-      console.log('[useFriends] Reloading pending requests after accept');
       await loadPendingRequests();
     } catch (err: any) {
-      console.error('[useFriends] Error accepting friend request:', err);
+      console.error('Error accepting friend request:', err);
       setError(err.message || 'Failed to accept friend request');
       throw err;
     }
@@ -120,6 +115,7 @@ export const useFriends = (userId: string | undefined) => {
     loading,
     error,
     sendFriendRequest,
+    sendFriendRequestById,
     acceptFriendRequest,
     rejectFriendRequest,
     removeFriend,

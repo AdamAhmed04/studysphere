@@ -5,7 +5,7 @@ import { searchService, SearchResult } from '../services/searchService';
 import { useDebounce } from '../hooks/useDebounce';
 
 interface SearchPageProps {
-  onAddFriend: (email: string) => void;
+  onAddFriend: (userId: string, name?: string) => void;
   currentUser: User;
   friends: Friend[];
 }
@@ -56,10 +56,11 @@ export const SearchPage: React.FC<SearchPageProps> = ({ onAddFriend, currentUser
     setSearchQuery(query);
   };
 
-  const handleAddFromSearch = (userEmail: string) => {
-    onAddFriend(userEmail);
-    // Remove from search results
-    setSearchResults(prev => prev.filter(user => user.email !== userEmail));
+  const handleAddFromSearch = (userId: string, name: string) => {
+    // Friending is by user id now. Email is no longer exposed in search
+    // results, and an id is the more direct identifier anyway.
+    onAddFriend(userId, name);
+    setSearchResults(prev => prev.filter(user => user.user_id !== userId));
   };
 
   const clearSearch = () => {
@@ -175,14 +176,11 @@ export const SearchPage: React.FC<SearchPageProps> = ({ onAddFriend, currentUser
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-2">
                           <h4 className="text-lg font-semibold text-gray-800">{user.name}</h4>
-                          {!user.is_public && (
-                            <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full">
-                              Private
-                            </span>
-                          )}
                         </div>
-                        
-                        <p className="text-gray-600 mb-2">{user.email}</p>
+
+                        {/* Email is no longer exposed in search results. School
+                            is the useful public identifier for finding someone. */}
+                        <p className="text-gray-600 mb-2">{user.school || user.bio || 'No details shared'}</p>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
                           <div className="flex items-center space-x-2">
@@ -222,18 +220,18 @@ export const SearchPage: React.FC<SearchPageProps> = ({ onAddFriend, currentUser
                     
                     <div className="flex flex-col space-y-2">
                       <button
-                        onClick={() => handleAddFromSearch(user.email)}
-                        disabled={!user.is_public || isAlreadyFriend}
+                        onClick={() => handleAddFromSearch(user.user_id, user.name)}
+                        disabled={isAlreadyFriend}
                         className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                          user.is_public && !isAlreadyFriend
+                          !isAlreadyFriend
                             ? 'bg-blue-600 text-white hover:bg-blue-700'
                             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         }`}
                       >
                         <UserPlus size={16} />
-                        <span>
-                          {isAlreadyFriend ? 'Friends' : !user.is_public ? 'Private' : 'Add Friend'}
-                        </span>
+                        {/* No "Private" state: private profiles are filtered out
+                            by the view and never reach search results. */}
+                        <span>{isAlreadyFriend ? 'Friends' : 'Add Friend'}</span>
                       </button>
                     </div>
                   </div>

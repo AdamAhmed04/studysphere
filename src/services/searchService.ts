@@ -3,7 +3,6 @@ import { supabase } from '../lib/supabase';
 export interface SearchResult {
   user_id: string;
   name: string;
-  email: string;
   avatar_url?: string;
   bio?: string;
   school?: string;
@@ -11,10 +10,28 @@ export interface SearchResult {
   interests: string[];
   total_study_time: number;
   is_friend: boolean;
-  is_public: boolean;
 }
 
+/**
+ * Escapes a value for interpolation into a PostgREST filter string.
+ *
+ * PostgREST parses commas, parentheses and dots as filter syntax. Interpolating
+ * raw user input let a crafted query append conditions of the caller's choosing
+ * — including overriding the is_public guard. Wrapping the pattern in double
+ * quotes and escaping embedded quotes and backslashes keeps it a literal.
+ */
+const escapeFilterValue = (value: string): string =>
+  `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+
 class SearchService {
+  /**
+   * Searches public profiles.
+   *
+   * Reads the `public_profiles` view rather than `user_profiles`. The view
+   * exposes an explicit column allowlist, which is what keeps email, date of
+   * birth, grade and graduation date out of search results. It also already
+   * filters to is_public = true, so no client-side flag is needed.
+   */
   async searchUsers(query: string, filters?: {
     school?: string;
     studyField?: string;
@@ -27,13 +44,16 @@ class SearchService {
       if (!user) return [];
 
       let profileQuery = supabase
-        .from('user_profiles')
-        .select('user_id, name, email, avatar_url, bio, school, study_field, interests, is_public')
-        .eq('is_public', true)
+        .from('public_profiles')
+        .select('user_id, name, avatar_url, bio, school, study_field, interests')
         .neq('user_id', user.id);
 
-      if (query) {
-        profileQuery = profileQuery.or(`name.ilike.%${query}%,email.ilike.%${query}%,school.ilike.%${query}%,study_field.ilike.%${query}%`);
+      const trimmed = query?.trim();
+      if (trimmed) {
+        const pattern = escapeFilterValue(`%${trimmed}%`);
+        profileQuery = profileQuery.or(
+          `name.ilike.${pattern},school.ilike.${pattern},study_field.ilike.${pattern}`
+        );
       }
 
       if (filters?.school) {
@@ -56,8 +76,10 @@ class SearchService {
       const userIds = profiles.map(p => p.user_id);
 
       const [statsData, friendsData] = await Promise.all([
+        // public_leaderboard, not user_stats — reading another user's stats row
+        // directly is no longer permitted.
         supabase
-          .from('user_stats')
+          .from('public_leaderboard')
           .select('user_id, total_focus_minutes')
           .in('user_id', userIds),
         supabase
@@ -74,24 +96,17 @@ class SearchService {
         friends.map(f => (f.user_id === user.id ? f.friend_user_id : f.user_id))
       );
 
-      const results: SearchResult[] = profiles.map(profile => {
-        const userStats = stats.find(s => s.user_id === profile.user_id);
-        return {
-          user_id: profile.user_id,
-          name: profile.name,
-          email: profile.email,
-          avatar_url: profile.avatar_url,
-          bio: profile.bio,
-          school: profile.school,
-          study_field: profile.study_field,
-          interests: profile.interests || [],
-          total_study_time: userStats?.total_focus_minutes || 0,
-          is_friend: friendIds.has(profile.user_id),
-          is_public: profile.is_public
-        };
-      });
-
-      return results;
+      return profiles.map(profile => ({
+        user_id: profile.user_id,
+        name: profile.name,
+        avatar_url: profile.avatar_url,
+        bio: profile.bio,
+        school: profile.school,
+        study_field: profile.study_field,
+        interests: profile.interests || [],
+        total_study_time: stats.find(s => s.user_id === profile.user_id)?.total_focus_minutes || 0,
+        is_friend: friendIds.has(profile.user_id),
+      }));
     } catch (error) {
       console.error('Error searching users:', error);
       return [];
@@ -105,18 +120,20 @@ class SearchService {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return null;
 
+      // maybeSingle, not single: a private or non-existent profile is a normal
+      // "not found", not an exception.
       const { data: profile, error: profileError } = await supabase
-        .from('user_profiles')
-        .select('*')
+        .from('public_profiles')
+        .select('user_id, name, avatar_url, bio, school, study_field, interests')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
 
       if (profileError) throw profileError;
-      if (!profile || (!profile.is_public && profile.user_id !== user.id)) return null;
+      if (!profile) return null;
 
       const [statsData, friendsData] = await Promise.all([
         supabase
-          .from('user_stats')
+          .from('public_leaderboard')
           .select('total_focus_minutes')
           .eq('user_id', userId)
           .maybeSingle(),
@@ -131,7 +148,6 @@ class SearchService {
       return {
         user_id: profile.user_id,
         name: profile.name,
-        email: profile.email,
         avatar_url: profile.avatar_url,
         bio: profile.bio,
         school: profile.school,
@@ -139,7 +155,6 @@ class SearchService {
         interests: profile.interests || [],
         total_study_time: statsData.data?.total_focus_minutes || 0,
         is_friend: !!friendsData.data,
-        is_public: profile.is_public
       };
     } catch (error) {
       console.error('Error fetching user:', error);

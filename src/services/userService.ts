@@ -93,10 +93,20 @@ class UserService {
     };
   }
 
-  async incrementStats(userId: string, payload: {
+  /**
+   * Applies a stat increment atomically in the database.
+   *
+   * This used to read the row, add in JavaScript and write the total back,
+   * which lost updates whenever two sessions finished close together. Direct
+   * writes to user_stats are now revoked; the RPC is the only way in, which
+   * also stops the leaderboard being editable from devtools.
+   *
+   * The streak is computed server-side from last_session_date, so callers no
+   * longer pass streakDays.
+   */
+  async incrementStats(_userId: string, payload: {
     sessions?: number;
     totalFocusMinutes?: number;
-    streakDays?: number;
     tasksCompleted?: number;
   }) {
     try {
@@ -104,34 +114,14 @@ class UserService {
         throw new Error('Supabase is not configured. Please set up your environment variables.');
       }
 
-      // Get current stats
-      const { data: currentStats, error: fetchError } = await supabase
-        .from('user_stats')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle();
-
-      if (fetchError) throw fetchError;
-      if (!currentStats) throw new Error('User stats not found');
-
-      // Calculate new values
-      const newStats = {
-        sessions: (currentStats.sessions || 0) + (payload.sessions || 0),
-        total_focus_minutes: (currentStats.total_focus_minutes || 0) + (payload.totalFocusMinutes || 0),
-        streak_days: payload.streakDays !== undefined ? payload.streakDays : (currentStats.streak_days || 0),
-        tasks_completed: (currentStats.tasks_completed || 0) + (payload.tasksCompleted || 0),
-        last_session_date: payload.totalFocusMinutes ? new Date().toISOString().split('T')[0] : currentStats.last_session_date,
-      };
-
-      const { data, error } = await supabase
-        .from('user_stats')
-        .update(newStats)
-        .eq('user_id', userId)
-        .select()
-        .single();
+      const { data, error } = await supabase.rpc('increment_user_stats', {
+        p_sessions: payload.sessions ?? 0,
+        p_focus_minutes: payload.totalFocusMinutes ?? 0,
+        p_tasks_completed: payload.tasksCompleted ?? 0,
+      });
 
       if (error) throw error;
-      return data;
+      return data as UserStats;
     } catch (error) {
       console.error('Increment stats error:', error);
       throw error;
@@ -159,52 +149,22 @@ class UserService {
     }
   }
 
-  async calculateStreak(userId: string): Promise<number> {
-    try {
-      if (!supabase) {
-        console.warn('Supabase client not configured');
-        return 0;
-      }
+  // calculateStreak() used to live here. Every branch returned a hard-coded 1,
+  // so a 40-day streak displayed as 1. Streaks are now computed inside
+  // increment_user_stats() from last_session_date, where the write is atomic.
 
-      const { data: stats, error } = await supabase
-        .from('user_stats')
-        .select('last_session_date')
-        .eq('user_id', userId)
-        .maybeSingle();
-
-      if (error) {
-        console.error('Error calculating streak:', error);
-        return 0;
-      }
-
-      if (!stats?.last_session_date) return 0;
-
-      const lastSessionDate = new Date(stats.last_session_date);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      lastSessionDate.setHours(0, 0, 0, 0);
-
-      const diffTime = today.getTime() - lastSessionDate.getTime();
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-      // If last session was today or yesterday, maintain/increment streak
-      if (diffDays <= 1) {
-        return diffDays === 0 ? 1 : 1; // Simplified streak calculation
-      }
-
-      return 0; // Streak broken
-    } catch (error) {
-      console.error('Calculate streak error:', error);
-      return 0;
-    }
-  }
-
-  // Cache management for offline support
+  // Cache management for offline support.
+  //
+  // The cached payload records which user it belongs to and reads verify it.
+  // This was previously one global key with no such check, so signing in as a
+  // second user on the same browser showed the previous user's name, email and
+  // stats until the network reply landed.
   private cacheKey = 'studysphere_user_cache';
 
   cacheUserData(profile: UserProfile, stats: UserStats) {
     try {
       const cacheData = {
+        userId: profile.user_id,
         profile,
         stats,
         timestamp: Date.now(),
@@ -215,12 +175,19 @@ class UserService {
     }
   }
 
-  getCachedUserData(): { profile: UserProfile; stats: UserStats } | null {
+  getCachedUserData(userId: string): { profile: UserProfile; stats: UserStats } | null {
     try {
       const cached = localStorage.getItem(this.cacheKey);
       if (!cached) return null;
 
       const data = JSON.parse(cached);
+
+      // Belongs to a different account — never hand it back.
+      if (!data.userId || data.userId !== userId) {
+        localStorage.removeItem(this.cacheKey);
+        return null;
+      }
+
       const isStale = Date.now() - data.timestamp > 24 * 60 * 60 * 1000; // 24 hours
 
       if (isStale) {

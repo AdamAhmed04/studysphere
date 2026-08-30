@@ -34,8 +34,9 @@ export const useAuth = () => {
       if (!mounted) return;
       
       try {
-        // Check for cached data first (offline support)
-        const cachedData = userService.getCachedUserData();
+        // Check for cached data first (offline support). Scoped to this user id
+        // so a previous account's profile can never be shown to a new one.
+        const cachedData = userService.getCachedUserData(user.id);
         if (cachedData && mounted) {
           setProfile(cachedData.profile);
           setStats(cachedData.stats);
@@ -158,26 +159,24 @@ export const useAuth = () => {
   const incrementStats = async (payload: {
     sessions?: number;
     totalFocusMinutes?: number;
-    streakDays?: number;
     tasksCompleted?: number;
   }) => {
     if (!user) return;
 
     try {
-      // Optimistic update
+      // Optimistic update. streak_days is deliberately left alone — the server
+      // owns it now, and the authoritative value comes back from the RPC.
       if (stats) {
-        const optimisticStats = {
+        setStats({
           ...stats,
           sessions: stats.sessions + (payload.sessions || 0),
           total_focus_minutes: stats.total_focus_minutes + (payload.totalFocusMinutes || 0),
           tasks_completed: stats.tasks_completed + (payload.tasksCompleted || 0),
-          streak_days: payload.streakDays !== undefined ? payload.streakDays : stats.streak_days,
-        };
-        setStats(optimisticStats);
+        });
       }
 
-      // Server update
-      await userService.incrementStats(user.id, payload);
+      const updated = await userService.incrementStats(user.id, payload);
+      if (updated) setStats(updated);
     } catch (err: any) {
       // Revert optimistic update on error
       const currentStats = await userService.getCurrentUserStats();

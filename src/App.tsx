@@ -54,7 +54,7 @@ function App() {
   const { currentTheme } = useTheme();
   const [isPasswordReset, setIsPasswordReset] = useState(false);
 
-  const { friends, pendingRequests, sendFriendRequest: sendFriendReq, acceptFriendRequest, rejectFriendRequest } = useFriends(user?.id);
+  const { friends, pendingRequests, sendFriendRequest: sendFriendReq, sendFriendRequestById, acceptFriendRequest, rejectFriendRequest } = useFriends(user?.id);
   const { groups, createGroup, refreshGroups } = useGroups(user?.id);
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications(user?.id);
   const { todos, addTodo, updateTodo, deleteTodo, toggleComplete } = useTodos(user?.id);
@@ -189,13 +189,16 @@ function App() {
     }
   };
 
+  // From search results, where we have a real user id.
+  const handleAddFriendById = async (userId: string, name?: string) => {
+    const result = await sendFriendRequestById(userId, name);
+    alert(result.message);
+  };
+
+  // From the "add by email" box.
   const handleAddFriend = async (email: string) => {
     const result = await sendFriendReq(email);
-    if (result.success) {
-      alert(result.message);
-    } else {
-      alert(result.message);
-    }
+    alert(result.message);
   };
 
   const handleSendMessage = (message: string, type: 'text' | 'note' | 'resource') => {
@@ -260,37 +263,33 @@ function App() {
     }
   };
 
+  /*
+   * Opens an existing two-person group with this friend, if one exists.
+   *
+   * This used to fabricate a group in React state with the id
+   * `direct-${Date.now()}` and never write it to the database. Nothing
+   * persisted, the other person never saw it, and opening it queried
+   * chat_messages with a group_id that is not a UUID — which Postgres rejects
+   * outright (22P02). Creating real direct-message groups is a feature that
+   * needs building; presenting a fake one was worse than not offering it.
+   */
   const handleStartChat = (friendId: string) => {
-    // Find or create a direct message group with this friend
-    const existingDirectChat = studyGroups.find(group => 
-      group.members.length === 2 && 
-      group.members.includes(user?.id || '') && 
+    const existingDirectChat = studyGroups.find(group =>
+      group.members.length === 2 &&
+      group.members.includes(user?.id || '') &&
       group.members.includes(friendId)
     );
-    
+
     if (existingDirectChat) {
       setActiveTab('chat');
       setSelectedGroupId(existingDirectChat.id);
-    } else {
-      // Create a new direct message group
-      const friend = friends.find(f => f.id === friendId);
-      if (friend) {
-        const newDirectChat: StudyGroup = {
-          id: `direct-${Date.now()}`,
-          name: `${profile?.name || 'You'} & ${friend.name}`,
-          description: 'Direct message',
-          members: [user?.id || '', friendId],
-          createdBy: user?.id || '',
-          createdAt: new Date(),
-          isPrivate: true,
-          lastActivity: new Date(),
-        };
-        
-        setStudyGroups(prev => [newDirectChat, ...prev]);
-        setActiveTab('chat');
-        setSelectedGroupId(newDirectChat.id);
-      }
+      return;
     }
+
+    const friend = friends.find(f => f.id === friendId);
+    alert(
+      `Direct messages aren't available yet. For now, create a study group with ${friend?.name || 'them'} to chat.`
+    );
   };
 
   const handleScheduleMeeting = () => {
@@ -705,7 +704,7 @@ function App() {
       case 'search':
         return (
           <SearchPage
-            onAddFriend={handleAddFriend}
+            onAddFriend={handleAddFriendById}
             currentUser={legacyUser}
             friends={friends}
           />
