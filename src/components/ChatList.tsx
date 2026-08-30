@@ -25,9 +25,22 @@ export const ChatList: React.FC<ChatListProps> = ({
     group.subject?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Separate groups and individual chats
-  const groupChats = filteredGroups.filter(group => group.members.length > 2);
-  const individualChats = filteredGroups.filter(group => group.members.length === 2);
+  /*
+   * Every study group is a group, whatever its size.
+   *
+   * This used to split on member count — `> 2` was a group, `=== 2` was a
+   * direct message. A group you have not invited anyone to yet has ONE member,
+   * so it matched neither test and disappeared from both tabs: the list showed
+   * "All (4)" alongside "Groups (0)".
+   *
+   * The count was only ever a proxy for the fabricated direct-chats, which
+   * always had exactly two members and never persisted. Those are gone. When
+   * direct messages are built for real they need their own flag on the row,
+   * not a guess based on how many people are in the conversation — a two-person
+   * study group is a perfectly ordinary group.
+   */
+  const groupChats = filteredGroups;
+  const individualChats: StudyGroup[] = [];
 
   // Get the appropriate list based on active category
   const getDisplayGroups = () => {
@@ -76,9 +89,9 @@ export const ChatList: React.FC<ChatListProps> = ({
     return group.name.charAt(0).toUpperCase();
   };
 
-  const isIndividualChat = (group: StudyGroup) => {
-    return group.members.length === 2;
-  };
+  // Direct messages are not implemented, so nothing is an individual chat yet.
+  // Kept as a single place to change when they are built.
+  const isIndividualChat = (_group: StudyGroup) => false;
 
   const getIndividualChatName = (group: StudyGroup) => {
     if (!isIndividualChat(group)) return group.name;

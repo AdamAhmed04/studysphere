@@ -130,19 +130,33 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
 
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
             <div className="flex items-center space-x-3">
-              {formData.isPrivate ? <Lock className="text-red-500" size={20} /> : <Globe className="text-green-500" size={20} />}
+              {/* Label follows the state. It used to read "Private Group ·
+                  Only invited members can join" in both states, so a public
+                  group was described as private. */}
+              {formData.isPrivate
+                ? <Lock className="text-gray-700" size={20} />
+                : <Globe className="text-gray-700" size={20} />}
               <div>
-                <p className="font-medium text-gray-800">Private Group</p>
+                <p className="font-medium text-gray-800">
+                  {formData.isPrivate ? 'Private group' : 'Public group'}
+                </p>
                 <p className="text-sm text-gray-600">
-                  Only invited members can join
+                  {formData.isPrivate
+                    ? 'Only people you invite can join'
+                    : 'Anyone can find and join this group'}
                 </p>
               </div>
             </div>
             <button
               type="button"
+              role="switch"
+              aria-checked={formData.isPrivate}
+              aria-label="Private group"
               onClick={() => setFormData(prev => ({ ...prev, isPrivate: !prev.isPrivate }))}
+              /* On means private, matching the label beside it. Previously the
+                 "on" colour meant public, which read as the opposite. */
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                formData.isPrivate ? 'bg-red-600' : 'bg-green-600'
+                formData.isPrivate ? 'bg-blue-600' : 'bg-gray-300'
               }`}
             >
               <span
