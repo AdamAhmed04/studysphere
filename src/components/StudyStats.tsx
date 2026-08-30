@@ -52,7 +52,7 @@ export const StudyStats: React.FC<StudyStatsProps> = ({ sessions, stats }) => {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-600 font-medium">Streak</p>
-            <p className="text-2xl font-bold text-orange-600">{streak} days</p>
+            <p className="text-2xl font-bold text-orange-600">{streak} {streak === 1 ? "day" : "days"}</p>
           </div>
           <Flame className="text-orange-500" size={32} />
         </div>

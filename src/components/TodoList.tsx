@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CheckSquare, Plus, Calendar, Clock, AlertCircle, Trash2, Edit3, X, Check } from 'lucide-react';
 import type { TodoItem } from '../types';
+import { parseLocalDate, toLocalDateString, todayLocalDateString } from '../utils/dates';
 
 interface TodoListProps {
   todos: TodoItem[];
@@ -34,7 +35,7 @@ export const TodoList: React.FC<TodoListProps> = ({
     const todoData = {
       title: formData.title,
       description: formData.description || undefined,
-      dueDate: formData.dueDate ? new Date(formData.dueDate) : undefined,
+      dueDate: parseLocalDate(formData.dueDate),
       priority: formData.priority,
       isCompleted: false,
       createdBy: currentUserId,
@@ -62,7 +63,7 @@ export const TodoList: React.FC<TodoListProps> = ({
     setFormData({
       title: todo.title,
       description: todo.description || '',
-      dueDate: todo.dueDate ? todo.dueDate.toISOString().split('T')[0] : '',
+      dueDate: toLocalDateString(todo.dueDate),
       priority: todo.priority,
       category: todo.category || ''
     });
@@ -104,13 +105,13 @@ export const TodoList: React.FC<TodoListProps> = ({
     const diffInDays = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
     
     if (diffInDays < 0) {
-      return { text: `${Math.abs(diffInDays)} days overdue`, color: 'text-red-600' };
+      return { text: `${Math.abs(diffInDays)} ${Math.abs(diffInDays) === 1 ? 'day' : 'days'} overdue`, color: 'text-red-600' };
     } else if (diffInDays === 0) {
       return { text: 'Due today', color: 'text-orange-600' };
     } else if (diffInDays === 1) {
       return { text: 'Due tomorrow', color: 'text-yellow-600' };
     } else if (diffInDays <= 7) {
-      return { text: `Due in ${diffInDays} days`, color: 'text-blue-600' };
+      return { text: `Due in ${diffInDays} ${diffInDays === 1 ? 'day' : 'days'}`, color: 'text-blue-600' };
     } else {
       return { text: date.toLocaleDateString(), color: 'text-gray-600' };
     }
@@ -198,7 +199,7 @@ export const TodoList: React.FC<TodoListProps> = ({
                   type="date"
                   value={formData.dueDate}
                   onChange={(e) => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
-                  min={new Date().toISOString().split('T')[0]}
+                  min={todayLocalDateString()}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[44px] text-base"
                 />
               </div>

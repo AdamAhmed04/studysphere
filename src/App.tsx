@@ -38,6 +38,7 @@ import { calendarService } from './services/calendarService';
 const BubblePopGame = lazy(() => import('./components/BubblePopGame').then(module => ({ default: module.BubblePopGame })));
 const BlockDropGame = lazy(() => import('./components/BlockDropGame').then(module => ({ default: module.BlockDropGame })));
 import { studySessionService } from './services/studySessionService';
+import { toLocalDateString } from './utils/dates';
 import type { StudySession, ChatMessage, Friend, User, Meeting, CalendarEvent, StudyGroup, Reminder, TodoItem } from './types';
 
 // Date reviver function to convert ISO strings back to Date objects
@@ -234,7 +235,7 @@ function App() {
       // drop keys that aren't columns at all (id, username, joinDate, ...).
       // Sending the raw form object made every profile save fail.
       const toDateString = (value: unknown) =>
-        value instanceof Date ? value.toISOString().split('T')[0] : (value as string | undefined);
+        value instanceof Date ? toLocalDateString(value) : (value as string | undefined);
 
       const columnPatch: Record<string, unknown> = {
         name: updates.name,

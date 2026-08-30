@@ -1,17 +1,5 @@
 import { supabase } from '../lib/supabase';
-
-/**
- * Formats a Date as YYYY-MM-DD from its LOCAL calendar date.
- *
- * toISOString() converts to UTC first, so a date picked as local midnight west
- * of UTC serialises as the previous day — the bug that made dates land a day
- * early for anyone in the Americas.
- */
-const toLocalDateString = (d?: Date): string | undefined => {
-  if (!d) return undefined;
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-};
+import { toLocalDateString } from '../utils/dates';
 
 export interface SignUpData {
   email: string;
@@ -96,8 +84,10 @@ class AuthService {
           }
         }
 
+        // Drop empty strings as well as undefined: toLocalDateString returns
+        // '' for a missing date, and '' is not a valid value for a date column.
         const cleaned = Object.fromEntries(
-          Object.entries(patch).filter(([, v]) => v !== undefined)
+          Object.entries(patch).filter(([, v]) => v !== undefined && v !== '')
         );
 
         if (Object.keys(cleaned).length > 0) {

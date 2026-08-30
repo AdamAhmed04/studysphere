@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Calendar, Clock, Users, MapPin, Video, Phone, User } from 'lucide-react';
 import type { User as UserType, Friend, StudyGroup } from '../types';
+import { toLocalDateString, todayLocalDateString } from '../utils/dates';
 
 interface ScheduleMeetingModalProps {
   isOpen: boolean;
@@ -72,7 +73,7 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
       tomorrow.setDate(tomorrow.getDate() + 1);
       setFormData(prev => ({
         ...prev,
-        date: tomorrow.toISOString().split('T')[0],
+        date: toLocalDateString(tomorrow),
         time: '14:00'
       }));
     }
@@ -266,7 +267,7 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                 type="date"
                 value={formData.date}
                 onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
-                min={new Date().toISOString().split('T')[0]}
+                min={todayLocalDateString()}
                 className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                   errors.date ? 'border-red-500' : 'border-gray-300'
                 }`}

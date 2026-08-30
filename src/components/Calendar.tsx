@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Calendar as CalendarIcon, Plus, Clock, Users, MapPin, ChevronLeft, ChevronRight, X, Video, Phone, MessageCircle, User as UserIcon, Bell, Edit3 } from 'lucide-react';
 import type { CalendarEvent, Meeting, User, Reminder } from '../types';
 import { eventTypeColors, eventTypeLabels, getEventTypeColor, formatEventTime, formatEventDate } from '../utils/calendarUtils';
+import { parseLocalDate, todayLocalDateString } from '../utils/dates';
 
 interface CalendarProps {
   events: CalendarEvent[];
@@ -169,7 +170,7 @@ export const Calendar: React.FC<CalendarProps> = ({
     if (!reminderForm.title.trim() || !reminderForm.date) return;
 
     const [hours, minutes] = reminderForm.time.split(':').map(Number);
-    const reminderDate = new Date(reminderForm.date);
+    const reminderDate = parseLocalDate(reminderForm.date) ?? new Date();
     reminderDate.setHours(hours, minutes);
 
     const newReminder: Reminder = {
@@ -620,7 +621,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                     type="date"
                     value={reminderForm.date}
                     onChange={(e) => setReminderForm(prev => ({ ...prev, date: e.target.value }))}
-                    min={new Date().toISOString().split('T')[0]}
+                    min={todayLocalDateString()}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
