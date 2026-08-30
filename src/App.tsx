@@ -718,9 +718,10 @@ function App() {
       case 'friends':
         return (
           <div className="max-w-4xl mx-auto grid lg:grid-cols-2 gap-6">
-            <FriendsList 
+            <FriendsList
               friends={friends}
               onAddFriend={handleAddFriend}
+              onAddFriendById={handleAddFriendById}
               onStartChat={handleStartChat}
             />
             <Leaderboard

@@ -1,19 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, UserPlus, MessageCircle, UserCheck, Search, X } from 'lucide-react';
 import { Friend } from '../types';
+import { searchService, SearchResult } from '../services/searchService';
+import { useDebounce } from '../hooks/useDebounce';
 
 interface FriendsListProps {
   friends: Friend[];
+  /** Add by typed email address. */
   onAddFriend: (email: string) => void;
+  /** Add someone picked from search results, where we already have their id. */
+  onAddFriendById: (userId: string, name?: string) => void;
   onStartChat: (friendId: string) => void;
 }
 
-export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, onStartChat }) => {
+export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, onAddFriendById, onStartChat }) => {
   const [showAddFriend, setShowAddFriend] = useState(false);
   const [friendEmail, setFriendEmail] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const debouncedQuery = useDebounce(searchQuery, 400);
 
   const handleAddFriend = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,55 +30,43 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
     }
   };
 
-  const handleSearch = async (query: string) => {
-    setSearchQuery(query);
-    if (query.trim().length < 2) {
+  /*
+   * A real search.
+   *
+   * This used to fabricate results: `${query} Smith` at
+   * `${query}@example.com` with Math.random() study times, behind a setTimeout
+   * pretending to be a network call. Clicking Add on one of them sent a friend
+   * request to an address that does not exist. It queries searchService now,
+   * the same source the Search page uses.
+   */
+  useEffect(() => {
+    let cancelled = false;
+    const term = debouncedQuery.trim();
+
+    if (term.length < 2) {
       setSearchResults([]);
       setIsSearching(false);
       return;
     }
 
     setIsSearching(true);
-    
-    // Simulate API search with mock results
-    setTimeout(() => {
-      const mockResults = [
-        {
-          id: `search-${Date.now()}-1`,
-          name: `${query} Smith`,
-          email: `${query.toLowerCase()}@example.com`,
-          totalStudyTime: Math.floor(Math.random() * 500),
-          isOnline: Math.random() > 0.5,
-          isPublic: true,
-        },
-        {
-          id: `search-${Date.now()}-2`,
-          name: `${query} Johnson`,
-          email: `${query.toLowerCase()}.j@example.com`,
-          totalStudyTime: Math.floor(Math.random() * 500),
-          isOnline: Math.random() > 0.5,
-          isPublic: true,
-        },
-        {
-          id: `search-${Date.now()}-3`,
-          name: `Study${query}`,
-          email: `study${query.toLowerCase()}@example.com`,
-          totalStudyTime: Math.floor(Math.random() * 500),
-          isOnline: Math.random() > 0.5,
-          isPublic: Math.random() > 0.3,
-        },
-      ].filter(user => 
-        user.name.toLowerCase().includes(query.toLowerCase()) ||
-        user.email.toLowerCase().includes(query.toLowerCase())
-      );
-      
-      setSearchResults(mockResults);
-      setIsSearching(false);
-    }, 800);
-  };
+    searchService.searchUsers(term)
+      .then(results => { if (!cancelled) setSearchResults(results); })
+      .catch(error => {
+        console.error('Friend search failed:', error);
+        if (!cancelled) setSearchResults([]);
+      })
+      .finally(() => { if (!cancelled) setIsSearching(false); });
 
-  const handleAddFromSearch = (userEmail: string) => {
-    onAddFriend(userEmail);
+    return () => { cancelled = true; };
+  }, [debouncedQuery]);
+
+  const handleSearch = (query: string) => setSearchQuery(query);
+
+  const handleAddFromSearch = (userId: string, name: string) => {
+    // By id, not email: search results no longer carry an address, and an id
+    // is the more direct identifier anyway.
+    onAddFriendById(userId, name);
     setSearchQuery('');
     setSearchResults([]);
     setShowAddFriend(false);
@@ -116,7 +110,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
               </div>
               <input
                 type="text"
-                placeholder="Search by name or email..."
+                placeholder="Search by name, school, or subject..."
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
                 className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -147,38 +141,35 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
               <div className="text-sm font-medium text-gray-700 mb-2">Search Results</div>
               <div className="space-y-2">
                 {searchResults.map(user => (
-                  <div key={user.id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
+                  <div key={user.user_id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-400 to-blue-500 flex items-center justify-center">
-                        <span className="text-white font-bold text-sm">
-                          {user.name.charAt(0).toUpperCase()}
-                        </span>
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-400 to-blue-500 flex items-center justify-center overflow-hidden">
+                        {user.avatar_url
+                          ? <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
+                          : <span className="text-white font-bold text-sm">{user.name.charAt(0).toUpperCase()}</span>}
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-800 flex items-center">
-                          {user.name}
-                          {!user.isPublic && (
-                            <span className="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full">
-                              Private
-                            </span>
-                          )}
-                        </p>
-                        <p className="text-sm text-gray-600">{user.email}</p>
+                        {/* No "Private" badge: private profiles are filtered out
+                            by the public_profiles view and never reach here. */}
+                        <p className="font-semibold text-gray-800">{user.name}</p>
+                        {/* Email is no longer readable, so school is the useful
+                            public identifier. */}
+                        <p className="text-sm text-gray-600">{user.school || user.study_field || 'No details shared'}</p>
                         <p className="text-xs text-gray-500">
-                          Study time: {formatTime(user.totalStudyTime)}
+                          Study time: {formatTime(user.total_study_time)}
                         </p>
                       </div>
                     </div>
                     <button
-                      onClick={() => handleAddFromSearch(user.email)}
-                      disabled={!user.isPublic}
+                      onClick={() => handleAddFromSearch(user.user_id, user.name)}
+                      disabled={user.is_friend}
                       className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                        user.isPublic
-                          ? 'btn-primary'
-                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        user.is_friend
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'btn-primary'
                       }`}
                     >
-                      {user.isPublic ? 'Add' : 'Private'}
+                      {user.is_friend ? 'Friends' : 'Add'}
                     </button>
                   </div>
                 ))}
