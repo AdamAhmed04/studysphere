@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { User, Lock, Globe, Bell, Palette, Save, Paintbrush, LogOut } from 'lucide-react';
 import { ThemeCustomizer } from './ThemeCustomizer';
 import { useAuthContext } from '../contexts/AuthContext';
+import { isNotificationSupported, requestNotificationPermission } from '../utils/safeNotification';
 
 interface UserProfileSummary {
   name: string;
@@ -23,6 +24,15 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
   const { signOut } = useAuthContext();
   const [confirmingSignOut, setConfirmingSignOut] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+
+  const notificationsSupported = isNotificationSupported();
+  const [notificationPermission, setNotificationPermission] =
+    useState<NotificationPermission>(notificationsSupported ? Notification.permission : 'denied');
+
+  const handleEnableNotifications = async () => {
+    if (!notificationsSupported || notificationPermission !== 'default') return;
+    setNotificationPermission(await requestNotificationPermission());
+  };
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -121,6 +131,18 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
             />
           </div>
 
+          {/*
+            Read-only on purpose.
+
+            This field used to be editable, but saving it only wrote
+            user_profiles.email — it never touched the address you actually
+            sign in with. Changing it left you logging in with the old address
+            while your profile showed the new one, and find_user_by_email
+            resolving friend requests to the new one.
+
+            Changing a sign-in address properly needs supabase.auth.updateUser
+            plus its confirmation flow, which is a feature rather than a field.
+          */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Email Address
@@ -128,9 +150,13 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
             <input
               type="email"
               value={formData.email}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              readOnly
+              aria-describedby="email-readonly-note"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed"
             />
+            <p id="email-readonly-note" className="mt-1 text-xs text-gray-500">
+              This is the address you sign in with and cannot be changed here yet.
+            </p>
           </div>
         </div>
 
@@ -202,18 +228,48 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
             </button>
           </div>
 
+          {/*
+            This was a decorative toggle: hardcoded green, no onClick, no
+            state, describing a "notified when friends are studying" feature
+            that does not exist. It now controls something real.
+
+            Browsers only grant notification permission in response to a user
+            gesture. The app previously asked from inside a realtime callback
+            and on timer mount, where the request is ignored or denied. A
+            button in Settings is the right place for that gesture.
+          */}
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
             <div className="flex items-center space-x-3">
-              <Bell className="text-blue-500" size={20} />
+              <Bell className={notificationPermission === 'granted' ? 'text-green-600' : 'text-gray-400'} size={20} />
               <div>
-                <p className="font-medium text-gray-800">Study Reminders</p>
+                <p className="font-medium text-gray-800">Browser notifications</p>
                 <p className="text-sm text-gray-600">
-                  Get notified when friends are studying
+                  {!notificationsSupported
+                    ? 'Not supported by this browser'
+                    : notificationPermission === 'granted'
+                      ? 'On — you will be told when a study session or break ends'
+                      : notificationPermission === 'denied'
+                        ? 'Blocked. Re-enable this site in your browser settings to turn it back on.'
+                        : 'Off — turn on to be told when a study session or break ends'}
                 </p>
               </div>
             </div>
-            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-green-600">
-              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6"></span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={notificationPermission === 'granted'}
+              aria-label="Browser notifications"
+              onClick={handleEnableNotifications}
+              disabled={!notificationsSupported || notificationPermission !== 'default'}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                notificationPermission === 'granted' ? 'bg-green-600' : 'bg-gray-300'
+              } ${(!notificationsSupported || notificationPermission !== 'default') ? 'cursor-not-allowed opacity-70' : ''}`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  notificationPermission === 'granted' ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
             </button>
           </div>
         </div>

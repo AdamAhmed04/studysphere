@@ -1,7 +1,6 @@
 import { supabase } from '../lib/supabase';
 import {
   isNotificationSupported,
-  requestNotificationPermission,
   showNotification,
 } from '../utils/safeNotification';
 
@@ -17,12 +16,22 @@ export interface Notification {
 }
 
 class NotificationService {
-  private async maybeShowBrowserNotification(n: Notification): Promise<void> {
+  /**
+   * Shows a desktop notification only if permission has already been granted.
+   *
+   * This used to call requestNotificationPermission() on every incoming
+   * notification. Browsers only honour that prompt in response to a user
+   * gesture, so from a websocket callback it is ignored or denied — and where
+   * it isn't, the user gets prompted over and over. Asking is now Settings'
+   * job; this only reads the answer.
+   */
+  private maybeShowBrowserNotification(n: Notification): void {
     if (!isNotificationSupported()) return;
-    const permission = await requestNotificationPermission();
-    if (permission !== 'granted') return;
-    showNotification(n.title ?? 'New notification', {
-      body: n.message ?? n.message,
+    if (Notification.permission !== 'granted') return;
+    showNotification(n.title || 'New notification', {
+      // Was `n.message ?? n.message` — the fallback was the same expression as
+      // the value, so it could never do anything.
+      body: n.message || '',
     });
   }
   async getNotifications(): Promise<Notification[]> {
@@ -142,7 +151,7 @@ class NotificationService {
         async (payload) => {
           const notification = payload.new as Notification;
           callback(notification);
-          await this.maybeShowBrowserNotification(notification);
+          this.maybeShowBrowserNotification(notification);
         }
       )
       .subscribe();

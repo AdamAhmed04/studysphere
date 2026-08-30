@@ -50,21 +50,16 @@ export const Timer: React.FC<TimerProps> = ({
 
   const handleStart = () => {
     if (!subject.trim()) return;
-    
-    // Request notification permission before starting
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          startTimer(subject, undefined, breakCount, breakDuration);
-        } else {
-          // Still start timer even if notifications are denied
-          startTimer(subject, undefined, breakCount, breakDuration);
-          alert('Notifications are disabled. You won\'t receive break reminders when away from the app.');
-        }
-      });
-    } else {
-      startTimer(subject, undefined, breakCount, breakDuration);
-    }
+
+    /*
+     * Just start the timer.
+     *
+     * This used to interrupt Start with a notification permission prompt, and
+     * pop an alert nagging you if you declined — so pressing Start gave you a
+     * dialog instead of a timer. Notifications are opt-in from Settings now,
+     * and the status line above the timer already shows whether they are on.
+     */
+    startTimer(subject, undefined, breakCount, breakDuration);
   };
 
   const handleStop = () => {

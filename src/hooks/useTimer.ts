@@ -21,18 +21,6 @@ const DEFAULT_TIMER_STATE: TimerState = {
   breakTimeElapsed: 0,
 };
 
-// Notification utility functions
-const requestNotificationPermission = async () => {
-  if (!('Notification' in window)) {
-    return false;
-  }
-  if (Notification.permission === 'default') {
-    const permission = await Notification.requestPermission();
-    return permission === 'granted';
-  }
-  return Notification.permission === 'granted';
-};
-
 const showNotification = (title: string, body: string, icon?: string) => {
   if ('Notification' in window && Notification.permission === 'granted') {
     const notification = new Notification(title, {
@@ -202,10 +190,9 @@ export const useTimer = () => {
     };
   }, []);
 
-  // Request notification permission on first load
-  useEffect(() => {
-    requestNotificationPermission();
-  }, []);
+  // Permission is requested from Settings, behind a real user gesture.
+  // Asking on mount is ignored or denied by browsers, and the timer simply
+  // reads Notification.permission when it wants to show something.
 
   const startTimer = (subject: string, duration?: number, breakCount?: number, breakDuration?: number) => {
     const timerData = {
