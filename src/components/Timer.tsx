@@ -47,6 +47,7 @@ export const Timer: React.FC<TimerProps> = ({
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [backgroundStyle, setBackgroundStyle] = useState<'waves' | 'bubbles' | 'particles' | 'minimal'>('waves');
   const [showBackgroundDropdown, setShowBackgroundDropdown] = useState(false);
+  const [discardedNote, setDiscardedNote] = useState<string | null>(null);
 
   const handleStart = () => {
     if (!subject.trim()) return;
@@ -64,6 +65,18 @@ export const Timer: React.FC<TimerProps> = ({
 
   const handleStop = () => {
     const session = stopTimer();
+
+    // stopTimer returns null for a session too short to count. Say so rather
+    // than discarding it silently, or it looks like the save failed.
+    if (!session) {
+      setDiscardedNote(
+        `That session was under a minute, so it wasn't added to your total.`
+      );
+      window.setTimeout(() => setDiscardedNote(null), 6000);
+      setSubject('');
+      return;
+    }
+
     onSessionComplete(session.duration, session.subject, session.startTime, session.endTime);
     setSubject('');
   };
@@ -689,6 +702,16 @@ export const Timer: React.FC<TimerProps> = ({
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Told, not silently dropped, when a session was too short to record. */}
+        {discardedNote && (
+          <div
+            role="status"
+            className="mb-4 px-4 py-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800"
+          >
+            {discardedNote}
           </div>
         )}
 

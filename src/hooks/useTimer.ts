@@ -1,6 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { TimerState } from '../types';
 
+/**
+ * Below this, a stopped session is discarded rather than recorded.
+ *
+ * Anything shorter is someone starting the timer and immediately stopping it,
+ * not a study session — and recording it inflates the totals and the
+ * leaderboard.
+ */
+export const MIN_RECORDED_SECONDS = 60;
+
 export interface CompletedSession {
   duration: number; // minutes
   subject: string;
@@ -236,28 +245,43 @@ export const useTimer = () => {
     }
   };
 
+  /**
+   * Stops the timer and returns the session to record, or null if it was too
+   * short to count.
+   *
+   * This used to return `Math.max(1, Math.round(elapsed / 60))`, which floored
+   * every stopped session at one minute however briefly it ran. An 18-second
+   * session was recorded as a full minute — verified against real data — so
+   * starting and stopping repeatedly inflated both the total and the
+   * leaderboard by a minute each time.
+   *
+   * Round rather than floor for the sessions that do count: rounding over- and
+   * under-states equally, where flooring would systematically under-count.
+   */
   const stopTimer = () => {
     if (workerRef.current) {
       workerRef.current.postMessage({ type: 'STOP_TIMER' });
     }
 
     const currentState = lastStateRef.current || timer;
-    // Round rather than floor, and never record a session as 0 minutes.
-    const durationInMinutes = Math.max(1, Math.round(currentState.timeElapsed / 60));
+
+    if (currentState.timeElapsed < MIN_RECORDED_SECONDS) {
+      return null;
+    }
+
+    const durationInMinutes = Math.round(currentState.timeElapsed / 60);
 
     const actualStartTime = currentState.startTime
       ? new Date(currentState.startTime)
       : new Date(Date.now() - currentState.timeElapsed * 1000);
 
-    const session = {
+    return {
       id: Date.now().toString(),
       duration: durationInMinutes,
       subject: currentState.currentSubject,
       startTime: actualStartTime,
       endTime: new Date(),
     };
-
-    return session;
   };
 
   const reset = () => {
