@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Play, Pause, Square, BookOpen, RotateCcw, Palette, ChevronDown, Maximize, Minimize, Waves, Circle } from 'lucide-react';
-import { useTimer } from '../hooks/useTimer';
+import { useTimerContext } from '../contexts/TimerContext';
 import { Celebration } from './Celebration';
 import { colorThemes, getColorTheme } from '../utils/themes';
 import { useTheme } from '../hooks/useTheme';
@@ -35,7 +35,7 @@ export const Timer: React.FC<TimerProps> = ({
     showCelebration,
     hideCelebration,
     completedSession
-  } = useTimer();
+  } = useTimerContext();
   const [subject, setSubject] = useState('');
   const { currentTheme } = useTheme();
   const [showDurationPicker, setShowDurationPicker] = useState(false);

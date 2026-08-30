@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, Clock, BookOpen, Users, Trophy, Globe, Camera, Upload, X } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuthContext } from '../contexts/AuthContext';
 
 interface AuthPageProps {
   // No props needed - using useAuth hook
 }
 
 export const AuthPage: React.FC<AuthPageProps> = () => {
-  const { signIn, signUp, resetPassword, loading, error } = useAuth();
+  const { signIn, signUp, resetPassword, loading, error } = useAuthContext();
   const [isSignUp, setIsSignUp] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState('');

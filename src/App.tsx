@@ -2,7 +2,7 @@ import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Clock } from 'lucide-react';
 import { AuthPage } from './components/AuthPage';
 import { ResetPassword } from './components/ResetPassword';
-import { useAuth } from './hooks/useAuth';
+import { useAuthContext } from './contexts/AuthContext';
 import { Navigation } from './components/Navigation';
 import { Timer } from './components/Timer';
 import { StudyStats } from './components/StudyStats';
@@ -28,7 +28,7 @@ import { usePresence } from './hooks/usePresence';
 import { useTodos } from './hooks/useTodos';
 import { useMeetings } from './hooks/useMeetings';
 import { useCalendar } from './hooks/useCalendar';
-import { useTimer } from './hooks/useTimer';
+import { useTimerContext } from './contexts/TimerContext';
 import { NotificationsDropdown } from './components/NotificationsDropdown';
 import { FriendRequestsModal } from './components/FriendRequestsModal';
 import { groupService } from './services/groupService';
@@ -49,7 +49,7 @@ const dateReviver = (key: string, value: any) => {
 };
 
 function App() {
-  const { user, profile, stats, loading, incrementStats, updateProfile, isAuthenticated } = useAuth();
+  const { user, profile, stats, loading, incrementStats, updateProfile, isAuthenticated } = useAuthContext();
   const [activeTab, setActiveTab] = useState('timer');
   const { currentTheme } = useTheme();
   const [isPasswordReset, setIsPasswordReset] = useState(false);
@@ -61,7 +61,7 @@ function App() {
   const { meetings, createMeeting, updateMeeting, deleteMeeting, getUpcomingMeetings } = useMeetings(user?.id);
   const { events: calendarEvents, createEvent, updateEvent, deleteEvent } = useCalendar(user?.id);
   usePresence(user?.id, isAuthenticated);
-  const { timer: globalTimerState, formatTime } = useTimer();
+  const { timer: globalTimerState, formatTime } = useTimerContext();
 
   const [showFriendRequests, setShowFriendRequests] = useState(false);
 
