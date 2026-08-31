@@ -121,6 +121,16 @@ export type Database = {
             referencedRelation: "user_profiles"
             referencedColumns: ["user_id"]
           },
+          // The same key reaches public_profiles, which is the one the client
+          // must embed: user_profiles is own-row-only under RLS, so an inner
+          // join against it drops every message written by anyone else.
+          {
+            foreignKeyName: "chat_messages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       friends: {
@@ -610,6 +620,20 @@ export type Database = {
           p_tasks_completed?: number
         }
         Returns: Database["public"]["Tables"]["user_stats"]["Row"][]
+      }
+      latest_group_messages: {
+        Args: { p_group_ids: string[] }
+        Returns: {
+          id: string
+          group_id: string
+          user_id: string
+          message: string
+          type: string
+          attachments: string[] | null
+          created_at: string
+          user_name: string | null
+          user_avatar: string | null
+        }[]
       }
       is_group_admin: { Args: { gid: string }; Returns: boolean }
       is_group_member: { Args: { gid: string }; Returns: boolean }

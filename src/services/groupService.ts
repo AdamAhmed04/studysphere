@@ -130,19 +130,22 @@ class GroupService {
 
       if (allMembersError) throw allMembersError;
 
+      /*
+       * One row per group, chosen in the database.
+       *
+       * This used to fetch the entire message history of every group the user
+       * belongs to and sort in JavaScript to find the newest of each, purely
+       * to render one preview line per group. It grew without bound as the
+       * chat was used.
+       */
       const { data: lastMessages, error: messagesError } = await supabase
-        .from('chat_messages')
-        .select('*, user_profiles!inner(name, avatar_url)')
-        .in('group_id', groupIds);
+        .rpc('latest_group_messages', { p_group_ids: groupIds });
 
       if (messagesError) throw messagesError;
 
       const groupsWithDetails: StudyGroupData[] = groups?.map(group => {
         const members = allMembers?.filter(m => m.group_id === group.id) || [];
-        const groupMessages = lastMessages?.filter(m => m.group_id === group.id) || [];
-        const lastMessage = groupMessages.sort((a, b) =>
-          new Date(orEmpty(b.created_at)).getTime() - new Date(orEmpty(a.created_at)).getTime()
-        )[0];
+        const lastMessage = lastMessages?.find(m => m.group_id === group.id);
 
         return {
           id: group.id,
@@ -164,8 +167,8 @@ class GroupService {
             type: asOneOf(lastMessage.type, MESSAGE_TYPES, 'text'),
             attachments: orUndefined(lastMessage.attachments),
             created_at: orEmpty(lastMessage.created_at),
-            user_name: orUndefined(lastMessage.user_profiles?.name),
-            user_avatar: orUndefined(lastMessage.user_profiles?.avatar_url)
+            user_name: orUndefined(lastMessage.user_name),
+            user_avatar: orUndefined(lastMessage.user_avatar)
           } : undefined
         };
       }) || [];
@@ -183,7 +186,7 @@ class GroupService {
     try {
       const { data: messages, error } = await supabase
         .from('chat_messages')
-        .select('*, user_profiles!inner(name, avatar_url)')
+        .select('*, public_profiles!inner(name, avatar_url)')
         .eq('group_id', groupId)
         .order('created_at', { ascending: true });
 
@@ -197,8 +200,8 @@ class GroupService {
         type: asOneOf(msg.type, MESSAGE_TYPES, 'text'),
         attachments: orUndefined(msg.attachments),
         created_at: orEmpty(msg.created_at),
-        user_name: orUndefined(msg.user_profiles?.name),
-        user_avatar: orUndefined(msg.user_profiles?.avatar_url)
+        user_name: orUndefined(msg.public_profiles?.name),
+        user_avatar: orUndefined(msg.public_profiles?.avatar_url)
       })) || [];
     } catch (error) {
       console.error('Error fetching group messages:', error);
@@ -225,7 +228,7 @@ class GroupService {
         message: sanitizedMessage,
         type
       })
-      .select('*, user_profiles!inner(name, avatar_url)')
+      .select('*, public_profiles!inner(name, avatar_url)')
       .single();
 
     if (messageError) throw messageError;
@@ -243,8 +246,8 @@ class GroupService {
       type: asOneOf(messageData.type, MESSAGE_TYPES, 'text'),
       attachments: orUndefined(messageData.attachments),
       created_at: orEmpty(messageData.created_at),
-      user_name: orUndefined(messageData.user_profiles?.name),
-      user_avatar: orUndefined(messageData.user_profiles?.avatar_url)
+      user_name: orUndefined(messageData.public_profiles?.name),
+      user_avatar: orUndefined(messageData.public_profiles?.avatar_url)
     };
   }
 
@@ -265,7 +268,7 @@ class GroupService {
           if (!supabase) return;
           const { data: messageWithProfile } = await supabase
             .from('chat_messages')
-            .select('*, user_profiles!inner(name, avatar_url)')
+            .select('*, public_profiles!inner(name, avatar_url)')
             .eq('id', payload.new.id)
             .single();
 
@@ -278,8 +281,8 @@ class GroupService {
               type: asOneOf(messageWithProfile.type, MESSAGE_TYPES, 'text'),
               attachments: orUndefined(messageWithProfile.attachments),
               created_at: orEmpty(messageWithProfile.created_at),
-              user_name: orUndefined(messageWithProfile.user_profiles?.name),
-              user_avatar: orUndefined(messageWithProfile.user_profiles?.avatar_url)
+              user_name: orUndefined(messageWithProfile.public_profiles?.name),
+              user_avatar: orUndefined(messageWithProfile.public_profiles?.avatar_url)
             });
           }
         }
