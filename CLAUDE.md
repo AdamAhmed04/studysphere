@@ -99,8 +99,13 @@ logged. They are cheap to reintroduce by accident.
 
 ### Outstanding, in priority order
 
-1. Leaked-password protection is disabled. A Supabase dashboard toggle, not a
-   code change.
+1. Leaked-password protection is disabled, and cannot currently be enabled:
+   it needs the Pro plan and this project's organisation is on Free. It is a
+   dashboard setting rather than anything in the codebase, so there is nothing
+   to change here until the plan changes. The signup form already requires 8+
+   characters with upper, lower, digit and symbol — the strongest server-side
+   password rules Supabase offers — so the specific gap is the
+   HaveIBeenPwned check, which no client-side code can stand in for.
 2. Direct messages and video calling are unbuilt; both show an honest toast
    rather than faking it. DMs would mean two-member private groups reusing the
    existing chat.
