@@ -42,6 +42,14 @@ import type { StudySession, ChatMessage, Friend, User, StudyGroup, Reminder, Tod
 
 // Date reviver function to convert ISO strings back to Date objects
 
+/*
+ * Shown when a message's author cannot be resolved through `public_profiles`,
+ * which now means their profile is private (or the profile is gone). That is a
+ * normal state a person can reach from the Settings toggle, not a fault, so it
+ * should not read like an error - "Unknown" did.
+ */
+const UNRESOLVED_AUTHOR = 'StudySphere user';
+
 function App() {
   const { user, profile, stats, loading, incrementStats, updateProfile, isAuthenticated } = useAuthContext();
   const [activeTab, setActiveTab] = useState('timer');
@@ -93,7 +101,7 @@ function App() {
       lastMessage: g.last_message ? {
         id: g.last_message.id,
         userId: g.last_message.user_id,
-        userName: g.last_message.user_name || 'Unknown',
+        userName: g.last_message.user_name || UNRESOLVED_AUTHOR,
         message: g.last_message.message,
         timestamp: new Date(g.last_message.created_at),
         type: g.last_message.type,
@@ -364,7 +372,7 @@ function App() {
           const chatMessage: ChatMessage = {
             id: newMessage.id,
             userId: newMessage.user_id,
-            userName: newMessage.user_name || 'Unknown',
+            userName: newMessage.user_name || UNRESOLVED_AUTHOR,
             userAvatar: newMessage.user_avatar,
             message: newMessage.message,
             timestamp: new Date(newMessage.created_at),
@@ -391,7 +399,7 @@ function App() {
       const chatMessages: ChatMessage[] = messages.map(msg => ({
         id: msg.id,
         userId: msg.user_id,
-        userName: msg.user_name || 'Unknown',
+        userName: msg.user_name || UNRESOLVED_AUTHOR,
         userAvatar: msg.user_avatar,
         message: msg.message,
         timestamp: new Date(msg.created_at),

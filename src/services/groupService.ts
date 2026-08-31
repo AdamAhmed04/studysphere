@@ -180,13 +180,30 @@ class GroupService {
     }
   }
 
+  /*
+   * The profile embed is a LEFT join on purpose - no `!inner`.
+   *
+   * `public_profiles` is filtered `where is_public = true`, so an inner join
+   * does not merely leave the author nameless, it drops the message. Toggling
+   * your own profile to private in Settings therefore removed every message you
+   * had ever posted, from every group, for everyone: 20 stored, 0 returned.
+   *
+   * It also broke sending. `sendMessage` selects the same embed with
+   * `.single()`, so for a private author the row inserted fine and the select
+   * that followed it matched nothing and threw - a failure reported for a
+   * message that had actually been saved.
+   *
+   * Left-joined, an unresolvable author yields a null profile and the mapper
+   * leaves `user_name` undefined; App.tsx already renders a fallback for that.
+   * Private stays private - the name is withheld, the message is not.
+   */
   async getGroupMessages(groupId: string): Promise<GroupMessage[]> {
     if (!supabase) throw new Error('Supabase not configured');
 
     try {
       const { data: messages, error } = await supabase
         .from('chat_messages')
-        .select('*, public_profiles!inner(name, avatar_url)')
+        .select('*, public_profiles(name, avatar_url)')
         .eq('group_id', groupId)
         .order('created_at', { ascending: true });
 
@@ -228,7 +245,7 @@ class GroupService {
         message: sanitizedMessage,
         type
       })
-      .select('*, public_profiles!inner(name, avatar_url)')
+      .select('*, public_profiles(name, avatar_url)')
       .single();
 
     if (messageError) throw messageError;
@@ -268,7 +285,7 @@ class GroupService {
           if (!supabase) return;
           const { data: messageWithProfile } = await supabase
             .from('chat_messages')
-            .select('*, public_profiles!inner(name, avatar_url)')
+            .select('*, public_profiles(name, avatar_url)')
             .eq('id', payload.new.id)
             .single();
 
