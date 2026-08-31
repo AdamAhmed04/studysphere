@@ -119,7 +119,10 @@ export const Calendar: React.FC<CalendarProps> = ({
 
     const [hours, minutes] = eventForm.time.split(':').map(Number);
     const eventDate = new Date(selectedDate);
-    eventDate.setHours(hours, minutes);
+    // Seconds and milliseconds zeroed explicitly: setHours(h, m) leaves them
+    // at whatever the Date was constructed with, so an event set for 14:00 was
+    // stored as 14:00:49.
+    eventDate.setHours(hours, minutes, 0, 0);
 
     const newEvent: CalendarEvent = {
       id: Date.now().toString(),
@@ -171,7 +174,7 @@ export const Calendar: React.FC<CalendarProps> = ({
 
     const [hours, minutes] = reminderForm.time.split(':').map(Number);
     const reminderDate = parseLocalDate(reminderForm.date) ?? new Date();
-    reminderDate.setHours(hours, minutes);
+    reminderDate.setHours(hours, minutes, 0, 0);
 
     const newReminder: Reminder = {
       id: `reminder-${Date.now()}`,
@@ -200,7 +203,7 @@ export const Calendar: React.FC<CalendarProps> = ({
 
     const [hours, minutes] = meetingForm.time.split(':').map(Number);
     const meetingDate = new Date(selectedDate);
-    meetingDate.setHours(hours, minutes);
+    meetingDate.setHours(hours, minutes, 0, 0);
 
     const newMeeting: Meeting = {
       id: Date.now().toString(),

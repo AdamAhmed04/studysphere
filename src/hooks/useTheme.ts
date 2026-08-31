@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CustomTheme } from '../types';
 import { themeColors } from '../utils/themeColors';
+import { useAuthContext } from '../contexts/AuthContext';
 
 const DEFAULT_THEME: CustomTheme = {
   id: 'default',
@@ -12,51 +13,82 @@ const DEFAULT_THEME: CustomTheme = {
   isActive: true
 };
 
-export const useTheme = () => {
-  const [currentTheme, setCurrentTheme] = useState<CustomTheme>(() => {
-    try {
-      const saved = localStorage.getItem('studysphere-theme');
-      if (saved) {
-        const parsedTheme = JSON.parse(saved);
-        // Merge with DEFAULT_THEME to ensure all properties exist
-        return { ...DEFAULT_THEME, ...parsedTheme };
+/*
+ * Themes are stored per account.
+ *
+ * The key used to be a single global 'studysphere-theme', shared by everyone
+ * who signed in on the browser, so a second user inherited the first one's
+ * customisation. Same class as the profile-cache leak, with lower stakes.
+ *
+ * Signed-out state keeps its own key rather than borrowing whoever was last
+ * signed in.
+ */
+const themeStorageKey = (userId?: string) =>
+  userId ? `studysphere-theme:${userId}` : 'studysphere-theme:signed-out';
+
+/** The single shared key this used to write to, before themes were per account. */
+const LEGACY_THEME_KEY = 'studysphere-theme';
+
+const readStoredTheme = (userId?: string): CustomTheme => {
+  try {
+    const key = themeStorageKey(userId);
+    let saved = localStorage.getItem(key);
+
+    /*
+     * Adopt a theme saved under the old shared key, once.
+     *
+     * Without this, moving to per-account storage would silently reset the
+     * customisation of anyone who already had one. The legacy key is removed
+     * as it is adopted, so the first account to sign in inherits it and the
+     * next account starts from the default rather than borrowing it — which
+     * was the bug being fixed.
+     */
+    if (!saved && userId) {
+      const legacy = localStorage.getItem(LEGACY_THEME_KEY);
+      if (legacy) {
+        localStorage.setItem(key, legacy);
+        localStorage.removeItem(LEGACY_THEME_KEY);
+        saved = legacy;
       }
-      return DEFAULT_THEME;
-    } catch {
-      return DEFAULT_THEME;
     }
-  });
+
+    // Merged with the default so a theme saved before a new property existed
+    // still has every field.
+    return saved ? { ...DEFAULT_THEME, ...JSON.parse(saved) } : DEFAULT_THEME;
+  } catch {
+    return DEFAULT_THEME;
+  }
+};
+
+/** Writes the CSS custom properties. Does not touch state or storage. */
+const writeThemeVars = (theme: CustomTheme) => {
+  const root = document.documentElement;
+  root.style.setProperty('--theme-background', theme.backgroundColor);
+  root.style.setProperty('--theme-secondary-background', theme.secondaryBackgroundColor);
+  root.style.setProperty('--theme-button-color', theme.buttonColor);
+  root.style.setProperty('--theme-textbox-color', theme.textBoxColor || '#ffffff');
+  root.style.setProperty('--theme-button-hover', darkenColor(theme.buttonColor || '#3b82f6', 10));
+  root.style.setProperty('--theme-button-text', getContrastTextColor(theme.buttonColor || '#3b82f6'));
+  root.style.setProperty('--theme-textbox-border', darkenColor(theme.textBoxColor || '#ffffff', 15));
+  root.style.setProperty('--theme-textbox-focus-border', theme.buttonColor || '#3b82f6');
+  const rgb = hexToRgb(theme.buttonColor || '#3b82f6');
+  root.style.setProperty('--theme-button-focus-shadow', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)`);
+};
+
+export const useTheme = () => {
+  const { user } = useAuthContext();
+  const userId = user?.id;
+
+  const [currentTheme, setCurrentTheme] = useState<CustomTheme>(() => readStoredTheme(userId));
 
   const applyTheme = (theme: CustomTheme) => {
-    // Apply CSS custom properties to the document root
-    const root = document.documentElement;
-    root.style.setProperty('--theme-background', theme.backgroundColor);
-    root.style.setProperty('--theme-secondary-background', theme.secondaryBackgroundColor);
-    root.style.setProperty('--theme-button-color', theme.buttonColor);
-    root.style.setProperty('--theme-textbox-color', theme.textBoxColor || '#ffffff');
-    
-    // Calculate hover color (slightly darker)
-    const hoverColor = darkenColor(theme.buttonColor || '#3b82f6', 10);
-    root.style.setProperty('--theme-button-hover', hoverColor);
-    
-    // Calculate text color based on button background
-    const textColor = getContrastTextColor(theme.buttonColor || '#3b82f6');
-    root.style.setProperty('--theme-button-text', textColor);
-    
-    // Calculate border color for text boxes (slightly darker than background)
-    const borderColor = darkenColor(theme.textBoxColor || '#ffffff', 15);
-    root.style.setProperty('--theme-textbox-border', borderColor);
-    
-    // Calculate focus border color and shadow using button color
-    root.style.setProperty('--theme-textbox-focus-border', theme.buttonColor || '#3b82f6');
-    
-    // Create focus shadow with button color and 10% opacity
-    const buttonColorRgb = hexToRgb(theme.buttonColor || '#3b82f6');
-    const focusShadow = `rgba(${buttonColorRgb.r}, ${buttonColorRgb.g}, ${buttonColorRgb.b}, 0.1)`;
-    root.style.setProperty('--theme-button-focus-shadow', focusShadow);
-    
+    writeThemeVars(theme);
     setCurrentTheme(theme);
-    localStorage.setItem('studysphere-theme', JSON.stringify(theme));
+    try {
+      localStorage.setItem(themeStorageKey(userId), JSON.stringify(theme));
+    } catch (error) {
+      console.error('Could not save theme:', error);
+    }
   };
 
   const updateTheme = (updates: Partial<CustomTheme>) => {
@@ -68,10 +100,19 @@ export const useTheme = () => {
     applyTheme(DEFAULT_THEME);
   };
 
-  // Apply theme on mount
+  /*
+   * Load whoever is signed in now. Runs on mount and whenever the account
+   * changes, so signing in as someone else swaps to their theme rather than
+   * leaving the previous user's colours on screen.
+   *
+   * Deliberately writeThemeVars and not applyTheme: this is reading a stored
+   * theme, and applyTheme would write it straight back under the new key.
+   */
   useEffect(() => {
-    applyTheme(currentTheme);
-  }, []);
+    const stored = readStoredTheme(userId);
+    writeThemeVars(stored);
+    setCurrentTheme(stored);
+  }, [userId]);
 
   return {
     currentTheme,
