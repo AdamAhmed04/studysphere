@@ -32,6 +32,7 @@ import { useToast } from './contexts/ToastContext';
 import { NotificationsDropdown } from './components/NotificationsDropdown';
 import { FriendRequestsModal } from './components/FriendRequestsModal';
 import { groupService } from './services/groupService';
+import { notificationService } from './services/notificationService';
 const BubblePopGame = lazy(() => import('./components/BubblePopGame').then(module => ({ default: module.BubblePopGame })));
 const BlockDropGame = lazy(() => import('./components/BlockDropGame').then(module => ({ default: module.BlockDropGame })));
 import { studySessionService } from './services/studySessionService';
@@ -197,17 +198,50 @@ function App() {
   };
 
 
-  const handleCallOut = (friendId: string) => {
+  /*
+   * Nudge a friend to get studying.
+   *
+   * This used to show an encouraging alert to whoever clicked it and send
+   * nothing to the other person. The `study_callout` notification type has
+   * existed in the schema the whole time; nothing ever wrote one. The
+   * notification policy permits it now, because it checks for a real
+   * relationship and these two are friends.
+   */
+  const handleCallOut = async (friendId: string) => {
     const friend = friends.find(f => f.id === friendId);
-    if (friend) {
-      toast.info(`Nudging ${friend.name} isn't wired up yet — they won't be notified.`);
+    if (!friend || !profile) return;
+
+    try {
+      await notificationService.createNotification(
+        friendId,
+        'study_callout',
+        'Time to study',
+        `${profile.name} is nudging you to get started.`,
+        { from_user_id: user?.id, from_name: profile.name }
+      );
+      toast.success(`Nudged ${friend.name}.`);
+    } catch (error) {
+      toast.error(`Could not nudge ${friend.name}.`, error);
     }
   };
 
-  const handleSendStar = (friendId: string) => {
+  /** Cheer a friend on. Same story as handleCallOut: the `cheer` type existed,
+   *  nothing ever wrote one. */
+  const handleSendStar = async (friendId: string) => {
     const friend = friends.find(f => f.id === friendId);
-    if (friend) {
-      toast.info(`Cheering ${friend.name} isn't wired up yet — they won't be notified.`);
+    if (!friend || !profile) return;
+
+    try {
+      await notificationService.createNotification(
+        friendId,
+        'cheer',
+        'Someone cheered you on',
+        `${profile.name} says keep it up.`,
+        { from_user_id: user?.id, from_name: profile.name }
+      );
+      toast.success(`Cheered ${friend.name}.`);
+    } catch (error) {
+      toast.error(`Could not cheer ${friend.name}.`, error);
     }
   };
 
