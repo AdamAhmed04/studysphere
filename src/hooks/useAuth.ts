@@ -158,20 +158,25 @@ export const useAuth = () => {
   };
 
   const incrementStats = async (payload: {
-    sessions?: number;
-    totalFocusMinutes?: number;
+    /** The saved study_sessions row to credit. The server reads the minutes
+     *  off it; nothing here decides how many are awarded. */
+    sessionId?: string;
+    /** Display only — what to show until the server's own figure lands.
+     *  Sending a different number here changes nothing that is stored. */
+    expectedFocusMinutes?: number;
     tasksCompleted?: number;
   }) => {
     if (!user) return;
 
     try {
       // Optimistic update. streak_days is deliberately left alone — the server
-      // owns it now, and the authoritative value comes back from the RPC.
+      // owns it now, and the authoritative value comes back from the RPC and
+      // overwrites all of this a moment later.
       if (stats) {
         setStats({
           ...stats,
-          sessions: stats.sessions + (payload.sessions || 0),
-          total_focus_minutes: stats.total_focus_minutes + (payload.totalFocusMinutes || 0),
+          sessions: stats.sessions + (payload.sessionId ? 1 : 0),
+          total_focus_minutes: stats.total_focus_minutes + (payload.expectedFocusMinutes || 0),
           tasks_completed: stats.tasks_completed + (payload.tasksCompleted || 0),
         });
       }

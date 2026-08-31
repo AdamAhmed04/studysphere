@@ -103,10 +103,19 @@ class UserService {
    *
    * The streak is computed server-side from last_session_date, so callers no
    * longer pass streakDays.
+   *
+   * Nor do they pass a number of minutes any more. The function used to take
+   * the figure on trust, which meant one request to /rest/v1/rpc from any
+   * signed-in account could set its own totals to anything - measured, a
+   * single call took total_focus_minutes from 1 to 1,000,000. It now takes the
+   * id of a study_sessions row and reads the minutes off that row: the session
+   * must belong to the caller, must not have been counted before, and cannot
+   * claim more focus time than elapsed between its own start and end.
+   *
+   * So the session has to be saved first, and its id passed here.
    */
   async incrementStats(_userId: string, payload: {
-    sessions?: number;
-    totalFocusMinutes?: number;
+    sessionId?: string;
     tasksCompleted?: number;
   }) {
     try {
@@ -116,8 +125,7 @@ class UserService {
 
       const { data, error } = await supabase
         .rpc('increment_user_stats', {
-          p_sessions: payload.sessions ?? 0,
-          p_focus_minutes: payload.totalFocusMinutes ?? 0,
+          p_session_id: payload.sessionId ?? null,
           p_tasks_completed: payload.tasksCompleted ?? 0,
         })
         .single();

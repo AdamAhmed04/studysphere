@@ -615,8 +615,7 @@ export type Database = {
       }
       increment_user_stats: {
         Args: {
-          p_focus_minutes?: number
-          p_sessions?: number
+          p_session_id?: string | null
           p_tasks_completed?: number
         }
         Returns: Database["public"]["Tables"]["user_stats"]["Row"][]

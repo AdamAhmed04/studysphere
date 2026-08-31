@@ -180,9 +180,11 @@ function App() {
 
       setSessions(prev => [newSession, ...prev]);
 
+      // The session row is what earns the credit; the server reads the minutes
+      // off it rather than believing a number sent from here.
       await incrementStats({
-        sessions: 1,
-        totalFocusMinutes: duration,
+        sessionId: savedSession.id,
+        expectedFocusMinutes: duration,
       });
 
       toast.success(`Saved ${duration} minute${duration === 1 ? '' : 's'} of ${subject}.`);
