@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import type { User } from '@supabase/supabase-js';
 import { toLocalDateString } from '../utils/dates';
 
 export interface SignUpData {
@@ -207,16 +208,28 @@ class AuthService {
     }
   }
 
-  onAuthStateChange(callback: (user: any) => void) {
+  /**
+   * Subscribes to sign-in / sign-out.
+   *
+   * The callback is deferred with setTimeout on purpose. Supabase holds an
+   * internal lock while it processes an auth event, and calling back into the
+   * client from inside that window can deadlock — which is exactly what the
+   * consumer does, since it reloads the profile and stats on sign-in.
+   *
+   * The previous version wrapped the call in `(() => { ... })()` under a
+   * comment reading "use async block to avoid deadlocks". A plain IIFE is
+   * synchronous and defers nothing, so it had the comment without the
+   * behaviour. setTimeout(…, 0) genuinely yields, letting the lock release
+   * before the callback runs.
+   */
+  onAuthStateChange(callback: (user: User | null) => void) {
     if (!supabase) {
       return { data: { subscription: { unsubscribe: () => {} } } };
     }
 
     return supabase.auth.onAuthStateChange((_event, session) => {
-      // Use async block to avoid deadlocks
-      (() => {
-        callback(session?.user || null);
-      })();
+      const user = session?.user ?? null;
+      setTimeout(() => callback(user), 0);
     });
   }
 }

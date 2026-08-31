@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
+import type { User } from '@supabase/supabase-js';
 import { authService } from '../services/authService';
 import { userService } from '../services/userService';
 import type { UserProfile, UserStats } from '../lib/supabase';
 
 export const useAuth = () => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [stats, setStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,7 +31,7 @@ export const useAuth = () => {
       }
     };
 
-    const loadUserData = async (user: any) => {
+    const loadUserData = async (user: User) => {
       if (!mounted) return;
       
       try {
