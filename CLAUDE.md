@@ -23,7 +23,7 @@ gitignored. The anon key is public by design — RLS is the real access control.
     src/types/        Shared types, plus database.ts generated from the schema
     src/utils/        dates.ts (calendar dates), rows.ts (the DB↔UI null boundary)
     public/           timer-worker.js — the timer runs in a Web Worker
-    supabase/         11 migrations. 14 tables, all with RLS enabled
+    supabase/         15 migrations. 15 tables, all with RLS enabled
 
 ## Conventions
 
@@ -83,24 +83,25 @@ logged. They are cheap to reintroduce by accident.
   column, not a timestamp.
 - **Do not HTML-escape before storing.** React escapes on render, so escaping
   first displayed `&` as `&amp;`.
+- **Changing a function's argument list creates a new function**, and a new
+  function is granted EXECUTE to PUBLIC by default. `revoke ... from anon` does
+  not undo that, because anon inherits through PUBLIC rather than holding a
+  direct grant. The earlier trap was the mirror image: revoking from PUBLIC left
+  a direct grant to anon. Check `pg_proc.proacl` afterwards instead of trusting
+  either revoke — an empty grantee (`=X/postgres`) is PUBLIC.
+- **`find_user_by_email` is rate-limited on purpose** (20 an hour, 60 a day per
+  account, misses included). Without a limit it answers "is this address
+  registered?" as fast as it can be asked, which is an enumeration oracle. The
+  attempts table has RLS on and no policies so nobody can read it or reset it.
 - **Realtime publishes nothing by default on a new project.** Tables must be
   added to `supabase_realtime` explicitly; `friends` also needs
   `REPLICA IDENTITY FULL` for filtered DELETE events.
 
 ### Outstanding, in priority order
 
-1. `find_user_by_email` lets any signed-in account test whether an address is
-   registered, as fast as it likes. Deliberate — friend-by-email needs it, and
-   it never returns the address — but it wants rate limiting before launch.
-2. Completing a to-do credits nothing. `tasks_completed` is plumbed through the
-   hook, the service and the RPC, but no caller ever passes it.
-3. Twenty-nine RLS policies re-evaluate `auth.uid()` per row; write it as
-   `(select auth.uid())` so Postgres hoists it. Three foreign keys have no
-   covering index: `calendar_events.group_id`, `calendar_events.todo_id`,
-   `reminders.event_id`. Performance only, invisible at this size.
-4. Leaked-password protection is disabled. A Supabase dashboard toggle, not a
+1. Leaked-password protection is disabled. A Supabase dashboard toggle, not a
    code change.
-5. Direct messages and video calling are unbuilt; both show an honest toast
+2. Direct messages and video calling are unbuilt; both show an honest toast
    rather than faking it. DMs would mean two-member private groups reusing the
    existing chat.
 

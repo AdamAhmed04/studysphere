@@ -28,6 +28,13 @@ class FriendService {
    * The lookup goes through the find_user_by_email RPC because `email` is no
    * longer a readable column — public_profiles exposes an allowlist that
    * deliberately omits it. The RPC returns an id and name and never the address.
+   *
+   * The RPC is rate-limited per account (20 an hour, 60 a day) because
+   * otherwise it answers "is this address registered?" as fast as you can ask,
+   * which is an enumeration oracle rather than a friend finder. Hitting the
+   * limit comes back as SQLSTATE 54000 and is shown as its own message —
+   * telling someone no such profile exists when really they need to slow down
+   * would send them looking for a problem that is not there.
    */
   async sendFriendRequest(friendEmail: string): Promise<{ success: boolean; message: string }> {
     if (!supabase) throw new Error('Supabase not configured');
@@ -36,7 +43,15 @@ class FriendService {
       const { data: matches, error: lookupError } = await supabase
         .rpc('find_user_by_email', { p_email: friendEmail });
 
-      if (lookupError) throw lookupError;
+      if (lookupError) {
+        if (lookupError.code === '54000') {
+          return {
+            success: false,
+            message: 'Too many email lookups just now. Please wait a while and try again.'
+          };
+        }
+        throw lookupError;
+      }
 
       const match = Array.isArray(matches) ? matches[0] : matches;
       if (!match) {
