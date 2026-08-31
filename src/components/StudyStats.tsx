@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Target, Flame, Calendar } from 'lucide-react';
+import { Clock, Target, Flame, Calendar, CheckCircle2 } from 'lucide-react';
 import { StudySession } from '../types';
 import type { UserStats } from '../lib/supabase';
 
@@ -19,6 +19,11 @@ export const StudyStats: React.FC<StudyStatsProps> = ({ sessions, stats }) => {
   // Calculate streak (consecutive days with study time)
   const streak = stats?.streak_days || calculateStreak(sessions);
   const totalSessions = stats?.sessions || sessions.length;
+
+  // No client-side fallback for this one: completed to-dos are counted in the
+  // database, once per to-do, and the local `sessions` array says nothing
+  // about them. `?? 0` rather than `|| 0` so a real zero stays a zero.
+  const tasksCompleted = stats?.tasks_completed ?? 0;
   
   const formatMinutes = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
@@ -27,7 +32,7 @@ export const StudyStats: React.FC<StudyStatsProps> = ({ sessions, stats }) => {
   };
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
       <div className="theme-secondary-bg rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
         <div className="flex items-center justify-between">
           <div>
@@ -65,6 +70,16 @@ export const StudyStats: React.FC<StudyStatsProps> = ({ sessions, stats }) => {
             <p className="text-2xl font-bold text-purple-600">{totalSessions}</p>
           </div>
           <Calendar className="text-purple-500" size={32} />
+        </div>
+      </div>
+
+      <div className="theme-secondary-bg rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-gray-600 font-medium">Tasks Done</p>
+            <p className="text-2xl font-bold text-teal-600">{tasksCompleted}</p>
+          </div>
+          <CheckCircle2 className="text-teal-500" size={32} />
         </div>
       </div>
     </div>

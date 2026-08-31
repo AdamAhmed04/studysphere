@@ -164,7 +164,9 @@ export const useAuth = () => {
     /** Display only — what to show until the server's own figure lands.
      *  Sending a different number here changes nothing that is stored. */
     expectedFocusMinutes?: number;
-    tasksCompleted?: number;
+    /** The completed to-do to credit. Counted once, server-side, however many
+     *  times it is ticked and un-ticked. */
+    todoId?: string;
   }) => {
     if (!user) return;
 
@@ -177,7 +179,7 @@ export const useAuth = () => {
           ...stats,
           sessions: stats.sessions + (payload.sessionId ? 1 : 0),
           total_focus_minutes: stats.total_focus_minutes + (payload.expectedFocusMinutes || 0),
-          tasks_completed: stats.tasks_completed + (payload.tasksCompleted || 0),
+          tasks_completed: stats.tasks_completed + (payload.todoId ? 1 : 0),
         });
       }
 

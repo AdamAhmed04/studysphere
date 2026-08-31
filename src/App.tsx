@@ -536,6 +536,19 @@ function App() {
         is_completed: updates.isCompleted
       });
 
+      // Credit the tasks counter the first time a to-do is ticked complete.
+      // The server decides whether it actually counts — it credits a to-do
+      // once and remembers, so un-ticking and re-ticking does not keep adding.
+      // Deliberately not awaited alongside the update above: the tick should
+      // not appear to fail because the counter did.
+      if (updates.isCompleted === true) {
+        try {
+          await incrementStats({ todoId: id });
+        } catch {
+          // Already surfaced by useAuth, and the to-do itself is saved.
+        }
+      }
+
       // Update calendar event if due date changed.
       // Note: a partial update (e.g. ticking a todo complete) has no dueDate
       // key at all, which is NOT the same as the user clearing the due date.

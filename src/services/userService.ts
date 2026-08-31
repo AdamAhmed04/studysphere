@@ -113,10 +113,15 @@ class UserService {
    * claim more focus time than elapsed between its own start and end.
    *
    * So the session has to be saved first, and its id passed here.
+   *
+   * Completed tasks work the same way and for the same reason. Passing a count
+   * would mean ticking a task, un-ticking it and ticking it again credited it
+   * three times, because the function only ever adds. Naming the to-do lets the
+   * server count it once and remember that it did.
    */
   async incrementStats(_userId: string, payload: {
     sessionId?: string;
-    tasksCompleted?: number;
+    todoId?: string;
   }) {
     try {
       if (!supabase) {
@@ -126,7 +131,7 @@ class UserService {
       const { data, error } = await supabase
         .rpc('increment_user_stats', {
           p_session_id: payload.sessionId ?? null,
-          p_tasks_completed: payload.tasksCompleted ?? 0,
+          p_todo_id: payload.todoId ?? null,
         })
         .single();
 
