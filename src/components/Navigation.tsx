@@ -254,8 +254,19 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
         </div>
 
         {/* Mobile navigation */}
+        {/*
+          Seven items share the width evenly rather than each claiming a fixed
+          52px. At 375px that fixed width left "Calendar" exactly filling its
+          own button and only 2px of gap before "Settings", where every other
+          pair had 11-20px. flex-1 with min-w-0 divides the row instead of
+          overflowing it, and the label steps down a size on the narrowest
+          screens so the longest one is comfortable rather than exact.
+
+          min-h stays at 52px: that is the touch target, and it should not
+          shrink.
+        */}
         <div className="lg:hidden border-t border-gray-200">
-          <div className="flex justify-around py-2 px-1">
+          <div className="flex items-stretch gap-0.5 py-2 px-1">
             {tabs.map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -263,7 +274,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                 <button
                   key={tab.id}
                   onClick={() => onTabChange(tab.id)}
-                  className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all border border-transparent min-h-[52px] min-w-[52px] ${
+                  className={`flex flex-1 min-w-0 flex-col items-center justify-center gap-1 px-0.5 py-2 rounded-lg transition-all border border-transparent min-h-[52px] ${
                     isActive
                       ? 'text-blue-700'
                       : 'text-gray-600'
@@ -289,8 +300,8 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
-                  <Icon size={24} />
-                  <span className="text-xs font-medium">{tab.label}</span>
+                  <Icon size={22} className="shrink-0" />
+                  <span className="text-[10px] sm:text-xs font-medium leading-none">{tab.label}</span>
                 </button>
               );
             })}
