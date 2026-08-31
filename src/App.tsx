@@ -490,7 +490,8 @@ function App() {
       const newTodo = await addTodo({
         title: todoData.title,
         description: todoData.description,
-        due_date: todoData.dueDate?.toISOString(),
+        // A calendar date, not an instant — the column is `date` now.
+        due_date: toLocalDateString(todoData.dueDate) || undefined,
         priority: todoData.priority,
         category: todoData.category
       });
@@ -516,7 +517,10 @@ function App() {
       await updateTodo(id, {
         title: updates.title,
         description: updates.description,
-        due_date: updates.dueDate?.toISOString(),
+        // A calendar date, not an instant — matching the `date` column.
+        // Undefined still means "not specified", so a partial update (ticking
+        // a todo complete) leaves the existing due date alone.
+        due_date: toLocalDateString(updates.dueDate) || undefined,
         priority: updates.priority,
         category: updates.category,
         is_completed: updates.isCompleted

@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 export interface TodoData {
   title: string;
   description?: string;
+  /** A calendar date, "YYYY-MM-DD" — the column is `date`, not a timestamp. */
   due_date?: string;
   priority: 'low' | 'medium' | 'high';
   category?: string;

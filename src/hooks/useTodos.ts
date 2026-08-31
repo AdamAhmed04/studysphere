@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { todoService, TodoData } from '../services/todoService';
 import { orUndefined, orEmpty, orFalse, asOneOf } from '../utils/rows';
+import { parseLocalDate } from '../utils/dates';
 
 const PRIORITIES = ['low', 'medium', 'high'] as const;
 
@@ -42,7 +43,7 @@ export const useTodos = (userId: string | undefined) => {
         id: todo.id,
         title: todo.title,
         description: orUndefined(todo.description),
-        dueDate: todo.due_date ? new Date(todo.due_date) : undefined,
+        dueDate: parseLocalDate(todo.due_date),
         priority: asOneOf(todo.priority, PRIORITIES, 'medium'),
         isCompleted: orFalse(todo.is_completed),
         createdBy: todo.user_id,
@@ -73,7 +74,7 @@ export const useTodos = (userId: string | undefined) => {
         id: data.id,
         title: data.title,
         description: orUndefined(data.description),
-        dueDate: data.due_date ? new Date(data.due_date) : undefined,
+        dueDate: parseLocalDate(data.due_date),
         priority: asOneOf(data.priority, PRIORITIES, 'medium'),
         isCompleted: orFalse(data.is_completed),
         createdBy: data.user_id,
@@ -100,7 +101,7 @@ export const useTodos = (userId: string | undefined) => {
             ...todo,
             title: data.title,
             description: orUndefined(data.description),
-            dueDate: data.due_date ? new Date(data.due_date) : undefined,
+            dueDate: parseLocalDate(data.due_date),
             priority: asOneOf(data.priority, PRIORITIES, 'medium'),
             isCompleted: orFalse(data.is_completed),
             completedAt: data.completed_at ? new Date(data.completed_at) : undefined,

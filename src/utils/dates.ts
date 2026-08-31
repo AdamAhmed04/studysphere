@@ -13,7 +13,7 @@
  */
 
 /** Parses "YYYY-MM-DD" as midnight in the viewer's own timezone. */
-export const parseLocalDate = (value: string): Date | undefined => {
+export const parseLocalDate = (value?: string | null): Date | undefined => {
   if (!value) return undefined;
   const [year, month, day] = value.split('-').map(Number);
   if (!year || !month || !day) return undefined;
