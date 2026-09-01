@@ -36,6 +36,7 @@ import { groupService } from './services/groupService';
 import { notificationService } from './services/notificationService';
 const BubblePopGame = lazy(() => import('./components/BubblePopGame').then(module => ({ default: module.BubblePopGame })));
 const BlockDropGame = lazy(() => import('./components/BlockDropGame').then(module => ({ default: module.BlockDropGame })));
+const JumpingGame = lazy(() => import('./components/JumpingGame').then(module => ({ default: module.JumpingGame })));
 import { studySessionService } from './services/studySessionService';
 import { toLocalDateString } from './utils/dates';
 import { orUndefined, orEmpty, orFalse } from './utils/rows';
@@ -153,6 +154,7 @@ function App() {
   const [showScheduleMeeting, setShowScheduleMeeting] = useState(false);
   const [showMiniGame, setShowMiniGame] = useState(false);
   const [showBlockDropGame, setShowBlockDropGame] = useState(false);
+  const [showJumpingGame, setShowJumpingGame] = useState(false);
   const [schedulingContext, setSchedulingContext] = useState<{
     group?: StudyGroup;
     friend?: Friend;
@@ -711,7 +713,31 @@ function App() {
                     </button>
                   </div>
                 </div>
-                
+
+                {/*
+                  The third game. It was written, complete, and imported by
+                  nothing — so the app promised three break games and offered
+                  two. Same {isOpen, onClose} contract as its siblings; it only
+                  ever needed wiring up.
+                */}
+                <div className="theme-secondary-bg rounded-2xl shadow-xl p-6">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <span className="text-2xl">🏃</span>
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-800 mb-2">Quick Reflexes</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Jump the obstacles and see how far you can get before your break is over!
+                    </p>
+                    <button
+                      onClick={() => setShowJumpingGame(true)}
+                      className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                    >
+                      Play Jump Run 🏃
+                    </button>
+                  </div>
+                </div>
+
               </div>
               <div className="lg:col-span-2 space-y-4 md:space-y-6">
                 <SocialFeed
@@ -987,6 +1013,13 @@ function App() {
           <BlockDropGame
             isOpen={showBlockDropGame}
             onClose={() => setShowBlockDropGame(false)}
+          />
+        )}
+
+        {showJumpingGame && (
+          <JumpingGame
+            isOpen={showJumpingGame}
+            onClose={() => setShowJumpingGame(false)}
           />
         )}
       </Suspense>
