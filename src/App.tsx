@@ -27,6 +27,7 @@ import { usePresence } from './hooks/usePresence';
 import { useTodos } from './hooks/useTodos';
 import { useMeetings } from './hooks/useMeetings';
 import { useCalendar } from './hooks/useCalendar';
+import { useReminders } from './hooks/useReminders';
 import { useTimerContext } from './contexts/TimerContext';
 import { useToast } from './contexts/ToastContext';
 import { NotificationsDropdown } from './components/NotificationsDropdown';
@@ -38,7 +39,7 @@ const BlockDropGame = lazy(() => import('./components/BlockDropGame').then(modul
 import { studySessionService } from './services/studySessionService';
 import { toLocalDateString } from './utils/dates';
 import { orUndefined, orEmpty, orFalse } from './utils/rows';
-import type { StudySession, ChatMessage, Friend, User, StudyGroup, Reminder, TodoItem } from './types';
+import type { StudySession, ChatMessage, Friend, User, StudyGroup, TodoItem } from './types';
 
 // Date reviver function to convert ISO strings back to Date objects
 
@@ -62,6 +63,7 @@ function App() {
   const { todos, addTodo, updateTodo, deleteTodo } = useTodos(user?.id);
   const { meetings, createMeeting, updateMeeting } = useMeetings(user?.id);
   const { events: calendarEvents, createEvent, updateEvent, deleteEvent } = useCalendar(user?.id);
+  const { reminders, createReminder } = useReminders(user?.id);
   usePresence(user?.id, isAuthenticated);
   const { timer: globalTimerState, formatTime } = useTimerContext();
   const toast = useToast();
@@ -83,7 +85,6 @@ function App() {
     } else {
       setSessions([]);
       setChatMessages([]);
-      setReminders([]);
     }
   }, [user?.id, isAuthenticated]);
 
@@ -135,7 +136,6 @@ function App() {
   };
   const [sessions, setSessions] = useState<StudySession[]>([]);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const [reminders, setReminders] = useState<Reminder[]>([]);
   const [studyGroups, setStudyGroups] = useState<StudyGroup[]>(groups.map(g => ({
     id: g.id,
     name: g.name,
@@ -834,7 +834,9 @@ function App() {
             events={calendarEvents}
             reminders={reminders}
             meetings={meetings}
-            onCreateEvent={(event) => {
+            onCreateEvent={(event) =>
+              // Returned, not swallowed: the Calendar needs the saved event's
+              // real id to attach a reminder to it.
               createEvent({
                 title: event.title,
                 description: event.description,
@@ -845,9 +847,21 @@ function App() {
                 reminderMinutes: event.reminderMinutes,
               }).catch((error) => {
                 toast.error('Could not create that event.', error);
+                return undefined;
+              })
+            }
+            onCreateReminder={(reminder) => {
+              // The Calendar builds a Reminder with a placeholder id; the real
+              // one comes back from the database, so only the fields go across.
+              createReminder({
+                title: reminder.title,
+                description: reminder.description,
+                reminderTime: reminder.reminderTime,
+                eventId: reminder.eventId,
+              }).catch((error) => {
+                toast.error('Could not save that reminder.', error);
               });
             }}
-            onCreateReminder={(reminder) => setReminders(prev => [...prev, reminder])}
             onCreateMeeting={(meeting) => {
               handleCreateMeeting({
                 title: meeting.title,

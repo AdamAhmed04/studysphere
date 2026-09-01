@@ -8,7 +8,17 @@ interface CalendarProps {
   events: CalendarEvent[];
   reminders: Reminder[];
   meetings: Meeting[];
-  onCreateEvent: (event: CalendarEvent) => void;
+  /*
+   * Resolves with the saved event, so a linked reminder can point at the id the
+   * database actually assigned. It used to return void, and the reminder was
+   * given `newEvent.id` — a `Date.now().toString()` placeholder that exists
+   * nowhere. That went unnoticed while reminders were never persisted; the
+   * moment they were, the foreign key rejected it.
+   *
+   * Resolves undefined when the event could not be saved, in which case no
+   * reminder is created rather than one that points at nothing.
+   */
+  onCreateEvent: (event: CalendarEvent) => Promise<CalendarEvent | undefined>;
   onCreateReminder: (reminder: Reminder) => void;
   onCreateMeeting: (meeting: Meeting) => void;
   currentUser: User;
@@ -114,7 +124,7 @@ export const Calendar: React.FC<CalendarProps> = ({
     }))];
   };
 
-  const handleCreateEvent = () => {
+  const handleCreateEvent = async () => {
     if (!selectedDate || !eventForm.title.trim()) return;
 
     const [hours, minutes] = eventForm.time.split(':').map(Number);
@@ -136,10 +146,11 @@ export const Calendar: React.FC<CalendarProps> = ({
       reminderMinutes: eventForm.reminderMinutes
     };
 
-    onCreateEvent(newEvent);
+    const savedEvent = await onCreateEvent(newEvent);
 
-    // Create reminder if requested
-    if (eventForm.hasReminder) {
+    // Create reminder if requested, and only if the event itself was saved —
+    // a reminder for an event that does not exist is worse than none.
+    if (eventForm.hasReminder && savedEvent) {
       const reminderTime = new Date(eventDate);
       reminderTime.setMinutes(reminderTime.getMinutes() - eventForm.reminderMinutes);
 
@@ -148,7 +159,7 @@ export const Calendar: React.FC<CalendarProps> = ({
         title: `Reminder: ${eventForm.title}`,
         description: `Upcoming ${eventForm.type}: ${eventForm.title}`,
         reminderTime,
-        eventId: newEvent.id,
+        eventId: savedEvent.id,
         type: 'event-reminder',
         isCompleted: false,
         createdBy: currentUser.id
