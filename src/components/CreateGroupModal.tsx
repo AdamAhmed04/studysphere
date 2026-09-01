@@ -95,6 +95,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="e.g., Calculus Study Group"
+              maxLength={100}
               required
             />
           </div>
@@ -109,6 +110,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
               rows={3}
               placeholder="What's this group about?"
+              maxLength={2000}
             />
           </div>
 

@@ -712,6 +712,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder="e.g., Mathematics, History, Programming..."
+              maxLength={200}
               className="w-full px-4 py-3 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-base min-h-[44px]"
             />
           </div>

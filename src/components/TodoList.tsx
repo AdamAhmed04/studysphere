@@ -175,6 +175,7 @@ export const TodoList: React.FC<TodoListProps> = ({
               <input
                 type="text"
                 placeholder="Task title..."
+                maxLength={500}
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[44px] text-base"
@@ -185,6 +186,7 @@ export const TodoList: React.FC<TodoListProps> = ({
             <div>
               <textarea
                 placeholder="Description (optional)..."
+                maxLength={2000}
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
@@ -222,6 +224,7 @@ export const TodoList: React.FC<TodoListProps> = ({
                 <input
                   type="text"
                   placeholder="e.g., Study, Work"
+                  maxLength={100}
                   value={formData.category}
                   onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[44px] text-base"

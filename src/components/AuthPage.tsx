@@ -427,6 +427,7 @@ export const AuthPage: React.FC<AuthPageProps> = () => {
                           errors.username ? 'border-red-500' : 'border-gray-300'
                         }`}
                         placeholder="Choose a username"
+                        maxLength={100}
                       />
                     </div>
                     {errors.username && <p className="mt-1 text-sm text-red-600">{errors.username}</p>}
@@ -536,6 +537,7 @@ export const AuthPage: React.FC<AuthPageProps> = () => {
                       value={formData.bio}
                       onChange={(e) => handleInputChange('bio', e.target.value)}
                       placeholder="Tell us about yourself..."
+                      maxLength={2000}
                       rows={3}
                       className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none theme-textbox"
                     />
@@ -551,6 +553,7 @@ export const AuthPage: React.FC<AuthPageProps> = () => {
                         value={formData.school}
                         onChange={(e) => handleInputChange('school', e.target.value)}
                         placeholder="e.g., Harvard University"
+                        maxLength={200}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
@@ -564,6 +567,7 @@ export const AuthPage: React.FC<AuthPageProps> = () => {
                         value={formData.studyField}
                         onChange={(e) => handleInputChange('studyField', e.target.value)}
                         placeholder="e.g., Computer Science"
+                        maxLength={200}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
@@ -591,6 +595,7 @@ export const AuthPage: React.FC<AuthPageProps> = () => {
                         value={newInterest}
                         onChange={(e) => setNewInterest(e.target.value)}
                         placeholder="Add an interest (e.g., Mathematics, History)"
+                        maxLength={50}
                         className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                       <button

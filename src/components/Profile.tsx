@@ -152,6 +152,7 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
                 rows={3}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 placeholder="Tell us about yourself..."
+                maxLength={2000}
               />
             </div>
 
@@ -164,6 +165,7 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
                   onChange={(e) => setEditData(prev => ({ ...prev, school: e.target.value }))}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="e.g., Harvard University"
+                  maxLength={200}
                 />
               </div>
               <div>
@@ -174,6 +176,7 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
                   onChange={(e) => setEditData(prev => ({ ...prev, studyField: e.target.value }))}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="e.g., Computer Science"
+                  maxLength={200}
                 />
               </div>
             </div>

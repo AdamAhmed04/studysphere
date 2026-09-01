@@ -206,6 +206,7 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                 errors.title ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="e.g., Calculus Study Session"
+              maxLength={200}
             />
             {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
           </div>
@@ -221,6 +222,7 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
               rows={3}
               placeholder="Meeting agenda, topics to cover, materials needed..."
+              maxLength={2000}
             />
           </div>
 
@@ -336,6 +338,7 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                   errors.location ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="e.g., Library Study Room 3, Coffee Shop on Main St"
+                maxLength={300}
               />
               {errors.location && <p className="mt-1 text-sm text-red-600">{errors.location}</p>}
             </div>

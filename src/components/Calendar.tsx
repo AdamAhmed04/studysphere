@@ -490,6 +490,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                   onChange={(e) => setEventForm(prev => ({ ...prev, title: e.target.value }))}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Event title"
+                  maxLength={200}
                 />
               </div>
               <div>
@@ -500,6 +501,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                   rows={3}
                   placeholder="Event description"
+                  maxLength={2000}
                 />
               </div>
               <div>
@@ -616,6 +618,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                   onChange={(e) => setReminderForm(prev => ({ ...prev, title: e.target.value }))}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   placeholder="Reminder title"
+                  maxLength={200}
                 />
               </div>
               <div>
@@ -626,6 +629,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
                   rows={3}
                   placeholder="What do you want to be reminded about?"
+                  maxLength={2000}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -697,6 +701,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                   onChange={(e) => setMeetingForm(prev => ({ ...prev, title: e.target.value }))}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Meeting title"
+                  maxLength={200}
                 />
               </div>
               <div>
@@ -707,6 +712,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                   rows={3}
                   placeholder="Meeting description"
+                  maxLength={2000}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
