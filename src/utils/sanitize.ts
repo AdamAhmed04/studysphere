@@ -38,9 +38,18 @@ export const escapeRegex = (string: string): string => {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
 
+/**
+ * Shortens text to at most maxLength characters, ellipsis included.
+ *
+ * The ellipsis used to be appended after cutting, so truncate(x, 2000)
+ * returned 2003 characters. That was invisible until the database grew length
+ * constraints: sanitizeInput caps a chat message at 2000, and the row was then
+ * rejected for being 2003 long. The budget has to include the marker.
+ */
 export const truncate = (text: string, maxLength: number): string => {
   if (text.length <= maxLength) return text;
-  return text.substring(0, maxLength) + '...';
+  if (maxLength <= 3) return text.substring(0, maxLength);
+  return text.substring(0, maxLength - 3) + '...';
 };
 
 export const validateEmail = (email: string): boolean => {

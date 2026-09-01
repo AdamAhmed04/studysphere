@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # Each step runs separately rather than relying on `npm run build`, which
+      # chains lint and tsc, so a failure names which check broke instead of
+      # just "build failed".
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      # No Supabase credentials here on purpose. src/lib/supabase.ts is null
+      # when the env vars are missing and every call site null-checks it, so the
+      # build has to succeed without them - and this proves it stays that way.
+      - name: Build
+        run: npx vite build
