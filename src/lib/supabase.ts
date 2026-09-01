@@ -36,4 +36,3 @@ export type UserProfile = Tables<'user_profiles'>;
 export type UserStats = Tables<'user_stats'>;
 
 /** Profile columns other users are allowed to read. */
-export type PublicProfile = Tables<'public_profiles'>;

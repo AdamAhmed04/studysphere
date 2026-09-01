@@ -16,28 +16,6 @@
  * renderer escapes it then.
  */
 
-export const sanitizeUrl = (url: string): string => {
-  try {
-    const parsed = new URL(url);
-    if (!['http:', 'https:'].includes(parsed.protocol)) {
-      return '';
-    }
-    return url;
-  } catch {
-    return '';
-  }
-};
-
-export const stripTags = (html: string): string => {
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html;
-  return tmp.textContent || tmp.innerText || '';
-};
-
-export const escapeRegex = (string: string): string => {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-};
-
 /**
  * Shortens text to at most maxLength characters, ellipsis included.
  *

@@ -3,7 +3,7 @@ import { calendarService, CalendarEventData } from '../services/calendarService'
 import { orUndefined, orFalse, asOneOf } from '../utils/rows';
 import { errorMessage } from '../utils/errors';
 
-export const EVENT_TYPES = ['meeting', 'reminder', 'study', 'exam', 'class', 'todo'] as const;
+const EVENT_TYPES = ['meeting', 'reminder', 'study', 'exam', 'class', 'todo'] as const;
 
 export interface CalendarEvent {
   id: string;

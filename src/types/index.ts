@@ -76,7 +76,6 @@ export interface TimerState {
   breakTimeElapsed: number; // in seconds
 }
 
-export type TimerTheme = 'cars' | 'pets' | 'cooking' | 'baking' | 'garden' | 'space' | 'ocean' | 'desert';
 
 
 export interface CalendarEvent {

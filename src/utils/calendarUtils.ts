@@ -1,3 +1,18 @@
+/*
+ * Only what the Calendar actually uses.
+ *
+ * This module also exported getEventTypeLabel, formatEventTime, formatEventDate,
+ * isEventToday, isEventUpcoming and sortEventsByDate, none of which had a single
+ * caller. Exported dead code is invisible to noUnusedLocals, which only sees
+ * within a module — the same blind spot that hid two unreachable components and
+ * a dead hook. Deleted rather than kept "just in case": git remembers, and an
+ * unused helper that drifts out of step with the schema is worse than no helper.
+ *
+ * sortEventsByDate was also quietly wrong, which is a fair argument for the
+ * deletion: it sorted in place, so it mutated the caller's array. Nothing
+ * noticed, because nothing called it.
+ */
+
 export const eventTypeColors = {
   meeting: '#3B82F6',    // Blue
   exam: '#EF4444',       // Red
@@ -18,38 +33,4 @@ export const eventTypeLabels = {
 
 export const getEventTypeColor = (type: keyof typeof eventTypeColors): string => {
   return eventTypeColors[type] || eventTypeColors.reminder;
-};
-
-export const getEventTypeLabel = (type: keyof typeof eventTypeLabels): string => {
-  return eventTypeLabels[type] || 'Event';
-};
-
-export const formatEventTime = (date: Date): string => {
-  return date.toLocaleTimeString('en-US', { 
-    hour: '2-digit', 
-    minute: '2-digit',
-    hour12: true 
-  });
-};
-
-export const formatEventDate = (date: Date): string => {
-  return date.toLocaleDateString('en-US', { 
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-};
-
-export const isEventToday = (date: Date): boolean => {
-  const today = new Date();
-  return date.toDateString() === today.toDateString();
-};
-
-export const isEventUpcoming = (date: Date): boolean => {
-  return new Date(date) >= new Date();
-};
-
-export const sortEventsByDate = <T extends { date: Date | string }>(events: T[]): T[] => {
-  return events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 };

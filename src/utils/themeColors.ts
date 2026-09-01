@@ -56,26 +56,3 @@ export const themeColors: ThemeColor[] = [
     lightVariant: '#ecfdf5'
   }
 ];
-
-export const getColorByName = (name: string): ThemeColor | undefined => {
-  return themeColors.find(color => color.name === name);
-};
-
-export const getContrastColor = (backgroundColor: string): string => {
-  // Simple contrast calculation - return dark text for light backgrounds
-  const hex = backgroundColor.replace('#', '');
-  const r = parseInt(hex.substr(0, 2), 16);
-  const g = parseInt(hex.substr(2, 2), 16);
-  const b = parseInt(hex.substr(4, 2), 16);
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-  return brightness > 128 ? '#1f2937' : '#ffffff';
-};
-
-export const getHoverColor = (color: string): string => {
-  // Darken the color slightly for hover effect
-  const hex = color.replace('#', '');
-  const r = Math.max(0, parseInt(hex.substr(0, 2), 16) - 20);
-  const g = Math.max(0, parseInt(hex.substr(2, 2), 16) - 20);
-  const b = Math.max(0, parseInt(hex.substr(4, 2), 16) - 20);
-  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-};
