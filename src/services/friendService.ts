@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import { requireUuid } from '../utils/ids';
 import { orUndefined, orEmpty } from '../utils/rows';
 
 export interface FriendRequest {
@@ -93,7 +94,7 @@ class FriendService {
       const { data: existing, error: existingError } = await supabase
         .from('friends')
         .select('id, status')
-        .or(`and(user_id.eq.${user.id},friend_user_id.eq.${friendUserId}),and(user_id.eq.${friendUserId},friend_user_id.eq.${user.id})`);
+        .or(`and(user_id.eq.${requireUuid(user.id, "user id")},friend_user_id.eq.${requireUuid(friendUserId, "friend id")}),and(user_id.eq.${requireUuid(friendUserId, "friend id")},friend_user_id.eq.${requireUuid(user.id, "user id")})`);
 
       if (existingError) throw existingError;
 
@@ -228,7 +229,7 @@ class FriendService {
         .from('friends')
         .select('user_id, friend_user_id')
         .eq('status', 'accepted')
-        .or(`user_id.eq.${user.id},friend_user_id.eq.${user.id}`);
+        .or(`user_id.eq.${requireUuid(user.id, "user id")},friend_user_id.eq.${requireUuid(user.id, "user id")}`);
 
       if (friendshipsError) throw friendshipsError;
       if (!friendships || friendships.length === 0) return [];
@@ -322,7 +323,7 @@ class FriendService {
     const { error } = await supabase
       .from('friends')
       .delete()
-      .or(`and(user_id.eq.${user.id},friend_user_id.eq.${friendId}),and(user_id.eq.${friendId},friend_user_id.eq.${user.id})`);
+      .or(`and(user_id.eq.${requireUuid(user.id, "user id")},friend_user_id.eq.${requireUuid(friendId, "friend id")}),and(user_id.eq.${requireUuid(friendId, "friend id")},friend_user_id.eq.${requireUuid(user.id, "user id")})`);
 
     if (error) throw error;
   }

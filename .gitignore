@@ -24,6 +24,9 @@ dist-ssr
 *.sw?
 
 # Environment files (local only)
+# .env itself is listed too: it was not, and a single stray file would have
+# been committed with the project keys in it.
+.env
 .env.local
 .env.development.local
 .env.test.local

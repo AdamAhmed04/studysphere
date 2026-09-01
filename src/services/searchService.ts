@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import { requireUuid } from '../utils/ids';
 import { orUndefined, orEmpty } from '../utils/rows';
 
 export interface SearchResult {
@@ -87,7 +88,7 @@ class SearchService {
           .from('friends')
           .select('user_id, friend_user_id')
           .eq('status', 'accepted')
-          .or(`user_id.eq.${user.id},friend_user_id.eq.${user.id}`)
+          .or(`user_id.eq.${requireUuid(user.id, "user id")},friend_user_id.eq.${requireUuid(user.id, "user id")}`)
       ]);
 
       const stats = statsData.data || [];
@@ -142,7 +143,7 @@ class SearchService {
           .from('friends')
           .select('id')
           .eq('status', 'accepted')
-          .or(`and(user_id.eq.${user.id},friend_user_id.eq.${userId}),and(user_id.eq.${userId},friend_user_id.eq.${user.id})`)
+          .or(`and(user_id.eq.${requireUuid(user.id, "user id")},friend_user_id.eq.${requireUuid(userId, "user id")}),and(user_id.eq.${requireUuid(userId, "user id")},friend_user_id.eq.${requireUuid(user.id, "user id")})`)
           .maybeSingle()
       ]);
 
