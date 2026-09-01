@@ -4,6 +4,7 @@ import type { User, Friend } from '../types';
 import { searchService, SearchResult } from '../services/searchService';
 import { useDebounce } from '../hooks/useDebounce';
 import { Avatar } from './Avatar';
+import { ProfilePreview } from './ProfilePreview';
 
 interface SearchPageProps {
   onAddFriend: (userId: string, name?: string) => void;
@@ -17,6 +18,7 @@ export const SearchPage: React.FC<SearchPageProps> = ({ onAddFriend, currentUser
   const [isSearching, setIsSearching] = useState(false);
   const [searchFilter, setSearchFilter] = useState<'all' | 'subject'>('all');
   const [selectedSubject, setSelectedSubject] = useState('');
+  const [previewUser, setPreviewUser] = useState<SearchResult | null>(null);
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
   const performSearch = useCallback(async (query: string) => {
@@ -63,6 +65,7 @@ export const SearchPage: React.FC<SearchPageProps> = ({ onAddFriend, currentUser
     // results, and an id is the more direct identifier anyway.
     onAddFriend(userId, name);
     setSearchResults(prev => prev.filter(user => user.user_id !== userId));
+    setPreviewUser(null);
   };
 
   const clearSearch = () => {
@@ -172,16 +175,27 @@ export const SearchPage: React.FC<SearchPageProps> = ({ onAddFriend, currentUser
                 <div key={user.user_id} className="border border-gray-200 rounded-xl p-6 hover:border-blue-300 transition-colors">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-4 flex-1">
-                      <Avatar
-                        name={user.name}
-                        src={user.avatar_url}
-                        className="w-16 h-16 flex-shrink-0"
-                        textClassName="text-xl"
-                      />
+                      <button
+                        onClick={() => setPreviewUser(user)}
+                        className="flex-shrink-0 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        aria-label={`View ${user.name}'s profile`}
+                      >
+                        <Avatar
+                          name={user.name}
+                          src={user.avatar_url}
+                          className="w-16 h-16"
+                          textClassName="text-xl"
+                        />
+                      </button>
                       
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-2">
-                          <h4 className="text-lg font-semibold text-gray-800">{user.name}</h4>
+                          <button
+                            onClick={() => setPreviewUser(user)}
+                            className="text-lg font-semibold text-gray-800 hover:text-blue-600 hover:underline transition-colors text-left"
+                          >
+                            {user.name}
+                          </button>
                         </div>
 
                         {/* Email is no longer exposed in search results. School
@@ -285,6 +299,14 @@ export const SearchPage: React.FC<SearchPageProps> = ({ onAddFriend, currentUser
             </div>
           </div>
         </div>
+      )}
+
+      {previewUser && (
+        <ProfilePreview
+          user={previewUser}
+          onAddFriend={handleAddFromSearch}
+          onClose={() => setPreviewUser(null)}
+        />
       )}
     </div>
   );

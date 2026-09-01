@@ -3,15 +3,31 @@ import { requireUuid } from '../utils/ids';
 import { orUndefined, orEmpty } from '../utils/rows';
 
 export interface SearchResult {
+  /*
+   * Identity. Always present, for a private account as much as a public one:
+   * you can find someone and send them a request without seeing anything
+   * about them.
+   */
   user_id: string;
   name: string;
   avatar_url?: string;
+
+  /*
+   * Detail. Populated only when `can_see_details` is true - that is, when the
+   * account is public, is your own, or belongs to an accepted friend.
+   */
   bio?: string;
   school?: string;
   study_field?: string;
+  grade?: string;
+  /** Derived server-side. The date of birth itself is never sent. */
+  age?: number;
   interests: string[];
+
   total_study_time: number;
   is_friend: boolean;
+  is_public: boolean;
+  can_see_details: boolean;
 }
 
 /**
@@ -108,6 +124,9 @@ class SearchService {
         interests: profile.interests || [],
         total_study_time: stats.find(s => s.user_id === profile.user_id)?.total_focus_minutes || 0,
         is_friend: friendIds.has(orEmpty(profile.user_id)),
+        // public_profiles filters to public rows, so anything here is both.
+        is_public: true,
+        can_see_details: true,
       }));
     } catch (error) {
       console.error('Error searching users:', error);
@@ -157,6 +176,8 @@ class SearchService {
         interests: profile.interests || [],
         total_study_time: statsData.data?.total_focus_minutes || 0,
         is_friend: !!friendsData.data,
+        is_public: true,
+        can_see_details: true,
       };
     } catch (error) {
       console.error('Error fetching user:', error);

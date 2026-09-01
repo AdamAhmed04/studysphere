@@ -131,7 +131,15 @@ logged. They are cheap to reintroduce by accident.
    characters with upper, lower, digit and symbol — the strongest server-side
    password rules Supabase offers — so the specific gap is the
    HaveIBeenPwned check, which no client-side code can stand in for.
-2. Direct messages and video calling are unbuilt; both show an honest toast
+2. `supabase/migrations/20260902010000_discoverable_profiles.sql` is written
+   but **not applied** — it needs database access. Until it is, search still
+   reads `public_profiles`, so private accounts remain entirely invisible
+   rather than findable-but-quiet. `searchService` sets `is_public` and
+   `can_see_details` to `true` literals for exactly this reason; switching the
+   query to `discoverable_profiles` and reading the real columns is the whole
+   client-side change. Do not make that switch before the view exists — search
+   would fail outright.
+3. Direct messages and video calling are unbuilt; both show an honest toast
    rather than faking it. DMs would mean two-member private groups reusing the
    existing chat.
 
