@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { TimerState } from '../types';
+import { showNotification } from '../utils/safeNotification';
 
 /**
  * Below this, a stopped session is discarded rather than recorded.
@@ -30,25 +31,21 @@ const DEFAULT_TIMER_STATE: TimerState = {
   breakTimeElapsed: 0,
 };
 
-const showNotification = (title: string, body: string, icon?: string) => {
-  if ('Notification' in window && Notification.permission === 'granted') {
-    const notification = new Notification(title, {
-      body,
-      icon: icon || '/vite.svg',
-      badge: '/vite.svg',
-      tag: 'studysphere-timer',
-      requireInteraction: false,
-      silent: false
-    });
-    
-    // Auto-close after 5 seconds
-    setTimeout(() => {
-      notification.close();
-    }, 5000);
-    
-    return notification;
-  }
-  return null;
+/*
+ * The timer's own notifications. Same shape as before - a five second
+ * auto-close and a shared tag so a new one replaces the last - but the
+ * wrapper owns how they are delivered now.
+ */
+const notifyFromTimer = (title: string, body: string, icon?: string) => {
+  showNotification(title, {
+    body,
+    icon: icon || '/vite.svg',
+    badge: '/vite.svg',
+    tag: 'studysphere-timer',
+    requireInteraction: false,
+    silent: false,
+    autoCloseMs: 5000,
+  });
 };
 
 export const useTimer = () => {
@@ -145,7 +142,7 @@ export const useTimer = () => {
             break;
             
           case 'BREAK_STARTED':
-            showNotification(
+            notifyFromTimer(
               '☕ Break Time!',
               `Time for a ${Math.floor(data.breakDuration)}-minute break from ${data.subject}. Break ${data.breakNumber} of ${data.totalBreaks}.`,
               '☕'
@@ -153,7 +150,7 @@ export const useTimer = () => {
             break;
             
           case 'BREAK_ENDED':
-            showNotification(
+            notifyFromTimer(
               '📚 Back to Study!',
               `Break is over! Time to get back to studying ${data.subject}.`,
               '📚'
@@ -201,7 +198,8 @@ export const useTimer = () => {
 
   // Permission is requested from Settings, behind a real user gesture.
   // Asking on mount is ignored or denied by browsers, and the timer simply
-  // reads Notification.permission when it wants to show something.
+  // asks the wrapper to show something - which no-ops unless permission was
+  // granted.
 
   const startTimer = (subject: string, duration?: number, breakCount?: number, breakDuration?: number) => {
     const timerData = {
@@ -217,7 +215,7 @@ export const useTimer = () => {
     }
     
     // Show notification that timer started
-    showNotification(
+    notifyFromTimer(
       '🎯 Study Session Started!',
       `Started studying ${subject} for ${Math.floor((duration || timer.targetDuration) / 60)} minutes.`,
       '🎯'

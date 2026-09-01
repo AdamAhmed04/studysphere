@@ -4,6 +4,7 @@ import { useTimerContext } from '../contexts/TimerContext';
 import { Celebration } from './Celebration';
 import { colorThemes, getColorTheme } from '../utils/themes';
 import { useTheme } from '../hooks/useTheme';
+import { isNotificationSupported, getNotificationPermission } from '../utils/safeNotification';
 interface TimerProps {
   onSessionComplete: (duration: number, subject: string, startTime: Date, endTime: Date) => void;
 }
@@ -69,8 +70,8 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
 
   // Show notification permission status
   const getNotificationStatus = () => {
-    if (!('Notification' in window)) return 'Not supported';
-    switch (Notification.permission) {
+    if (!isNotificationSupported()) return 'Not supported';
+    switch (getNotificationPermission()) {
       case 'granted': return 'Enabled ✅';
       case 'denied': return 'Disabled ❌';
       default: return 'Not requested';
@@ -526,7 +527,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
             <span className="text-blue-700 font-medium">Break Notifications:</span>
             <span className="text-blue-600">{getNotificationStatus()}</span>
           </div>
-          {'Notification' in window && Notification.permission !== 'granted' && (
+          {isNotificationSupported() && getNotificationPermission() !== 'granted' && (
             <p className="text-xs text-blue-600 mt-1">Enable notifications to get break reminders when away from the app.</p>
           )}
         </div>

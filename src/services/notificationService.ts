@@ -3,6 +3,7 @@ import { orEmpty, orFalse, asOneOf } from '../utils/rows';
 import type { Tables, Json } from '../types/database';
 import {
   isNotificationSupported,
+  getNotificationPermission,
   showNotification,
 } from '../utils/safeNotification';
 
@@ -48,7 +49,7 @@ class NotificationService {
    */
   private maybeShowBrowserNotification(n: Notification): void {
     if (!isNotificationSupported()) return;
-    if (Notification.permission !== 'granted') return;
+    if (getNotificationPermission() !== 'granted') return;
     showNotification(n.title || 'New notification', {
       // Was `n.message ?? n.message` — the fallback was the same expression as
       // the value, so it could never do anything.

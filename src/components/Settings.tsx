@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { User, Lock, Globe, Bell, Save, Paintbrush, LogOut } from 'lucide-react';
 import { ThemeCustomizer } from './ThemeCustomizer';
 import { useAuthContext } from '../contexts/AuthContext';
-import { isNotificationSupported, requestNotificationPermission } from '../utils/safeNotification';
+import { isNotificationSupported, getNotificationPermission, requestNotificationPermission } from '../utils/safeNotification';
 
 interface UserProfileSummary {
   name: string;
@@ -27,7 +27,7 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
 
   const notificationsSupported = isNotificationSupported();
   const [notificationPermission, setNotificationPermission] =
-    useState<NotificationPermission>(notificationsSupported ? Notification.permission : 'denied');
+    useState<NotificationPermission>(getNotificationPermission());
 
   const handleEnableNotifications = async () => {
     if (!notificationsSupported || notificationPermission !== 'default') return;
