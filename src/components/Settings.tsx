@@ -120,10 +120,10 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
 
         <div className="grid md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="settings-display-name" className="block text-sm font-medium text-gray-700 mb-2">
               Display Name
             </label>
-            <input
+            <input id="settings-display-name"
               type="text"
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
@@ -144,10 +144,10 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
             plus its confirmation flow, which is a feature rather than a field.
           */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="settings-email-address" className="block text-sm font-medium text-gray-700 mb-2">
               Email Address
             </label>
-            <input
+            <input id="settings-email-address"
               type="email"
               value={formData.email}
               readOnly
@@ -162,11 +162,11 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
 
         {/* Interests */}
         <div className="mt-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="settings-study-interests" className="block text-sm font-medium text-gray-700 mb-2">
             Study Interests
           </label>
           <div className="flex space-x-3 mb-3">
-            <input
+            <input id="settings-study-interests"
               type="text"
               value={newInterest}
               onChange={(e) => setNewInterest(e.target.value)}

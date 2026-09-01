@@ -361,14 +361,14 @@ export const AuthPage: React.FC = () => {
             {showForgotPassword ? (
               <form onSubmit={handleForgotPassword} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="authpage-email-address-2" className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <Mail className="h-5 w-5 text-gray-400" />
                     </div>
-                    <input
+                    <input id="authpage-email-address-2"
                       type="email"
                       value={resetEmail}
                       onChange={(e) => setResetEmail(e.target.value)}
@@ -410,14 +410,14 @@ export const AuthPage: React.FC = () => {
               {isSignUp && signUpStep === 1 && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="authpage-username" className="block text-sm font-medium text-gray-700 mb-2">
                       Username
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <User className="h-5 w-5 text-gray-400" />
                       </div>
-                      <input
+                      <input id="authpage-username"
                         type="text"
                         value={formData.username}
                         onChange={(e) => handleInputChange('username', e.target.value)}
@@ -438,10 +438,10 @@ export const AuthPage: React.FC = () => {
                 <div>
                   {/* Profile Photo Upload */}
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                    <div id="authpage-profile-photo" className="block text-sm font-medium text-gray-700 mb-3">
                       Profile Photo (Optional)
-                    </label>
-                    <div className="flex items-center space-x-4">
+                    </div>
+                    <div role="group" aria-labelledby="authpage-profile-photo" className="flex items-center space-x-4">
                       <div className="relative">
                         {avatarPreview ? (
                           <div className="relative">
@@ -492,10 +492,10 @@ export const AuthPage: React.FC = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="authpage-date-of-birth" className="block text-sm font-medium text-gray-700 mb-2">
                         Date of Birth
                       </label>
-                      <input
+                      <input id="authpage-date-of-birth"
                         type="date"
                         value={formData.dateOfBirth}
                         onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
@@ -504,10 +504,10 @@ export const AuthPage: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="authpage-grade-year" className="block text-sm font-medium text-gray-700 mb-2">
                         Grade/Year
                       </label>
-                      <select
+                      <select id="authpage-grade-year"
                         value={formData.grade}
                         onChange={(e) => handleInputChange('grade', e.target.value)}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -528,10 +528,10 @@ export const AuthPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="authpage-bio" className="block text-sm font-medium text-gray-700 mb-2">
                       Bio
                     </label>
-                    <textarea
+                    <textarea id="authpage-bio"
                       value={formData.bio}
                       onChange={(e) => handleInputChange('bio', e.target.value)}
                       placeholder="Tell us about yourself..."
@@ -543,10 +543,10 @@ export const AuthPage: React.FC = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="authpage-school-university" className="block text-sm font-medium text-gray-700 mb-2">
                         School/University
                       </label>
-                      <input
+                      <input id="authpage-school-university"
                         type="text"
                         value={formData.school}
                         onChange={(e) => handleInputChange('school', e.target.value)}
@@ -557,10 +557,10 @@ export const AuthPage: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="authpage-field-of-study" className="block text-sm font-medium text-gray-700 mb-2">
                         Field of Study
                       </label>
-                      <input
+                      <input id="authpage-field-of-study"
                         type="text"
                         value={formData.studyField}
                         onChange={(e) => handleInputChange('studyField', e.target.value)}
@@ -572,10 +572,10 @@ export const AuthPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="authpage-expected-graduation-date" className="block text-sm font-medium text-gray-700 mb-2">
                       Expected Graduation Date
                     </label>
-                    <input
+                    <input id="authpage-expected-graduation-date"
                       type="date"
                       value={formData.graduationDate}
                       onChange={(e) => handleInputChange('graduationDate', e.target.value)}
@@ -584,11 +584,11 @@ export const AuthPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="authpage-interests" className="block text-sm font-medium text-gray-700 mb-2">
                       Interests
                     </label>
                     <div className="flex space-x-3 mb-3">
-                      <input
+                      <input id="authpage-interests"
                         type="text"
                         value={newInterest}
                         onChange={(e) => setNewInterest(e.target.value)}
@@ -646,14 +646,14 @@ export const AuthPage: React.FC = () => {
 
               {(!isSignUp || signUpStep === 1) && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="authpage-email-address" className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <Mail className="h-5 w-5 text-gray-400" />
                     </div>
-                    <input
+                    <input id="authpage-email-address"
                       type="email"
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
@@ -669,14 +669,14 @@ export const AuthPage: React.FC = () => {
 
               {(!isSignUp || signUpStep === 1) && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="authpage-password" className="block text-sm font-medium text-gray-700 mb-2">
                     Password
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <Lock className="h-5 w-5 text-gray-400" />
                     </div>
-                    <input
+                    <input id="authpage-password"
                       type={showPassword ? 'text' : 'password'}
                       value={formData.password}
                       onChange={(e) => handleInputChange('password', e.target.value)}
@@ -742,14 +742,14 @@ export const AuthPage: React.FC = () => {
 
               {isSignUp && signUpStep === 1 && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="authpage-confirm-password" className="block text-sm font-medium text-gray-700 mb-2">
                     Confirm Password
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <Lock className="h-5 w-5 text-gray-400" />
                     </div>
-                    <input
+                    <input id="authpage-confirm-password"
                       type={showConfirmPassword ? 'text' : 'password'}
                       value={formData.confirmPassword}
                       onChange={(e) => handleInputChange('confirmPassword', e.target.value)}

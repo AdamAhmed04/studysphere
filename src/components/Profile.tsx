@@ -125,8 +125,8 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
-                <input
+                <label htmlFor="profile-name" className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                <input id="profile-name"
                   type="text"
                   value={editData.name}
                   onChange={(e) => setEditData(prev => ({ ...prev, name: e.target.value }))}
@@ -134,8 +134,8 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                <input
+                <label htmlFor="profile-email" className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input id="profile-email"
                   type="email"
                   value={editData.email}
                   onChange={(e) => setEditData(prev => ({ ...prev, email: e.target.value }))}
@@ -145,8 +145,8 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
-              <textarea
+              <label htmlFor="profile-bio" className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+              <textarea id="profile-bio"
                 value={editData.bio || ''}
                 onChange={(e) => setEditData(prev => ({ ...prev, bio: e.target.value }))}
                 rows={3}
@@ -158,8 +158,8 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">School/University</label>
-                <input
+                <label htmlFor="profile-school-university" className="block text-sm font-medium text-gray-700 mb-2">School/University</label>
+                <input id="profile-school-university"
                   type="text"
                   value={editData.school || ''}
                   onChange={(e) => setEditData(prev => ({ ...prev, school: e.target.value }))}
@@ -169,8 +169,8 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Field of Study</label>
-                <input
+                <label htmlFor="profile-field-of-study" className="block text-sm font-medium text-gray-700 mb-2">Field of Study</label>
+                <input id="profile-field-of-study"
                   type="text"
                   value={editData.studyField || ''}
                   onChange={(e) => setEditData(prev => ({ ...prev, studyField: e.target.value }))}

@@ -101,14 +101,14 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
       {showAddFriend && (
         <div className="mb-6 p-4 bg-gray-50 rounded-xl">
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="friendslist-search-for-friends" className="block text-sm font-medium text-gray-700 mb-2">
               Search for Friends
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
-              <input
+              <input id="friendslist-search-for-friends"
                 type="text"
                 placeholder="Search by name, school, or subject..."
                 value={searchQuery}
@@ -185,11 +185,11 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
 
           <div className="border-t border-gray-200 pt-4">
             <form onSubmit={handleAddFriend}>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="friendslist-or-add-by-email" className="block text-sm font-medium text-gray-700 mb-2">
                 Or add by email directly
               </label>
               <div className="flex space-x-3">
-                <input
+                <input id="friendslist-or-add-by-email"
                   type="email"
                   placeholder="Friend's email address"
                   value={friendEmail}

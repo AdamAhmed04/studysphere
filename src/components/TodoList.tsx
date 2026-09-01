@@ -198,8 +198,8 @@ export const TodoList: React.FC<TodoListProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
-                <input
+                <label htmlFor="todolist-due-date" className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                <input id="todolist-due-date"
                   type="date"
                   value={formData.dueDate}
                   onChange={(e) => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
@@ -209,8 +209,8 @@ export const TodoList: React.FC<TodoListProps> = ({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
-                <select
+                <label htmlFor="todolist-priority" className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                <select id="todolist-priority"
                   value={formData.priority}
                   onChange={(e) => setFormData(prev => ({ ...prev, priority: asOneOf(e.target.value, PRIORITIES, 'medium') }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[44px] text-base"
@@ -222,8 +222,8 @@ export const TodoList: React.FC<TodoListProps> = ({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                <input
+                <label htmlFor="todolist-category" className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <input id="todolist-category"
                   type="text"
                   placeholder="e.g., Study, Work"
                   maxLength={100}

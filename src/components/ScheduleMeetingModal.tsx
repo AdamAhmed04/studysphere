@@ -195,10 +195,10 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
         <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-80px)]">
           {/* Meeting Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="schedulemeetingmodal-meeting-title" className="block text-sm font-medium text-gray-700 mb-2">
               Meeting Title *
             </label>
-            <input
+            <input id="schedulemeetingmodal-meeting-title"
               type="text"
               value={formData.title}
               onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
@@ -213,10 +213,10 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="schedulemeetingmodal-description" className="block text-sm font-medium text-gray-700 mb-2">
               Description
             </label>
-            <textarea
+            <textarea id="schedulemeetingmodal-description"
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
@@ -229,10 +229,10 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
           {/* Date and Time */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="schedulemeetingmodal-date" className="block text-sm font-medium text-gray-700 mb-2">
                 Date *
               </label>
-              <input
+              <input id="schedulemeetingmodal-date"
                 type="date"
                 value={formData.date}
                 onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
@@ -245,10 +245,10 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="schedulemeetingmodal-time" className="block text-sm font-medium text-gray-700 mb-2">
                 Time *
               </label>
-              <input
+              <input id="schedulemeetingmodal-time"
                 type="time"
                 value={formData.time}
                 onChange={(e) => setFormData(prev => ({ ...prev, time: e.target.value }))}
@@ -262,11 +262,11 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
 
           {/* Duration */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="schedulemeetingmodal-duration-minutes" className="block text-sm font-medium text-gray-700 mb-2">
               Duration (minutes)
             </label>
             <div className="flex items-center space-x-4">
-              <input
+              <input id="schedulemeetingmodal-duration-minutes"
                 type="number"
                 value={formData.duration}
                 onChange={(e) => setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) || 60 }))}
@@ -298,10 +298,10 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
 
           {/* Meeting Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <div id="meeting-type-label" className="block text-sm font-medium text-gray-700 mb-3">
               Meeting Type
-            </label>
-            <div className="grid grid-cols-3 gap-3">
+            </div>
+            <div role="group" aria-labelledby="meeting-type-label" className="grid grid-cols-3 gap-3">
               {([
                 { type: 'video', label: 'Video Call', icon: Video },
                 { type: 'in-person', label: 'In Person', icon: MapPin },
@@ -327,10 +327,10 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
           {/* Location (for in-person meetings) */}
           {formData.meetingType === 'in-person' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="schedulemeetingmodal-location" className="block text-sm font-medium text-gray-700 mb-2">
                 Location *
               </label>
-              <input
+              <input id="schedulemeetingmodal-location"
                 type="text"
                 value={formData.location}
                 onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
@@ -347,10 +347,10 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
           {/* Participants */}
           {!selectedGroup && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <div id="meeting-participants-label" className="block text-sm font-medium text-gray-700 mb-3">
                 Participants ({formData.selectedParticipants.length} selected)
-              </label>
-              <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg">
+              </div>
+              <div role="group" aria-labelledby="meeting-participants-label" className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg">
                 {friends.length === 0 ? (
                   <div className="p-4 text-center text-gray-500">
                     <Users size={32} className="mx-auto mb-2 opacity-50" />
@@ -397,10 +397,10 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
 
           {/* Reminders */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <div id="meeting-reminders-label" className="block text-sm font-medium text-gray-700 mb-3">
               Reminders
-            </label>
-            <div className="flex flex-wrap gap-2">
+            </div>
+            <div role="group" aria-labelledby="meeting-reminders-label" className="flex flex-wrap gap-2">
               {[5, 15, 30, 60, 1440].map(minutes => (
                 <button
                   key={minutes}

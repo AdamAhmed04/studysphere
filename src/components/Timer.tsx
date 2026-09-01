@@ -589,10 +589,10 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
             <div className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4">
               <h4 className="text-xl font-bold text-gray-800 mb-4">Set Study Duration</h4>
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="timer-study-duration-minutes" className="block text-sm font-medium text-gray-700 mb-2">
                   Study Duration (minutes)
                 </label>
-                <input
+                <input id="timer-study-duration-minutes"
                   type="number"
                   min="1"
                   max="480"
@@ -615,10 +615,10 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
               </div>
               
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="timer-number-of-breaks" className="block text-sm font-medium text-gray-700 mb-2">
                   Number of Breaks
                 </label>
-                <input
+                <input id="timer-number-of-breaks"
                   type="number"
                   min="0"
                   max="10"
@@ -642,10 +642,10 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
               
               {breakCount > 0 && (
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="timer-break-duration-minutes" className="block text-sm font-medium text-gray-700 mb-2">
                     Break Duration (minutes)
                   </label>
-                  <input
+                  <input id="timer-break-duration-minutes"
                     type="number"
                     min="1"
                     max="30"

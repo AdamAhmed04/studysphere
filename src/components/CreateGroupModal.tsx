@@ -86,10 +86,10 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-80px)]">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="creategroupmodal-group-name" className="block text-sm font-medium text-gray-700 mb-2">
               Group Name *
             </label>
-            <input
+            <input id="creategroupmodal-group-name"
               type="text"
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
@@ -101,10 +101,10 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="creategroupmodal-description" className="block text-sm font-medium text-gray-700 mb-2">
               Description
             </label>
-            <textarea
+            <textarea id="creategroupmodal-description"
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
@@ -115,10 +115,10 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="creategroupmodal-subject-optional" className="block text-sm font-medium text-gray-700 mb-2">
               Subject (Optional)
             </label>
-            <select
+            <select id="creategroupmodal-subject-optional"
               value={formData.subject}
               onChange={(e) => setFormData(prev => ({ ...prev, subject: e.target.value }))}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -170,10 +170,10 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <div id="creategroup-add-friends" className="block text-sm font-medium text-gray-700 mb-3">
               Add Friends ({formData.selectedMembers.length} selected)
-            </label>
-            <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg">
+            </div>
+            <div role="group" aria-labelledby="creategroup-add-friends" className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg">
               {friends.length === 0 ? (
                 <div className="p-4 text-center text-gray-500">
                   <Users size={32} className="mx-auto mb-2 opacity-50" />

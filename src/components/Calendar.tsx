@@ -505,8 +505,8 @@ export const Calendar: React.FC<CalendarProps> = ({
             <h4 className="text-xl font-bold text-gray-800 mb-4">Create Event</h4>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                <input
+                <label htmlFor="calendar-title-3" className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                <input id="calendar-title-3"
                   type="text"
                   value={eventForm.title}
                   onChange={(e) => setEventForm(prev => ({ ...prev, title: e.target.value }))}
@@ -516,8 +516,8 @@ export const Calendar: React.FC<CalendarProps> = ({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                <textarea
+                <label htmlFor="calendar-description-3" className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea id="calendar-description-3"
                   value={eventForm.description}
                   onChange={(e) => setEventForm(prev => ({ ...prev, description: e.target.value }))}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
@@ -527,8 +527,8 @@ export const Calendar: React.FC<CalendarProps> = ({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
-                <input
+                <label htmlFor="calendar-time-3" className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                <input id="calendar-time-3"
                   type="time"
                   value={eventForm.time}
                   onChange={(e) => setEventForm(prev => ({ ...prev, time: e.target.value }))}
@@ -536,8 +536,8 @@ export const Calendar: React.FC<CalendarProps> = ({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
-                <select
+                <label htmlFor="calendar-type" className="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                <select id="calendar-type"
                   value={eventForm.type}
                   onChange={(e) => setEventForm(prev => ({ 
                     ...prev, 
@@ -554,7 +554,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Preview</label>
+                <span className="block text-sm font-medium text-gray-700 mb-2">Preview</span>
                 <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
                   <div
                     className="w-4 h-4 rounded-full"
@@ -593,8 +593,8 @@ export const Calendar: React.FC<CalendarProps> = ({
               </div>
               {eventForm.hasReminder && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Remind me</label>
-                  <select
+                  <label htmlFor="calendar-remind-me" className="block text-sm font-medium text-gray-700 mb-2">Remind me</label>
+                  <select id="calendar-remind-me"
                     value={eventForm.reminderMinutes}
                     onChange={(e) => setEventForm(prev => ({ ...prev, reminderMinutes: parseInt(e.target.value) }))}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -633,8 +633,8 @@ export const Calendar: React.FC<CalendarProps> = ({
             <h4 className="text-xl font-bold text-gray-800 mb-4">Create Reminder</h4>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                <input
+                <label htmlFor="calendar-title-2" className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                <input id="calendar-title-2"
                   type="text"
                   value={reminderForm.title}
                   onChange={(e) => setReminderForm(prev => ({ ...prev, title: e.target.value }))}
@@ -644,8 +644,8 @@ export const Calendar: React.FC<CalendarProps> = ({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                <textarea
+                <label htmlFor="calendar-description-2" className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea id="calendar-description-2"
                   value={reminderForm.description}
                   onChange={(e) => setReminderForm(prev => ({ ...prev, description: e.target.value }))}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
@@ -656,8 +656,8 @@ export const Calendar: React.FC<CalendarProps> = ({
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                  <input
+                  <label htmlFor="calendar-date" className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                  <input id="calendar-date"
                     type="date"
                     value={reminderForm.date}
                     onChange={(e) => setReminderForm(prev => ({ ...prev, date: e.target.value }))}
@@ -666,8 +666,8 @@ export const Calendar: React.FC<CalendarProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
-                  <input
+                  <label htmlFor="calendar-time-2" className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                  <input id="calendar-time-2"
                     type="time"
                     value={reminderForm.time}
                     onChange={(e) => setReminderForm(prev => ({ ...prev, time: e.target.value }))}
@@ -676,8 +676,8 @@ export const Calendar: React.FC<CalendarProps> = ({
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Link to Event (Optional)</label>
-                <select
+                <label htmlFor="calendar-link-to-event-optional" className="block text-sm font-medium text-gray-700 mb-2">Link to Event (Optional)</label>
+                <select id="calendar-link-to-event-optional"
                   value={reminderForm.linkedEventId}
                   onChange={(e) => setReminderForm(prev => ({ ...prev, linkedEventId: e.target.value }))}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
@@ -716,8 +716,8 @@ export const Calendar: React.FC<CalendarProps> = ({
             <h4 className="text-xl font-bold text-gray-800 mb-4">Schedule Meeting</h4>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                <input
+                <label htmlFor="calendar-title" className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                <input id="calendar-title"
                   type="text"
                   value={meetingForm.title}
                   onChange={(e) => setMeetingForm(prev => ({ ...prev, title: e.target.value }))}
@@ -727,8 +727,8 @@ export const Calendar: React.FC<CalendarProps> = ({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                <textarea
+                <label htmlFor="calendar-description" className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea id="calendar-description"
                   value={meetingForm.description}
                   onChange={(e) => setMeetingForm(prev => ({ ...prev, description: e.target.value }))}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
@@ -739,8 +739,8 @@ export const Calendar: React.FC<CalendarProps> = ({
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
-                  <input
+                  <label htmlFor="calendar-time" className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                  <input id="calendar-time"
                     type="time"
                     value={meetingForm.time}
                     onChange={(e) => setMeetingForm(prev => ({ ...prev, time: e.target.value }))}
@@ -748,8 +748,8 @@ export const Calendar: React.FC<CalendarProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Duration (min)</label>
-                  <input
+                  <label htmlFor="calendar-duration-min" className="block text-sm font-medium text-gray-700 mb-2">Duration (min)</label>
+                  <input id="calendar-duration-min"
                     type="number"
                     value={meetingForm.duration}
                     onChange={(e) => setMeetingForm(prev => ({ ...prev, duration: parseInt(e.target.value) || 60 }))}
