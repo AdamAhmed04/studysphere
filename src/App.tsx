@@ -1,21 +1,21 @@
 import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
 import { Clock } from 'lucide-react';
-import { AuthPage } from './components/AuthPage';
-import { ResetPassword } from './components/ResetPassword';
+
+
 import { useAuthContext } from './contexts/AuthContext';
 import { Navigation } from './components/Navigation';
 import { Timer } from './components/Timer';
 import { StudyStats } from './components/StudyStats';
-import { FriendsList } from './components/FriendsList';
+
 import { Leaderboard } from './components/Leaderboard';
-import { GroupChat } from './components/GroupChat';
-import { Settings } from './components/Settings';
-import { Profile } from './components/Profile';
-import { Calendar } from './components/Calendar';
-import { SearchPage } from './components/SearchPage';
-import { ChatList } from './components/ChatList';
-import { CreateGroupModal } from './components/CreateGroupModal';
-import { ScheduleMeetingModal } from './components/ScheduleMeetingModal';
+
+
+
+
+
+
+
+
 import { UpcomingMeetings } from './components/UpcomingMeetings';
 import { SocialFeed } from './components/SocialFeed';
 import { TodoList } from './components/TodoList';
@@ -31,12 +31,24 @@ import { useReminders } from './hooks/useReminders';
 import { useTimerContext } from './contexts/TimerContext';
 import { useToast } from './contexts/ToastContext';
 import { NotificationsDropdown } from './components/NotificationsDropdown';
-import { FriendRequestsModal } from './components/FriendRequestsModal';
+
 import { groupService } from './services/groupService';
 import { notificationService } from './services/notificationService';
 const BubblePopGame = lazy(() => import('./components/BubblePopGame').then(module => ({ default: module.BubblePopGame })));
 const BlockDropGame = lazy(() => import('./components/BlockDropGame').then(module => ({ default: module.BlockDropGame })));
 const JumpingGame = lazy(() => import('./components/JumpingGame').then(module => ({ default: module.JumpingGame })));
+const AuthPage = lazy(() => import('./components/AuthPage').then(module => ({ default: module.AuthPage })));
+const ResetPassword = lazy(() => import('./components/ResetPassword').then(module => ({ default: module.ResetPassword })));
+const Calendar = lazy(() => import('./components/Calendar').then(module => ({ default: module.Calendar })));
+const SearchPage = lazy(() => import('./components/SearchPage').then(module => ({ default: module.SearchPage })));
+const ChatList = lazy(() => import('./components/ChatList').then(module => ({ default: module.ChatList })));
+const GroupChat = lazy(() => import('./components/GroupChat').then(module => ({ default: module.GroupChat })));
+const FriendsList = lazy(() => import('./components/FriendsList').then(module => ({ default: module.FriendsList })));
+const Settings = lazy(() => import('./components/Settings').then(module => ({ default: module.Settings })));
+const Profile = lazy(() => import('./components/Profile').then(module => ({ default: module.Profile })));
+const CreateGroupModal = lazy(() => import('./components/CreateGroupModal').then(module => ({ default: module.CreateGroupModal })));
+const ScheduleMeetingModal = lazy(() => import('./components/ScheduleMeetingModal').then(module => ({ default: module.ScheduleMeetingModal })));
+const FriendRequestsModal = lazy(() => import('./components/FriendRequestsModal').then(module => ({ default: module.FriendRequestsModal })));
 import { studySessionService } from './services/studySessionService';
 import { toLocalDateString } from './utils/dates';
 import { orUndefined, orEmpty, orFalse } from './utils/rows';
@@ -52,6 +64,21 @@ import type { UserProfile } from './lib/supabase';
  * should not read like an error - "Unknown" did.
  */
 const UNRESOLVED_AUTHOR = 'StudySphere user';
+
+/*
+ * Shown while a deferred chunk loads. The same treatment as the initial
+ * loading screen, so switching tabs does not flash something unfamiliar.
+ */
+const AppLoading = () => (
+  <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 flex items-center justify-center">
+    <div className="text-center">
+      <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+        <Clock className="text-white animate-spin" size={32} />
+      </div>
+      <p className="text-gray-600">Loading…</p>
+    </div>
+  </div>
+);
 
 function App() {
   const { user, profile, stats, loading, incrementStats, updateProfile, isAuthenticated } = useAuthContext();
@@ -632,12 +659,14 @@ function App() {
   // Show password reset page if user is resetting password
   if (isPasswordReset) {
     return (
+      <Suspense fallback={<AppLoading />}>
       <ResetPassword
         onComplete={() => {
           setIsPasswordReset(false);
           window.location.hash = '';
         }}
       />
+      </Suspense>
     );
   }
 
@@ -657,7 +686,11 @@ function App() {
   }
 
   if (!isAuthenticated || !profile) {
-    return <AuthPage />;
+    return (
+      <Suspense fallback={<AppLoading />}>
+        <AuthPage />
+      </Suspense>
+    );
   }
 
   // Convert profile and stats to legacy User format for compatibility
@@ -953,6 +986,7 @@ function App() {
   };
 
   return (
+    <Suspense fallback={<AppLoading />}>
     <div className="min-h-screen theme-bg" style={{
       background: currentTheme.backgroundColor !== '#f8fafc'
         ? currentTheme.backgroundColor
@@ -1059,6 +1093,7 @@ function App() {
         }}
       />
     </div>
+    </Suspense>
   );
 }
 
