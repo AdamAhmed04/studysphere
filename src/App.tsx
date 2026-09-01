@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import { Clock } from 'lucide-react';
 import { AuthPage } from './components/AuthPage';
 import { ResetPassword } from './components/ResetPassword';
@@ -85,7 +85,6 @@ function App() {
       loadUserData();
     } else {
       setSessions([]);
-      setChatMessages([]);
     }
   }, [user?.id, isAuthenticated]);
 
@@ -136,7 +135,6 @@ function App() {
     }
   };
   const [sessions, setSessions] = useState<StudySession[]>([]);
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [studyGroups, setStudyGroups] = useState<StudyGroup[]>(groups.map(g => ({
     id: g.id,
     name: g.name,
@@ -148,6 +146,24 @@ function App() {
     isPrivate: g.is_private,
     lastActivity: new Date(g.last_activity)
   })));
+
+  /*
+   * What the Social panel shows.
+   *
+   * It used to be handed a `chatMessages` state that was only ever assigned
+   * [], so the panel sat in its "No recent messages" state permanently, however
+   * much people were talking. The group list already carries each group's
+   * latest message - loaded for the chat previews - so the feed is derived from
+   * that rather than fetched again. SocialFeed does its own sorting and
+   * slicing.
+   */
+  const recentGroupMessages = useMemo(
+    () => studyGroups
+      .map(group => group.lastMessage)
+      .filter((message): message is ChatMessage => Boolean(message)),
+    [studyGroups]
+  );
+
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [groupMessagesCache, setGroupMessagesCache] = useState<{ [key: string]: ChatMessage[] }>({});
   const [showCreateGroup, setShowCreateGroup] = useState(false);
@@ -742,7 +758,7 @@ function App() {
               <div className="lg:col-span-2 space-y-4 md:space-y-6">
                 <SocialFeed
                   groups={studyGroups}
-                  messages={chatMessages}
+                  messages={recentGroupMessages}
                   onOpenChat={handleOpenChatFromSocial}
                 />
                 <UpcomingMeetings
