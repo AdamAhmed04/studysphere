@@ -118,7 +118,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     { id: 'bubbles', name: 'Floating Bubbles', icon: Circle },
     { id: 'particles', name: 'Gentle Particles', icon: Circle },
     { id: 'minimal', name: 'Minimal', icon: Minimize }
-  ];
+  ] as const;
 
   const renderAnimatedBackground = () => {
     const baseColor = currentColorTheme.color;
@@ -287,7 +287,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
                       <button
                         key={style.id}
                         onClick={() => {
-                          setBackgroundStyle(style.id as any);
+                          setBackgroundStyle(style.id);
                           setShowBackgroundDropdown(false);
                         }}
                         className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
@@ -503,7 +503,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
                     <button
                       key={style.id}
                       onClick={() => {
-                        setBackgroundStyle(style.id as any);
+                        setBackgroundStyle(style.id);
                         setShowBackgroundDropdown(false);
                       }}
                       className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${

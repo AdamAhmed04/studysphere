@@ -91,10 +91,10 @@ export const ChatList: React.FC<ChatListProps> = ({
 
   // Direct messages are not implemented, so nothing is an individual chat yet.
   // Kept as a single place to change when they are built.
-  const isIndividualChat = (_group: StudyGroup) => false;
+  const isIndividualChat = () => false;
 
   const getIndividualChatName = (group: StudyGroup) => {
-    if (!isIndividualChat(group)) return group.name;
+    if (!isIndividualChat()) return group.name;
     
     // Find the other member (not current user)
     const otherMemberId = group.members.find(id => id !== currentUser.id);
@@ -244,12 +244,12 @@ export const ChatList: React.FC<ChatListProps> = ({
                 {/* Group Avatar */}
                 <div className="flex-shrink-0 mr-3">
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                    isIndividualChat(group)
+                    isIndividualChat()
                       ? 'bg-gradient-to-r from-green-400 to-blue-500'
                       : 'bg-gradient-to-r from-blue-400 to-purple-500'
                   }`}>
                     <span className="text-white font-bold text-lg">
-                      {isIndividualChat(group) ? (
+                      {isIndividualChat() ? (
                         <UserIcon size={20} />
                       ) : (
                         getGroupAvatar(group)
@@ -262,7 +262,7 @@ export const ChatList: React.FC<ChatListProps> = ({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
                     <h4 className="text-base font-semibold text-gray-900 truncate">
-                      {isIndividualChat(group) ? getIndividualChatName(group) : group.name}
+                      {isIndividualChat() ? getIndividualChatName(group) : group.name}
                     </h4>
                     <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
                       {formatTime(group.lastActivity)}
@@ -276,7 +276,7 @@ export const ChatList: React.FC<ChatListProps> = ({
                     
                     {/* Member count */}
                     <div className="flex items-center text-xs text-gray-400 flex-shrink-0 ml-2">
-                      {isIndividualChat(group) ? (
+                      {isIndividualChat() ? (
                         <>
                           <UserIcon size={12} />
                           <span>Direct</span>
@@ -291,7 +291,7 @@ export const ChatList: React.FC<ChatListProps> = ({
                   </div>
                   
                   {/* Subject tag */}
-                  {group.subject && !isIndividualChat(group) && (
+                  {group.subject && !isIndividualChat() && (
                     <div className="mt-1">
                       <span className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">
                         {group.subject}

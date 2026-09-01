@@ -8,6 +8,12 @@ interface Obstacle {
   height: number;
 }
 
+// Module scope: these are fixed, and re-creating them each render made the
+// game loop callbacks change identity on every frame.
+const GRAVITY = 0.8;
+const JUMP_FORCE = -15;
+const GAME_SPEED = 3;
+
 interface JumpingGameProps {
   isOpen: boolean;
   onClose: () => void;
@@ -30,11 +36,11 @@ export const JumpingGame: React.FC<JumpingGameProps> = ({ isOpen, onClose }) => 
   const lastObstacleRef = useRef<number>(0);
 
   // Game constants
-  const GRAVITY = 0.8;
-  const JUMP_FORCE = -15;
+
+
   const GROUND_Y = 200;
   const PLAYER_SIZE = 40;
-  const GAME_SPEED = 3;
+
   const OBSTACLE_SPAWN_DISTANCE = 300;
 
   const jump = useCallback(() => {
@@ -120,7 +126,7 @@ export const JumpingGame: React.FC<JumpingGameProps> = ({ isOpen, onClose }) => 
 
       // Move obstacles and add new ones
       setObstacles(prev => {
-        let newObstacles = prev.map(obstacle => ({
+        const newObstacles = prev.map(obstacle => ({
           ...obstacle,
           x: obstacle.x - GAME_SPEED
         })).filter(obstacle => obstacle.x > -obstacle.width);

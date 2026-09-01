@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, lazy, Suspense } from 'react';
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
 import { Clock } from 'lucide-react';
 import { AuthPage } from './components/AuthPage';
 import { ResetPassword } from './components/ResetPassword';
@@ -41,6 +41,7 @@ import { studySessionService } from './services/studySessionService';
 import { toLocalDateString } from './utils/dates';
 import { orUndefined, orEmpty, orFalse } from './utils/rows';
 import type { StudySession, ChatMessage, Friend, User, StudyGroup, TodoItem } from './types';
+import type { UserProfile } from './lib/supabase';
 
 // Date reviver function to convert ISO strings back to Date objects
 
@@ -80,13 +81,37 @@ function App() {
     }
   }, []);
 
+  const loadUserData = useCallback(async () => {
+    if (!user?.id) return;
+
+    try {
+      const [sessionsData] = await Promise.all([
+        studySessionService.getSessions(user.id, 50),
+      ]);
+
+      if (sessionsData) {
+        setSessions(sessionsData.map(s => ({
+          id: s.id,
+          userId: s.user_id,
+          startTime: new Date(s.start_time),
+          endTime: s.end_time ? new Date(s.end_time) : undefined,
+          duration: s.duration,
+          subject: s.subject,
+          notes: orUndefined(s.notes),
+        })));
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  }, [user?.id]);
+
   useEffect(() => {
     if (user?.id && isAuthenticated) {
       loadUserData();
     } else {
       setSessions([]);
     }
-  }, [user?.id, isAuthenticated]);
+  }, [user?.id, isAuthenticated, loadUserData]);
 
   useEffect(() => {
     setStudyGroups(groups.map(g => ({
@@ -111,29 +136,6 @@ function App() {
     })));
   }, [groups]);
 
-  const loadUserData = async () => {
-    if (!user?.id) return;
-
-    try {
-      const [sessionsData] = await Promise.all([
-        studySessionService.getSessions(user.id, 50),
-      ]);
-
-      if (sessionsData) {
-        setSessions(sessionsData.map(s => ({
-          id: s.id,
-          userId: s.user_id,
-          startTime: new Date(s.start_time),
-          endTime: s.end_time ? new Date(s.end_time) : undefined,
-          duration: s.duration,
-          subject: s.subject,
-          notes: orUndefined(s.notes),
-        })));
-      }
-    } catch (error) {
-      console.error('Error loading user data:', error);
-    }
-  };
   const [sessions, setSessions] = useState<StudySession[]>([]);
   const [studyGroups, setStudyGroups] = useState<StudyGroup[]>(groups.map(g => ({
     id: g.id,
@@ -299,7 +301,10 @@ function App() {
         Object.entries(columnPatch).filter(([, value]) => value !== undefined)
       );
 
-      updateProfile(patch as any).then(() => {
+      // fromEntries erases the key types, so this asserts back to the shape
+      // updateProfile declares. A real type rather than any: a wrong column name
+      // is still a compile error.
+      updateProfile(patch as Partial<UserProfile>).then(() => {
         toast.success('Profile updated.');
       }).catch((error) => {
         toast.error('Could not save your profile.', error);

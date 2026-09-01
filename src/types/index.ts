@@ -131,7 +131,7 @@ export interface Notification {
   message: string;
   timestamp: Date;
   isRead: boolean;
-  actionData?: any;
+  actionData?: Record<string, unknown>;
 }
 
 export interface CustomTheme {

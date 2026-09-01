@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { authService } from '../services/authService';
+import { errorMessage } from '../utils/errors';
 
 interface ResetPasswordProps {
   onComplete: () => void;
@@ -28,7 +29,7 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ onComplete }) => {
       hasUppercase: /[A-Z]/.test(password),
       hasLowercase: /[a-z]/.test(password),
       hasNumber: /\d/.test(password),
-      hasSymbol: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+      hasSymbol: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password),
     };
     setPasswordStrength(strength);
     return strength;
@@ -72,8 +73,8 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({ onComplete }) => {
       setTimeout(() => {
         onComplete();
       }, 2000);
-    } catch (err: any) {
-      setError(err.message || 'Failed to reset password');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to reset password'));
     } finally {
       setLoading(false);
     }

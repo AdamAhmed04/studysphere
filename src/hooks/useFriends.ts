@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { friendService, FriendWithProfile } from '../services/friendService';
+import { friendService, FriendWithProfile, PendingFriendRequest } from '../services/friendService';
+import { errorMessage } from '../utils/errors';
 
 export const useFriends = (userId: string | undefined) => {
   const [friends, setFriends] = useState<FriendWithProfile[]>([]);
-  const [pendingRequests, setPendingRequests] = useState<any[]>([]);
+  const [pendingRequests, setPendingRequests] = useState<PendingFriendRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,9 +40,9 @@ export const useFriends = (userId: string | undefined) => {
       setLoading(true);
       setFriends(await friendService.getFriends());
       setError(null);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error loading friends:', err);
-      setError(err.message || 'Failed to load friends');
+      setError(errorMessage(err, 'Failed to load friends'));
     } finally {
       setLoading(false);
     }
@@ -58,16 +59,16 @@ export const useFriends = (userId: string | undefined) => {
   const sendFriendRequest = async (email: string) => {
     try {
       return await friendService.sendFriendRequest(email);
-    } catch (err: any) {
-      return { success: false, message: err.message || 'Failed to send friend request' };
+    } catch (err) {
+      return { success: false, message: errorMessage(err, 'Failed to send friend request') };
     }
   };
 
   const sendFriendRequestById = async (friendUserId: string, friendName?: string) => {
     try {
       return await friendService.sendFriendRequestById(friendUserId, friendName);
-    } catch (err: any) {
-      return { success: false, message: err.message || 'Failed to send friend request' };
+    } catch (err) {
+      return { success: false, message: errorMessage(err, 'Failed to send friend request') };
     }
   };
 
@@ -82,9 +83,9 @@ export const useFriends = (userId: string | undefined) => {
       }
 
       await loadPendingRequests();
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error accepting friend request:', err);
-      setError(err.message || 'Failed to accept friend request');
+      setError(errorMessage(err, 'Failed to accept friend request'));
       throw err;
     }
   };
@@ -93,8 +94,8 @@ export const useFriends = (userId: string | undefined) => {
     try {
       await friendService.rejectFriendRequest(requestId);
       await loadPendingRequests();
-    } catch (err: any) {
-      setError(err.message || 'Failed to reject friend request');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to reject friend request'));
       throw err;
     }
   };
@@ -103,8 +104,8 @@ export const useFriends = (userId: string | undefined) => {
     try {
       await friendService.removeFriend(friendId);
       await loadFriends();
-    } catch (err: any) {
-      setError(err.message || 'Failed to remove friend');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to remove friend'));
       throw err;
     }
   };

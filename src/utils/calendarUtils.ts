@@ -50,6 +50,6 @@ export const isEventUpcoming = (date: Date): boolean => {
   return new Date(date) >= new Date();
 };
 
-export const sortEventsByDate = (events: any[]): any[] => {
+export const sortEventsByDate = <T extends { date: Date | string }>(events: T[]): T[] => {
   return events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 };

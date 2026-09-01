@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search, UserPlus, Users, BookOpen, Filter, X } from 'lucide-react';
 import type { User, Friend } from '../types';
 import { searchService, SearchResult } from '../services/searchService';
@@ -18,26 +18,11 @@ export const SearchPage: React.FC<SearchPageProps> = ({ onAddFriend, currentUser
   const [selectedSubject, setSelectedSubject] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-  useEffect(() => {
-    if (debouncedSearchQuery.trim().length >= 2) {
-      performSearch(debouncedSearchQuery);
-    } else {
-      setSearchResults([]);
-      setIsSearching(false);
-    }
-  }, [debouncedSearchQuery, searchFilter, selectedSubject]);
-
-  const subjects = [
-    'Mathematics', 'Physics', 'Chemistry', 'Biology', 'Computer Science',
-    'History', 'English', 'Psychology', 'Economics', 'Art', 'Music',
-    'Engineering', 'Medicine', 'Law', 'Business', 'Philosophy'
-  ];
-
-  const performSearch = async (query: string) => {
+  const performSearch = useCallback(async (query: string) => {
     setIsSearching(true);
 
     try {
-      const filters: any = {};
+      const filters: { school?: string; studyField?: string; interests?: string[] } = {};
       if (searchFilter === 'subject' && selectedSubject) {
         filters.studyField = selectedSubject;
       }
@@ -50,7 +35,23 @@ export const SearchPage: React.FC<SearchPageProps> = ({ onAddFriend, currentUser
     } finally {
       setIsSearching(false);
     }
-  };
+  }, [searchFilter, selectedSubject]);
+
+  useEffect(() => {
+    if (debouncedSearchQuery.trim().length >= 2) {
+      performSearch(debouncedSearchQuery);
+    } else {
+      setSearchResults([]);
+      setIsSearching(false);
+    }
+  }, [debouncedSearchQuery, searchFilter, selectedSubject, performSearch]);
+
+  const subjects = [
+    'Mathematics', 'Physics', 'Chemistry', 'Biology', 'Computer Science',
+    'History', 'English', 'Psychology', 'Economics', 'Art', 'Music',
+    'Engineering', 'Medicine', 'Law', 'Business', 'Philosophy'
+  ];
+
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);

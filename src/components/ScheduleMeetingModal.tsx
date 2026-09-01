@@ -302,15 +302,15 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
               Meeting Type
             </label>
             <div className="grid grid-cols-3 gap-3">
-              {[
+              {([
                 { type: 'video', label: 'Video Call', icon: Video },
                 { type: 'in-person', label: 'In Person', icon: MapPin },
                 { type: 'phone', label: 'Phone Call', icon: Phone }
-              ].map(({ type, label, icon: Icon }) => (
+              ] as const).map(({ type, label, icon: Icon }) => (
                 <button
                   key={type}
                   type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, meetingType: type as any }))}
+                  onClick={() => setFormData(prev => ({ ...prev, meetingType: type }))}
                   className={`flex flex-col items-center p-4 border-2 rounded-lg transition-all ${
                     formData.meetingType === type
                       ? 'border-blue-500 bg-blue-50 text-blue-700'

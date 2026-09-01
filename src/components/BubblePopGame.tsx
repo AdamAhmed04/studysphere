@@ -11,6 +11,13 @@ interface Bubble {
   opacity: number;
 }
 
+// Module scope: a fresh array on every render made every useCallback that
+// used it unstable.
+const BUBBLE_COLORS = [
+  '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
+  '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9'
+];
+
 interface BubblePopGameProps {
   isOpen: boolean;
   onClose: () => void;
@@ -28,11 +35,6 @@ export const BubblePopGame: React.FC<BubblePopGameProps> = ({ isOpen, onClose })
     return saved ? parseInt(saved) : 0;
   });
 
-  const colors = [
-    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
-    '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9'
-  ];
-
   const createBubble = useCallback(() => {
     const gameArea = document.getElementById('game-area');
     if (!gameArea) return null;
@@ -45,11 +47,11 @@ export const BubblePopGame: React.FC<BubblePopGameProps> = ({ isOpen, onClose })
       x: Math.random() * (rect.width - size),
       y: rect.height + size,
       size,
-      color: colors[Math.floor(Math.random() * colors.length)],
+      color: BUBBLE_COLORS[Math.floor(Math.random() * BUBBLE_COLORS.length)],
       speed: Math.random() * 2 + 1, // 1-3px per frame
       opacity: 0.8 + Math.random() * 0.2
     };
-  }, [colors]);
+  }, []);
 
   const popBubble = useCallback((bubbleId: number) => {
     setBubbles(prev => prev.filter(bubble => bubble.id !== bubbleId));

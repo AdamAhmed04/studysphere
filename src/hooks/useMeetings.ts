@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { meetingService, MeetingData } from '../services/meetingService';
 import { orUndefined, asOneOf } from '../utils/rows';
+import { errorMessage } from '../utils/errors';
 
 const MEETING_TYPES = ['video', 'in-person', 'phone'] as const;
 const MEETING_STATUSES = ['scheduled', 'active', 'completed', 'cancelled'] as const;
@@ -29,6 +30,44 @@ export const useMeetings = (userId: string | undefined) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const loadMeetings = useCallback(async () => {
+    if (!userId) return;
+
+    try {
+      setLoading(true);
+      const data = await meetingService.getMeetings(userId);
+
+      const mappedMeetings: Meeting[] = data.map((meeting) => ({
+        id: meeting.id,
+        title: meeting.title,
+        description: orUndefined(meeting.description),
+        scheduledTime: new Date(meeting.scheduled_time),
+        duration: meeting.duration,
+        hostId: meeting.host_id,
+        participants: meeting.meeting_participants?.map((p) => p.user_id) || [],
+        invitees: meeting.meeting_participants?.filter((p) => p.status === 'invited').map((p) => p.user_id) || [],
+        inviteeEmails: [],
+        groupId: orUndefined(meeting.group_id),
+        location: orUndefined(meeting.location),
+        meetingType: asOneOf(meeting.meeting_type, MEETING_TYPES, 'video'),
+        meetingLink: orUndefined(meeting.meeting_link),
+        status: asOneOf(meeting.status, MEETING_STATUSES, 'scheduled'),
+        reminders: [],
+        // created_at has a database default, so null never happens in practice -
+        // but the column is nullable and the mapper should not pretend otherwise.
+        createdAt: meeting.created_at ? new Date(meeting.created_at) : new Date()
+      }));
+
+      setMeetings(mappedMeetings);
+      setError(null);
+    } catch (err) {
+      console.error('Error loading meetings:', err);
+      setError(errorMessage(err, 'Failed to load meetings'));
+    } finally {
+      setLoading(false);
+    }
+  }, [userId]);
+
   useEffect(() => {
     if (!userId) {
       setMeetings([]);
@@ -37,43 +76,8 @@ export const useMeetings = (userId: string | undefined) => {
     }
 
     loadMeetings();
-  }, [userId]);
+  }, [userId, loadMeetings]);
 
-  const loadMeetings = async () => {
-    if (!userId) return;
-
-    try {
-      setLoading(true);
-      const data = await meetingService.getMeetings(userId);
-
-      const mappedMeetings: Meeting[] = data.map((meeting: any) => ({
-        id: meeting.id,
-        title: meeting.title,
-        description: meeting.description,
-        scheduledTime: new Date(meeting.scheduled_time),
-        duration: meeting.duration,
-        hostId: meeting.host_id,
-        participants: meeting.meeting_participants?.map((p: any) => p.user_id) || [],
-        invitees: meeting.meeting_participants?.filter((p: any) => p.status === 'invited').map((p: any) => p.user_id) || [],
-        inviteeEmails: [],
-        groupId: meeting.group_id,
-        location: meeting.location,
-        meetingType: meeting.meeting_type,
-        meetingLink: meeting.meeting_link,
-        status: meeting.status,
-        reminders: [],
-        createdAt: new Date(meeting.created_at)
-      }));
-
-      setMeetings(mappedMeetings);
-      setError(null);
-    } catch (err: any) {
-      console.error('Error loading meetings:', err);
-      setError(err.message || 'Failed to load meetings');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const createMeeting = async (meetingData: {
     title: string;
@@ -125,13 +129,15 @@ export const useMeetings = (userId: string | undefined) => {
         meetingLink: meeting.meeting_link,
         status: meeting.status,
         reminders: meetingData.reminders,
-        createdAt: new Date(meeting.created_at)
+        // created_at has a database default, so null never happens in practice -
+        // but the column is nullable and the mapper should not pretend otherwise.
+        createdAt: meeting.created_at ? new Date(meeting.created_at) : new Date()
       };
 
       setMeetings(prev => [newMeeting, ...prev]);
       return newMeeting;
-    } catch (err: any) {
-      setError(err.message || 'Failed to create meeting');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to create meeting'));
       throw err;
     }
   };
@@ -155,8 +161,8 @@ export const useMeetings = (userId: string | undefined) => {
         }
         return meeting;
       }));
-    } catch (err: any) {
-      setError(err.message || 'Failed to update meeting');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to update meeting'));
       throw err;
     }
   };
@@ -165,8 +171,8 @@ export const useMeetings = (userId: string | undefined) => {
     try {
       await meetingService.deleteMeeting(id);
       setMeetings(prev => prev.filter(meeting => meeting.id !== id));
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete meeting');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to delete meeting'));
       throw err;
     }
   };

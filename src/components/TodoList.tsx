@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { CheckSquare, Plus, Calendar, Clock, AlertCircle, Trash2, Edit3, Check } from 'lucide-react';
 import type { TodoItem } from '../types';
+import { asOneOf } from '../utils/rows';
+import { PRIORITIES } from '../hooks/useTodos';
 import { parseLocalDate, toLocalDateString, todayLocalDateString } from '../utils/dates';
 
 interface TodoListProps {
@@ -210,7 +212,7 @@ export const TodoList: React.FC<TodoListProps> = ({
                 <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
                 <select
                   value={formData.priority}
-                  onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value as any }))}
+                  onChange={(e) => setFormData(prev => ({ ...prev, priority: asOneOf(e.target.value, PRIORITIES, 'medium') }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[44px] text-base"
                 >
                   <option value="low">Low</option>

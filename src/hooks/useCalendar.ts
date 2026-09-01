@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { calendarService, CalendarEventData } from '../services/calendarService';
 import { orUndefined, orFalse, asOneOf } from '../utils/rows';
+import { errorMessage } from '../utils/errors';
 
-const EVENT_TYPES = ['meeting', 'reminder', 'study', 'exam', 'class', 'todo'] as const;
+export const EVENT_TYPES = ['meeting', 'reminder', 'study', 'exam', 'class', 'todo'] as const;
 
 export interface CalendarEvent {
   id: string;
@@ -23,17 +24,7 @@ export const useCalendar = (userId: string | undefined) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!userId) {
-      setEvents([]);
-      setLoading(false);
-      return;
-    }
-
-    loadEvents();
-  }, [userId]);
-
-  const loadEvents = async (startDate?: string, endDate?: string) => {
+  const loadEvents = useCallback(async (startDate?: string, endDate?: string) => {
     if (!userId) return;
 
     try {
@@ -56,13 +47,24 @@ export const useCalendar = (userId: string | undefined) => {
 
       setEvents(mappedEvents);
       setError(null);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error loading calendar events:', err);
-      setError(err.message || 'Failed to load calendar events');
+      setError(errorMessage(err, 'Failed to load calendar events'));
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) {
+      setEvents([]);
+      setLoading(false);
+      return;
+    }
+
+    loadEvents();
+  }, [userId, loadEvents]);
+
 
   const createEvent = async (eventData: {
     title: string;
@@ -108,8 +110,8 @@ export const useCalendar = (userId: string | undefined) => {
 
       setEvents(prev => [...prev, newEvent]);
       return newEvent;
-    } catch (err: any) {
-      setError(err.message || 'Failed to create event');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to create event'));
       throw err;
     }
   };
@@ -133,8 +135,8 @@ export const useCalendar = (userId: string | undefined) => {
         }
         return event;
       }));
-    } catch (err: any) {
-      setError(err.message || 'Failed to update event');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to update event'));
       throw err;
     }
   };
@@ -143,8 +145,8 @@ export const useCalendar = (userId: string | undefined) => {
     try {
       await calendarService.deleteEvent(id);
       setEvents(prev => prev.filter(event => event.id !== id));
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete event');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to delete event'));
       throw err;
     }
   };
@@ -170,8 +172,8 @@ export const useCalendar = (userId: string | undefined) => {
       }));
 
       setEvents(mappedEvents);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load events');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to load events'));
       throw err;
     }
   };

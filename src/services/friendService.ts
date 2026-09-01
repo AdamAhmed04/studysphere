@@ -21,6 +21,15 @@ export interface FriendWithProfile {
   studyField?: string;
 }
 
+/** A friend request waiting on the signed-in user. */
+export interface PendingFriendRequest {
+  id: string;
+  senderId: string;
+  senderName: string;
+  senderAvatar?: string;
+  createdAt: Date;
+}
+
 class FriendService {
   /**
    * Sends a friend request to whoever owns an email address.
@@ -267,13 +276,7 @@ class FriendService {
     }
   }
 
-  async getPendingRequests(): Promise<Array<{
-    id: string;
-    senderId: string;
-    senderName: string;
-    senderAvatar?: string;
-    createdAt: Date;
-  }>> {
+  async getPendingRequests(): Promise<PendingFriendRequest[]> {
     if (!supabase) throw new Error('Supabase not configured');
 
     try {
@@ -332,7 +335,7 @@ class FriendService {
    * `friends` changed for anybody — and two components subscribing to the same
    * literal name on one client collided.
    */
-  subscribeToPendingRequests(userId: string, callback: (requests: any[]) => void) {
+  subscribeToPendingRequests(userId: string, callback: (requests: PendingFriendRequest[]) => void) {
     if (!supabase) return { unsubscribe: () => {} };
 
     const channel = supabase

@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase';
 import { orEmpty, orFalse, asOneOf } from '../utils/rows';
-import type { Tables } from '../types/database';
+import type { Tables, Json } from '../types/database';
 import {
   isNotificationSupported,
   showNotification,
@@ -140,7 +140,7 @@ class NotificationService {
     type: Notification['type'],
     title: string,
     message: string,
-    actionData?: any
+    actionData?: Json
   ): Promise<void> {
     if (!supabase) throw new Error('Supabase not configured');
 

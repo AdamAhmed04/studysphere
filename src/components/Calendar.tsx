@@ -1,6 +1,27 @@
 import React, { useState } from 'react';
 import { Calendar as CalendarIcon, Plus, Clock, Users, MapPin, ChevronLeft, ChevronRight, X, Video, Phone, MessageCircle, User as UserIcon, Bell } from 'lucide-react';
-import type { CalendarEvent, Meeting, User, Reminder } from '../types';
+import type { CalendarEvent, Meeting, User, Reminder, Friend } from '../types';
+import { asOneOf } from '../utils/rows';
+
+/** The event types a person can pick. 'todo' is excluded on purpose: those
+ *  are created from to-dos with a due date, not chosen in this form. */
+const SELECTABLE_EVENT_TYPES = ['meeting', 'reminder', 'study', 'exam', 'class'] as const;
+
+/*
+ * What the agenda list and the day cells actually hand to a click handler:
+ * events, reminders and meetings are all flattened to this shape before being
+ * rendered together. CalendarEvent is a superset, so it fits without a cast.
+ */
+interface AgendaItem {
+  id: string;
+  title: string;
+  description?: string;
+  date: Date;
+  type: CalendarEvent['type'];
+  color: string;
+  createdBy?: string;
+  meetingData?: Meeting;
+}
 import { eventTypeColors, eventTypeLabels, getEventTypeColor } from '../utils/calendarUtils';
 import { parseLocalDate, todayLocalDateString } from '../utils/dates';
 
@@ -24,7 +45,7 @@ interface CalendarProps {
   currentUser: User;
   onJoinMeeting: (meetingId: string) => void;
   onOpenChat: (groupId: string) => void;
-  friends: any[];
+  friends: Friend[];
 }
 
 export const Calendar: React.FC<CalendarProps> = ({ 
@@ -44,7 +65,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   const [showReminderModal, setShowReminderModal] = useState(false);
   const [showMeetingModal, setShowMeetingModal] = useState(false);
   const [showEventDetails, setShowEventDetails] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [selectedEvent, setSelectedEvent] = useState<AgendaItem | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [eventForm, setEventForm] = useState({
     title: '',
@@ -237,12 +258,13 @@ export const Calendar: React.FC<CalendarProps> = ({
     setMeetingForm({ title: '', description: '', duration: 60, time: '14:00' });
   };
 
-  const handleEventClick = (event: any) => {
+  const handleEventClick = (event: AgendaItem) => {
     setSelectedEvent(event);
     setShowEventDetails(true);
   };
 
-  const getHostName = (hostId: string) => {
+  const getHostName = (hostId?: string) => {
+    if (!hostId) return 'Unknown User';
     if (hostId === currentUser.id) return currentUser.name;
     const friend = friends.find(f => f.id === hostId);
     return friend?.name || 'Unknown User';
@@ -519,8 +541,8 @@ export const Calendar: React.FC<CalendarProps> = ({
                   value={eventForm.type}
                   onChange={(e) => setEventForm(prev => ({ 
                     ...prev, 
-                    type: e.target.value as any,
-                    color: getEventTypeColor(e.target.value as any)
+                    type: asOneOf(e.target.value, SELECTABLE_EVENT_TYPES, 'study'),
+                    color: getEventTypeColor(asOneOf(e.target.value, SELECTABLE_EVENT_TYPES, 'study'))
                   }))}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
@@ -899,10 +921,10 @@ export const Calendar: React.FC<CalendarProps> = ({
                     <span>Join Meeting</span>
                   </button>
                   
-                  {selectedEvent.meetingData.groupId && (
+                  {selectedEvent.meetingData?.groupId && (
                     <button
                       onClick={() => {
-                        onOpenChat(selectedEvent.meetingData.groupId);
+                        onOpenChat(selectedEvent.meetingData!.groupId!);
                         setShowEventDetails(false);
                       }}
                       className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"

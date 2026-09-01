@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, Clock, BookOpen, Users, Trophy, Globe, Camera, Upload, X } from 'lucide-react';
 import { useAuthContext } from '../contexts/AuthContext';
+import { errorMessage } from '../utils/errors';
 
-interface AuthPageProps {
-  // No props needed - using useAuth hook
-}
-
-export const AuthPage: React.FC<AuthPageProps> = () => {
+// No props: everything comes from the auth context.
+export const AuthPage: React.FC = () => {
   const { signIn, signUp, resetPassword, loading, error } = useAuthContext();
   const [isSignUp, setIsSignUp] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -49,7 +47,7 @@ export const AuthPage: React.FC<AuthPageProps> = () => {
       hasUppercase: /[A-Z]/.test(password),
       hasLowercase: /[a-z]/.test(password),
       hasNumber: /\d/.test(password),
-      hasSymbol: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+      hasSymbol: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password),
     };
     setPasswordStrength(strength);
     return strength;
@@ -253,8 +251,8 @@ export const AuthPage: React.FC<AuthPageProps> = () => {
       setResetError('');
       await resetPassword(resetEmail);
       setResetMessage('Password reset email sent! Please check your inbox.');
-    } catch (err: any) {
-      setResetError(err.message || 'Failed to send reset email');
+    } catch (err) {
+      setResetError(errorMessage(err, 'Failed to send reset email'));
     } finally {
       setResetLoading(false);
     }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { groupService, StudyGroupData } from '../services/groupService';
+import { errorMessage } from '../utils/errors';
 
 export const useGroups = (userId: string | undefined) => {
   const [groups, setGroups] = useState<StudyGroupData[]>([]);
@@ -22,9 +23,9 @@ export const useGroups = (userId: string | undefined) => {
       const groupsList = await groupService.getGroups();
       setGroups(groupsList);
       setError(null);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error loading groups:', err);
-      setError(err.message || 'Failed to load groups');
+      setError(errorMessage(err, 'Failed to load groups'));
     } finally {
       setLoading(false);
     }
@@ -41,8 +42,8 @@ export const useGroups = (userId: string | undefined) => {
       const newGroup = await groupService.createGroup(groupData);
       await loadGroups();
       return newGroup;
-    } catch (err: any) {
-      setError(err.message || 'Failed to create group');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to create group'));
       throw err;
     }
   };
@@ -51,8 +52,8 @@ export const useGroups = (userId: string | undefined) => {
     try {
       await groupService.leaveGroup(groupId);
       await loadGroups();
-    } catch (err: any) {
-      setError(err.message || 'Failed to leave group');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to leave group'));
       throw err;
     }
   };

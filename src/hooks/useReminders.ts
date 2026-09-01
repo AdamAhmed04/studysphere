@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { reminderService, ReminderData } from '../services/reminderService';
 import { orUndefined, orFalse } from '../utils/rows';
 import type { Reminder } from '../types';
+import { errorMessage } from '../utils/errors';
 
 /*
  * A note on `Reminder.type`.
@@ -41,6 +42,22 @@ export const useReminders = (userId: string | undefined) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const loadReminders = useCallback(async () => {
+    if (!userId) return;
+
+    try {
+      setLoading(true);
+      const data = await reminderService.getReminders(userId);
+      setReminders(data.map(toReminder));
+      setError(null);
+    } catch (err) {
+      console.error('Error loading reminders:', err);
+      setError(errorMessage(err, 'Failed to load reminders'));
+    } finally {
+      setLoading(false);
+    }
+  }, [userId]);
+
   useEffect(() => {
     if (!userId) {
       // Also covers signing out: the previous account's reminders must not
@@ -51,23 +68,8 @@ export const useReminders = (userId: string | undefined) => {
     }
 
     loadReminders();
-  }, [userId]);
+  }, [userId, loadReminders]);
 
-  const loadReminders = async () => {
-    if (!userId) return;
-
-    try {
-      setLoading(true);
-      const data = await reminderService.getReminders(userId);
-      setReminders(data.map(toReminder));
-      setError(null);
-    } catch (err: any) {
-      console.error('Error loading reminders:', err);
-      setError(err.message || 'Failed to load reminders');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   /*
    * Takes the fields rather than a whole Reminder: the caller builds one with a
@@ -100,8 +102,8 @@ export const useReminders = (userId: string | undefined) => {
         [...prev, created].sort((a, b) => a.reminderTime.getTime() - b.reminderTime.getTime())
       );
       return created;
-    } catch (err: any) {
-      setError(err.message || 'Failed to create reminder');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to create reminder'));
       throw err;
     }
   };
@@ -110,8 +112,8 @@ export const useReminders = (userId: string | undefined) => {
     try {
       await reminderService.deleteReminder(id);
       setReminders(prev => prev.filter(reminder => reminder.id !== id));
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete reminder');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to delete reminder'));
       throw err;
     }
   };

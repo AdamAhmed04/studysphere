@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { todoService, TodoData } from '../services/todoService';
 import { orUndefined, orEmpty, orFalse, asOneOf } from '../utils/rows';
 import { parseLocalDate } from '../utils/dates';
+import { errorMessage } from '../utils/errors';
 
-const PRIORITIES = ['low', 'medium', 'high'] as const;
+export const PRIORITIES = ['low', 'medium', 'high'] as const;
 
 export interface Todo {
   id: string;
@@ -23,17 +24,7 @@ export const useTodos = (userId: string | undefined) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!userId) {
-      setTodos([]);
-      setLoading(false);
-      return;
-    }
-
-    loadTodos();
-  }, [userId]);
-
-  const loadTodos = async () => {
+  const loadTodos = useCallback(async () => {
     if (!userId) return;
 
     try {
@@ -53,13 +44,24 @@ export const useTodos = (userId: string | undefined) => {
       }));
       setTodos(mappedTodos);
       setError(null);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error loading todos:', err);
-      setError(err.message || 'Failed to load todos');
+      setError(errorMessage(err, 'Failed to load todos'));
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) {
+      setTodos([]);
+      setLoading(false);
+      return;
+    }
+
+    loadTodos();
+  }, [userId, loadTodos]);
+
 
   const addTodo = async (todoData: Omit<TodoData, 'is_completed'>) => {
     if (!userId) throw new Error('Not authenticated');
@@ -85,8 +87,8 @@ export const useTodos = (userId: string | undefined) => {
 
       setTodos(prev => [newTodo, ...prev]);
       return newTodo;
-    } catch (err: any) {
-      setError(err.message || 'Failed to create todo');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to create todo'));
       throw err;
     }
   };
@@ -110,8 +112,8 @@ export const useTodos = (userId: string | undefined) => {
         }
         return todo;
       }));
-    } catch (err: any) {
-      setError(err.message || 'Failed to update todo');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to update todo'));
       throw err;
     }
   };
@@ -120,8 +122,8 @@ export const useTodos = (userId: string | undefined) => {
     try {
       await todoService.deleteTodo(id);
       setTodos(prev => prev.filter(todo => todo.id !== id));
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete todo');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to delete todo'));
       throw err;
     }
   };
@@ -140,8 +142,8 @@ export const useTodos = (userId: string | undefined) => {
         }
         return todo;
       }));
-    } catch (err: any) {
-      setError(err.message || 'Failed to toggle todo');
+    } catch (err) {
+      setError(errorMessage(err, 'Failed to toggle todo'));
       throw err;
     }
   };

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import type { User } from '@supabase/supabase-js';
-import { authService } from '../services/authService';
+import { authService, SignUpData } from '../services/authService';
 import { userService } from '../services/userService';
 import type { UserProfile, UserStats } from '../lib/supabase';
+import { errorMessage } from '../utils/errors';
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -102,15 +103,15 @@ export const useAuth = () => {
       if (result?.user) {
         setUser(result.user);
       }
-    } catch (err: any) {
-      setError(err.message || 'Sign in failed');
+    } catch (err) {
+      setError(errorMessage(err, 'Sign in failed'));
       throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  const signUp = async (userData: any) => {
+  const signUp = async (userData: SignUpData) => {
     try {
       setError(null);
       setLoading(true);
@@ -118,8 +119,8 @@ export const useAuth = () => {
       if (result?.user) {
         setUser(result.user);
       }
-    } catch (err: any) {
-      setError(err.message || 'Sign up failed');
+    } catch (err) {
+      setError(errorMessage(err, 'Sign up failed'));
       throw err;
     } finally {
       setLoading(false);
@@ -134,8 +135,8 @@ export const useAuth = () => {
       setProfile(null);
       setStats(null);
       userService.clearCache();
-    } catch (err: any) {
-      setError(err.message || 'Sign out failed');
+    } catch (err) {
+      setError(errorMessage(err, 'Sign out failed'));
       throw err;
     }
   };
@@ -151,8 +152,8 @@ export const useAuth = () => {
       if (stats) {
         userService.cacheUserData(updatedProfile, stats);
       }
-    } catch (err: any) {
-      setError(err.message || 'Profile update failed');
+    } catch (err) {
+      setError(errorMessage(err, 'Profile update failed'));
       throw err;
     }
   };
@@ -185,12 +186,12 @@ export const useAuth = () => {
 
       const updated = await userService.incrementStats(user.id, payload);
       if (updated) setStats(updated);
-    } catch (err: any) {
+    } catch (err) {
       // Revert optimistic update on error
       const currentStats = await userService.getCurrentUserStats();
       setStats(currentStats);
 
-      setError(err.message || 'Stats update failed');
+      setError(errorMessage(err, 'Stats update failed'));
       throw err;
     }
   };
@@ -200,10 +201,10 @@ export const useAuth = () => {
       setError(null);
       await authService.resetPassword(email);
       return { success: true };
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to send reset email';
-      setError(errorMessage);
-      throw new Error(errorMessage);
+    } catch (err) {
+      const message = errorMessage(err, 'Failed to send reset email');
+      setError(message);
+      throw new Error(message);
     }
   };
 
