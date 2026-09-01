@@ -1,27 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="StudySphere">
   <title>StudySphere</title>
-  <defs>
-    <!--
-      The same blue-to-purple the app already uses for its own badge on the
-      loading screen (Tailwind blue-600 to purple-600), so the icon and the
-      first thing you see when it opens are recognisably the same product.
-    -->
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#2563eb"/>
-      <stop offset="1" stop-color="#9333ea"/>
-    </linearGradient>
-  </defs>
-
-  <!-- Squircle-ish corner radius, close to what iOS masks to anyway. -->
-  <rect width="512" height="512" rx="112" fill="url(#g)"/>
 
   <!--
-    A clock, matching the lucide Clock the app uses in its nav and loading
-    state. Geometry is that icon scaled up: r=10 becomes r=132, and the hands
-    keep its 12-to-4 angle.
+    Three arcs of a sphere on deep navy. No gradient and no outline: flat ground,
+    solid strokes, nothing else, which is what keeps it legible down to 16px in a
+    browser tab.
+
+    Rounded corners here because this is the favicon. The PNGs are square and
+    opaque - iOS and Android both apply their own mask to home screen icons, and
+    a pre-rounded PNG gets rounded twice, with its transparent corners rendering
+    black on some versions.
   -->
-  <g fill="none" stroke="#ffffff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="256" cy="256" r="132"/>
-    <path d="M256 177 L256 256 L309 282"/>
+  <rect width="512" height="512" rx="112" fill="#111a2e"/>
+
+  <g fill="none" stroke="#f2efe4" stroke-width="46" stroke-linecap="round">
+    <path d="M126 190 A 168 168 0 0 1 386 190"/>
+    <path d="M150 300 A 132 132 0 0 0 362 300"/>
+    <path d="M198 388 A 88 88 0 0 0 314 388"/>
   </g>
 </svg>
