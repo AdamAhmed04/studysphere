@@ -39,8 +39,8 @@ const DEFAULT_TIMER_STATE: TimerState = {
 const notifyFromTimer = (title: string, body: string, icon?: string) => {
   showNotification(title, {
     body,
-    icon: icon || '/vite.svg',
-    badge: '/vite.svg',
+    icon: icon || '/icon-192.png',
+    badge: '/icon-192.png',
     tag: 'studysphere-timer',
     requireInteraction: false,
     silent: false,

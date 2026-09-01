@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="StudySphere">
+  <title>StudySphere</title>
+  <defs>
+    <!--
+      The same blue-to-purple the app already uses for its own badge on the
+      loading screen (Tailwind blue-600 to purple-600), so the icon and the
+      first thing you see when it opens are recognisably the same product.
+    -->
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#9333ea"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle-ish corner radius, close to what iOS masks to anyway. -->
+  <rect width="512" height="512" rx="112" fill="url(#g)"/>
+
+  <!--
+    A clock, matching the lucide Clock the app uses in its nav and loading
+    state. Geometry is that icon scaled up: r=10 becomes r=132, and the hands
+    keep its 12-to-4 angle.
+  -->
+  <g fill="none" stroke="#ffffff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="256" cy="256" r="132"/>
+    <path d="M256 177 L256 256 L309 282"/>
+  </g>
+</svg>
