@@ -872,6 +872,10 @@ function App() {
                 // for whoever matches currentUserId, and doing both produced
                 // "Adam Ahmed (You) (You)".
                 name: legacyUser.name,
+                // Your own row is built here rather than fetched, so it has to
+                // carry the photo too — without it everyone had a face on the
+                // leaderboard except you.
+                avatar: legacyUser.avatar,
                 totalStudyTime: legacyUser.totalStudyTime,
                 isOnline: true
               }]}
