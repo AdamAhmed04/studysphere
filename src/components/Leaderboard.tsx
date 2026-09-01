@@ -1,6 +1,7 @@
 import React from 'react';
 import { Trophy, Crown, Medal, Target, Star } from 'lucide-react';
 import { Friend } from '../types';
+import { Avatar } from './Avatar';
 
 interface LeaderboardProps {
   friends: Friend[];
@@ -50,11 +51,12 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ friends, currentUserId
               </div>
               
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center">
-                  <span className="text-white font-bold">
-                    {friend.name.charAt(0).toUpperCase()}
-                  </span>
-                </div>
+                <Avatar
+                  name={friend.name}
+                  src={friend.avatar}
+                  className="w-10 h-10"
+                  gradient="from-blue-400 to-purple-500"
+                />
                 <div>
                   <p className="font-semibold text-gray-800">
                     {friend.name} {friend.id === currentUserId && '(You)'}

@@ -24,6 +24,7 @@ interface AgendaItem {
 }
 import { eventTypeColors, eventTypeLabels, getEventTypeColor } from '../utils/calendarUtils';
 import { parseLocalDate, todayLocalDateString } from '../utils/dates';
+import { Avatar } from './Avatar';
 
 interface CalendarProps {
   events: CalendarEvent[];
@@ -876,11 +877,13 @@ export const Calendar: React.FC<CalendarProps> = ({
                       const friend = friends.find(f => f.id === inviteeId);
                       return friend ? (
                         <div key={inviteeId} className="flex items-center space-x-2 text-sm text-gray-600">
-                          <div className="w-4 h-4 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">
-                              {friend.name.charAt(0).toUpperCase()}
-                            </span>
-                          </div>
+                          <Avatar
+                            name={friend.name}
+                            src={friend.avatar}
+                            className="w-4 h-4"
+                            textClassName="text-xs"
+                            gradient="from-green-400 to-blue-500"
+                          />
                           <span>{friend.name}</span>
                         </div>
                       ) : null;

@@ -36,6 +36,9 @@ gitignored. The anon key is public by design — RLS is the real access control.
 - Consume auth, timer and toasts through `src/contexts/`, never by calling the
   hooks directly in a second component.
 - User feedback goes through the toast context. No `alert()`.
+- Anyone drawn as a circle goes through `src/components/Avatar.tsx`. It takes
+  the name and the photo URL separately and falls back to the initial. Do not
+  hand-roll another initial-in-a-gradient circle.
 - `npm run build` runs `tsc -b` first, with `noUnusedLocals` and
   `noUnusedParameters` on. Keep it passing.
 
@@ -92,6 +95,11 @@ logged. They are cheap to reintroduce by accident.
   `applyPendingAvatar` uploads it on the first load that has a session. The
   same trap still applies to `date_of_birth` and `graduation_date`, which are
   dropped for the same reason and are not yet fixed.
+- **Every screen that draws a person must render `avatar_url`.** The services
+  all fetch and map it correctly; nine of the eleven screens then dropped it
+  and rendered an initial, so a photo showed on Profile and nowhere else -
+  not in chat, not in the friends list, not to anyone else. `Avatar` is now
+  the only circle, so a new screen gets this by construction.
 - **Avatar URLs are cache-busted with `?v=`.** The storage path is stable per
   user, so a replacement produces a byte-identical URL that every client keeps
   serving from cache for `cacheControl` seconds.

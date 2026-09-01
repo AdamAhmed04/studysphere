@@ -4,6 +4,7 @@ import type { User as UserType, StudySession, Friend } from '../types';
 import { authService } from '../services/authService';
 import { dataUrlToBlob, downscaleImage } from '../utils/avatar';
 import { useToast } from '../contexts/ToastContext';
+import { Avatar } from './Avatar';
 
 interface ProfileProps {
   userProfile: UserType;
@@ -96,15 +97,14 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
         <div className="relative px-6 pb-6">
           <div className="flex items-end space-x-6 -mt-16">
             <div className="relative">
-              <div className="w-32 h-32 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center overflow-hidden border-4 border-white shadow-lg">
-                {avatarSrc ? (
-                  <img src={avatarSrc} alt={userProfile.name} className="w-full h-full object-cover" />
-                ) : (
-                  <span className="text-white font-bold text-4xl">
-                    {userProfile.name.charAt(0).toUpperCase()}
-                  </span>
-                )}
-              </div>
+              <Avatar
+                name={userProfile.name}
+                src={avatarSrc}
+                alt={userProfile.name}
+                className="w-32 h-32 border-4 border-white shadow-lg"
+                textClassName="text-4xl"
+                gradient="from-green-400 to-blue-500"
+              />
 
               <label
                 htmlFor="profile-photo"

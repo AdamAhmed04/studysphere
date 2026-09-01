@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Clock, Users, MessageSquare, BarChart3, Settings, User, Calendar, Search, ChevronDown, Play, Pause, MoreHorizontal } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
+import { Avatar } from './Avatar';
 
 interface NavigationProps {
   activeTab: string;
@@ -136,19 +137,14 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               >
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center overflow-hidden border-2 border-white shadow-md">
-                  {userProfile.avatar ? (
-                    <img
-                      src={userProfile.avatar}
-                      alt={userProfile.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-white font-bold text-base md:text-lg">
-                      {userProfile.username.charAt(0).toUpperCase()}
-                    </span>
-                  )}
-                </div>
+                <Avatar
+                  name={userProfile.username}
+                  src={userProfile.avatar}
+                  alt={userProfile.name}
+                  className="w-10 h-10 md:w-12 md:h-12 border-2 border-white shadow-md"
+                  textClassName="text-base md:text-lg"
+                  gradient="from-green-400 to-blue-500"
+                />
                 <div className="text-left hidden md:block">
                   <p className="font-semibold text-gray-800">{userProfile.username}</p>
                   <p className="text-sm text-gray-500">

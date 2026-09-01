@@ -3,6 +3,7 @@ import { Users, UserPlus, MessageCircle, UserCheck, Search, X } from 'lucide-rea
 import { Friend } from '../types';
 import { searchService, SearchResult } from '../services/searchService';
 import { useDebounce } from '../hooks/useDebounce';
+import { Avatar } from './Avatar';
 
 interface FriendsListProps {
   friends: Friend[];
@@ -143,11 +144,12 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
                 {searchResults.map(user => (
                   <div key={user.user_id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-400 to-blue-500 flex items-center justify-center overflow-hidden">
-                        {user.avatar_url
-                          ? <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
-                          : <span className="text-white font-bold text-sm">{user.name.charAt(0).toUpperCase()}</span>}
-                      </div>
+                      <Avatar
+                        name={user.name}
+                        src={user.avatar_url}
+                        className="w-10 h-10"
+                        textClassName="text-sm"
+                      />
                       <div>
                         {/* No "Private" badge: private profiles are filtered out
                             by the public_profiles view and never reach here. */}
@@ -213,11 +215,12 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
           <div key={friend.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
             <div className="flex items-center space-x-3">
               <div className="relative">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-400 to-blue-500 flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">
-                    {friend.name.charAt(0).toUpperCase()}
-                  </span>
-                </div>
+                <Avatar
+                  name={friend.name}
+                  src={friend.avatar}
+                  className="w-12 h-12"
+                  textClassName="text-lg"
+                />
                 <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${
                   friend.isOnline ? 'bg-green-400' : 'bg-gray-300'
                 }`}></div>

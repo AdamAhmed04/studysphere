@@ -1,5 +1,6 @@
 import React from 'react';
 import { UserPlus, Check, X } from 'lucide-react';
+import { Avatar } from './Avatar';
 
 interface FriendRequest {
   id: string;
@@ -80,19 +81,13 @@ export const FriendRequestsModal: React.FC<FriendRequestsModalProps> = ({
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
-                      {request.senderAvatar ? (
-                        <img
-                          src={request.senderAvatar}
-                          alt={request.senderName}
-                          className="w-12 h-12 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-                          <span className="text-white font-bold text-lg">
-                            {request.senderName.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                      )}
+                      <Avatar
+                        name={request.senderName}
+                        src={request.senderAvatar}
+                        className="w-12 h-12"
+                        textClassName="text-lg"
+                        gradient="from-blue-500 to-purple-500"
+                      />
                       <div>
                         <p className="font-semibold text-gray-800 text-lg">
                           {request.senderName}

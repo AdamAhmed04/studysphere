@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Users, Lock, Globe } from 'lucide-react';
 import type { User, Friend } from '../types';
+import { Avatar } from './Avatar';
 
 interface CreateGroupModalProps {
   isOpen: boolean;
@@ -187,11 +188,12 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
                       className="flex items-center p-3 hover:bg-gray-50 cursor-pointer"
                       onClick={() => toggleMember(friend.id)}
                     >
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-400 to-blue-500 flex items-center justify-center mr-3">
-                        <span className="text-white font-bold text-sm">
-                          {friend.name.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
+                      <Avatar
+                        name={friend.name}
+                        src={friend.avatar}
+                        className="w-10 h-10 mr-3"
+                        textClassName="text-sm"
+                      />
                       <div className="flex-1">
                         <p className="font-medium text-gray-800">{friend.name}</p>
                         <p className="text-sm text-gray-500">

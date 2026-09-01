@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, Paperclip, Video, Calendar, Users, ArrowLeft } from 'lucide-react';
 import { ChatMessage } from '../types';
+import { Avatar } from './Avatar';
 
 interface GroupChatProps {
   groupName?: string;
@@ -125,11 +126,13 @@ export const GroupChat: React.FC<GroupChatProps> = ({
         {messages.map(message => (
           <div key={message.id} className={`p-3 rounded-lg ${getMessageStyle(message.type)}`}>
             <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center flex-shrink-0">
-                <span className="text-white font-bold text-sm">
-                  {message.userName.charAt(0).toUpperCase()}
-                </span>
-              </div>
+              <Avatar
+                name={message.userName}
+                src={message.userAvatar}
+                className="w-8 h-8 flex-shrink-0"
+                textClassName="text-sm"
+                gradient="from-blue-400 to-purple-500"
+              />
               <div className="flex-1">
                 <div className="flex items-center space-x-2 mb-1">
                   <span className="font-semibold text-gray-800">{message.userName}</span>

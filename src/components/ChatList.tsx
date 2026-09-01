@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MessageCircle, Users, Plus, Search, MoreVertical, User as UserIcon } from 'lucide-react';
 import type { StudyGroup, User, Friend } from '../types';
+import { Avatar } from './Avatar';
 
 interface ChatListProps {
   groups: StudyGroup[];
@@ -82,11 +83,6 @@ export const ChatList: React.FC<ChatListProps> = ({
 
   const truncateMessage = (message: string, maxLength: number = 50) => {
     return message.length > maxLength ? message.substring(0, maxLength) + '...' : message;
-  };
-
-  const getGroupAvatar = (group: StudyGroup) => {
-    if (group.avatar) return group.avatar;
-    return group.name.charAt(0).toUpperCase();
   };
 
   // Direct messages are not implemented, so nothing is an individual chat yet.
@@ -243,19 +239,19 @@ export const ChatList: React.FC<ChatListProps> = ({
               >
                 {/* Group Avatar */}
                 <div className="flex-shrink-0 mr-3">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                    isIndividualChat()
-                      ? 'bg-gradient-to-r from-green-400 to-blue-500'
-                      : 'bg-gradient-to-r from-blue-400 to-purple-500'
-                  }`}>
-                    <span className="text-white font-bold text-lg">
-                      {isIndividualChat() ? (
-                        <UserIcon size={20} />
-                      ) : (
-                        getGroupAvatar(group)
-                      )}
-                    </span>
-                  </div>
+                  {isIndividualChat() ? (
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
+                      <UserIcon size={20} className="text-white" />
+                    </div>
+                  ) : (
+                    <Avatar
+                      name={group.name}
+                      src={group.avatar}
+                      className="w-12 h-12"
+                      textClassName="text-lg"
+                      gradient="from-blue-400 to-purple-500"
+                    />
+                  )}
                 </div>
 
                 {/* Chat Content */}

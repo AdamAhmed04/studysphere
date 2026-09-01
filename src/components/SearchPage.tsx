@@ -3,6 +3,7 @@ import { Search, UserPlus, Users, BookOpen, Filter, X } from 'lucide-react';
 import type { User, Friend } from '../types';
 import { searchService, SearchResult } from '../services/searchService';
 import { useDebounce } from '../hooks/useDebounce';
+import { Avatar } from './Avatar';
 
 interface SearchPageProps {
   onAddFriend: (userId: string, name?: string) => void;
@@ -171,11 +172,12 @@ export const SearchPage: React.FC<SearchPageProps> = ({ onAddFriend, currentUser
                 <div key={user.user_id} className="border border-gray-200 rounded-xl p-6 hover:border-blue-300 transition-colors">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-4 flex-1">
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-400 to-blue-500 flex items-center justify-center flex-shrink-0">
-                        <span className="text-white font-bold text-xl">
-                          {user.name.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
+                      <Avatar
+                        name={user.name}
+                        src={user.avatar_url}
+                        className="w-16 h-16 flex-shrink-0"
+                        textClassName="text-xl"
+                      />
                       
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-2">
