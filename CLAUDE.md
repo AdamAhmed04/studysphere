@@ -59,6 +59,12 @@ and the schema rewritten from scratch rather than patched.
   graduation_date private. Never add those columns to a view.
 - `user_stats` has no INSERT/UPDATE policy on purpose. All stat changes go
   through `increment_user_stats()`, which is atomic and owns streak logic.
+  It takes row ids, never numbers: a session id and a to-do id, each counted
+  once. `reconcile_user_stats()` checks the stored totals against those rows
+  and repairs them with `p_apply => true`. It is service_role only, and worth
+  running once after the test data is wiped. Note what counts as truth there:
+  the session and to-do rows, not `counted_at`, which is a replay guard rather
+  than a ledger.
 - Profile, stats and presence rows are created by the `on_auth_user_created`
   trigger. The client must not insert them; it passes fields via
   `signUp({ options: { data } })`.
