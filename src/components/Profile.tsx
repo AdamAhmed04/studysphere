@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { Calendar, BookOpen, Users, Trophy, Edit3, GraduationCap, School } from 'lucide-react';
+import { Calendar, BookOpen, Users, Trophy, Edit3, GraduationCap, School, Camera, Loader2 } from 'lucide-react';
 import type { User as UserType, StudySession, Friend } from '../types';
+import { authService } from '../services/authService';
+import { dataUrlToBlob, downscaleImage } from '../utils/avatar';
+import { useToast } from '../contexts/ToastContext';
 
 interface ProfileProps {
   userProfile: UserType;
@@ -12,6 +15,49 @@ interface ProfileProps {
 export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, sessions, friends }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(userProfile);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [avatarBusy, setAvatarBusy] = useState(false);
+  const toast = useToast();
+
+  // The preview is what was just picked; it wins until the reloaded profile
+  // carries the new URL, so the change is visible without waiting for a fetch.
+  const avatarSrc = avatarPreview ?? userProfile.avatar ?? null;
+
+  /*
+   * Saved as soon as it is picked rather than on Save. The file is already in
+   * storage by then, so deferring the profile write would only leave storage
+   * and the profile disagreeing until the user happened to press a button.
+   */
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = ''; // so picking the same file twice still fires
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please choose an image file.');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Please choose an image under 5MB.');
+      return;
+    }
+
+    setAvatarBusy(true);
+
+    try {
+      const dataUrl = await downscaleImage(file);
+      const avatarUrl = await authService.uploadAvatar(userProfile.id, dataUrlToBlob(dataUrl));
+
+      setAvatarPreview(dataUrl);
+      setEditData((previous) => ({ ...previous, avatar: avatarUrl }));
+      onUpdateProfile({ avatar: avatarUrl });
+    } catch (error) {
+      toast.error('Could not upload that photo.', error);
+    } finally {
+      setAvatarBusy(false);
+    }
+  };
 
   const handleSave = () => {
     onUpdateProfile(editData);
@@ -49,10 +95,36 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 h-32"></div>
         <div className="relative px-6 pb-6">
           <div className="flex items-end space-x-6 -mt-16">
-            <div className="w-32 h-32 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center border-4 border-white shadow-lg">
-              <span className="text-white font-bold text-4xl">
-                {userProfile.name.charAt(0).toUpperCase()}
-              </span>
+            <div className="relative">
+              <div className="w-32 h-32 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center overflow-hidden border-4 border-white shadow-lg">
+                {avatarSrc ? (
+                  <img src={avatarSrc} alt={userProfile.name} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-white font-bold text-4xl">
+                    {userProfile.name.charAt(0).toUpperCase()}
+                  </span>
+                )}
+              </div>
+
+              <label
+                htmlFor="profile-photo"
+                className="absolute bottom-1 right-1 flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white border-2 border-white shadow-md cursor-pointer hover:bg-blue-700 transition-colors"
+              >
+                {avatarBusy
+                  ? <Loader2 size={18} className="animate-spin" />
+                  : <Camera size={18} />}
+                <span className="sr-only">
+                  {avatarSrc ? "Change profile photo" : "Add a profile photo"}
+                </span>
+              </label>
+              <input
+                id="profile-photo"
+                type="file"
+                accept="image/*"
+                className="sr-only"
+                disabled={avatarBusy}
+                onChange={handleAvatarChange}
+              />
             </div>
             <div className="flex-1 pt-16">
               <div className="flex items-center justify-between">

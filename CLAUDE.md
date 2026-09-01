@@ -84,6 +84,17 @@ logged. They are cheap to reintroduce by accident.
   measured, 1 to 1,000,000 focus minutes. It now reads the minutes off a session
   row that must belong to the caller, cannot claim more time than elapsed, and
   counts once. Never add a minutes parameter back.
+- **Anything needing `auth.uid()` cannot run during `signUp()`.** With email
+  confirmation on, `signUp()` returns no session, so the avatar upload sat
+  inside `if (authData.session)` and never ran: the photo picked at signup was
+  discarded, silently, on every single account. Storage held zero files. The
+  photo is now downscaled and parked in `localStorage`, and
+  `applyPendingAvatar` uploads it on the first load that has a session. The
+  same trap still applies to `date_of_birth` and `graduation_date`, which are
+  dropped for the same reason and are not yet fixed.
+- **Avatar URLs are cache-busted with `?v=`.** The storage path is stable per
+  user, so a replacement produces a byte-identical URL that every client keeps
+  serving from cache for `cacheControl` seconds.
 - **Calendar dates go through `src/utils/dates.ts`.** `new Date('2026-09-01')`
   parses as UTC and lands a day early west of UTC. `todos.due_date` is a `date`
   column, not a timestamp.

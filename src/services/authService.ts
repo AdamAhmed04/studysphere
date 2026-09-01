@@ -1,6 +1,13 @@
 import { supabase } from '../lib/supabase';
 import type { User } from '@supabase/supabase-js';
 import { toLocalDateString } from '../utils/dates';
+import {
+  clearPendingAvatar,
+  dataUrlToBlob,
+  downscaleImage,
+  readPendingAvatar,
+  stashPendingAvatar,
+} from '../utils/avatar';
 
 export interface SignUpData {
   email: string;
@@ -52,36 +59,29 @@ class AuthService {
       if (!authData.user) throw new Error('Failed to create user');
 
       /*
-       * Avatar and the two date fields need an authenticated session: the
-       * storage policies and the profile UPDATE policy both key off auth.uid().
-       * When email confirmation is enabled signUp() returns no session, so
-       * these are skipped and the user sets them from Profile after confirming.
-       * Never fail signup over them.
+       * The two date fields need an authenticated session: the profile UPDATE
+       * policy keys off auth.uid(). When email confirmation is on signUp()
+       * returns no session, so they are skipped and the user sets them from
+       * Profile after confirming. Never fail signup over them.
        */
+      const avatarDataUrl = await this.prepareAvatar(userData.avatar);
+
       if (authData.session) {
         const patch: Record<string, unknown> = {
           date_of_birth: toLocalDateString(userData.dateOfBirth),
           graduation_date: toLocalDateString(userData.graduationDate),
         };
 
-        if (userData.avatar) {
+        if (avatarDataUrl) {
           try {
-            const fileExt = userData.avatar.name.split('.').pop();
-            const filePath = `${authData.user.id}/${authData.user.id}.${fileExt}`;
-
-            const { error: uploadError } = await supabase.storage
-              .from('avatars')
-              .upload(filePath, userData.avatar, { cacheControl: '3600', upsert: true });
-
-            if (uploadError) throw uploadError;
-
-            const { data: urlData } = supabase.storage
-              .from('avatars')
-              .getPublicUrl(filePath);
-
-            patch.avatar_url = urlData.publicUrl;
+            patch.avatar_url = await this.uploadAvatar(
+              authData.user.id,
+              dataUrlToBlob(avatarDataUrl),
+            );
           } catch (avatarError) {
-            console.error('Avatar upload failed, continuing without it:', avatarError);
+            // Park it rather than drop it, so the next load retries.
+            console.error('Avatar upload failed, deferring to first load:', avatarError);
+            stashPendingAvatar(authData.user.id, avatarDataUrl);
           }
         }
 
@@ -99,6 +99,14 @@ class AuthService {
 
           if (patchError) console.error('Post-signup profile update failed:', patchError);
         }
+      } else if (avatarDataUrl) {
+        /*
+         * No session means confirmation is pending, so there is no auth.uid()
+         * for the storage policy to match. Park the photo; applyPendingAvatar
+         * uploads it on the first load that has a session, which is the
+         * redirect back from the confirmation email.
+         */
+        stashPendingAvatar(authData.user.id, avatarDataUrl);
       }
 
       // The profile, stats and presence rows are all created by the
@@ -107,6 +115,75 @@ class AuthService {
     } catch (error) {
       console.error('Sign up error:', error);
       throw error;
+    }
+  }
+
+  /** Downscales a chosen photo. Returns null if there is none, or it is unreadable. */
+  private async prepareAvatar(file: File | undefined): Promise<string | null> {
+    if (!file) return null;
+
+    try {
+      return await downscaleImage(file);
+    } catch (error) {
+      console.error('Could not process the chosen profile photo:', error);
+      return null;
+    }
+  }
+
+  /*
+   * Uploads to a stable per-user path and returns a cache-busted public URL.
+   * Stable so a user only ever occupies one file; cache-busted because the URL
+   * would otherwise be byte-identical after a replacement and every client
+   * would keep serving the old photo for the rest of the hour.
+   */
+  async uploadAvatar(userId: string, image: Blob): Promise<string> {
+    if (!supabase) {
+      throw new Error('Supabase is not configured. Please set up your environment variables.');
+    }
+
+    // The storage policies match (storage.foldername(name))[1] against
+    // auth.uid(), so the user id has to be the first path segment.
+    const filePath = `${userId}/avatar.jpg`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, image, {
+        cacheControl: '3600',
+        contentType: 'image/jpeg',
+        upsert: true,
+      });
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+    return `${data.publicUrl}?v=${Date.now()}`;
+  }
+
+  /*
+   * Uploads a photo that was picked at signup but could not be sent then.
+   * Called on every authenticated load; costs one localStorage read when there
+   * is nothing waiting. On failure the photo stays parked so the next load
+   * tries again - it is only cleared once it is safely on the profile.
+   */
+  async applyPendingAvatar(userId: string): Promise<string | null> {
+    const dataUrl = readPendingAvatar(userId);
+    if (!dataUrl || !supabase) return null;
+
+    try {
+      const avatarUrl = await this.uploadAvatar(userId, dataUrlToBlob(dataUrl));
+
+      const { error } = await supabase
+        .from('user_profiles')
+        .update({ avatar_url: avatarUrl })
+        .eq('user_id', userId);
+
+      if (error) throw error;
+
+      clearPendingAvatar(userId);
+      return avatarUrl;
+    } catch (error) {
+      console.error('Could not apply the profile photo picked at signup:', error);
+      return null;
     }
   }
 

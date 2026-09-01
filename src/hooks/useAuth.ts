@@ -44,6 +44,11 @@ export const useAuth = () => {
           setStats(cachedData.stats);
         }
 
+        // A photo picked at signup could not be uploaded then - there was no
+        // session until the confirmation email was followed. This is the
+        // first load that has one, so it goes up before the profile is read.
+        await authService.applyPendingAvatar(user.id);
+
         // Load fresh data from server
         const [userProfile, userStats] = await Promise.all([
           userService.getCurrentUserProfile(),
