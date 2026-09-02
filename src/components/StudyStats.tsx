@@ -47,9 +47,9 @@ export const StudyStats: React.FC<StudyStatsProps> = ({ sessions, stats }) => {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-ink/75 font-medium">Total Time</p>
-            <p className="text-2xl font-bold text-emerald-300">{formatMinutes(totalTime)}</p>
+            <p className="text-2xl font-bold text-ink">{formatMinutes(totalTime)}</p>
           </div>
-          <Target className="text-green-500" size={32} />
+          <Target className="text-muted" size={32} />
         </div>
       </div>
 

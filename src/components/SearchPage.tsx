@@ -208,7 +208,7 @@ export const SearchPage: React.FC<SearchPageProps> = ({ onAddFriend, currentUser
                             <span className="text-sm text-ink/75">{user.study_field || 'Not specified'}</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <Users className="h-4 w-4 text-green-500" />
+                            <Users className="h-4 w-4 text-muted" />
                             <span className="text-sm text-ink/75">{user.school}</span>
                           </div>
                         </div>

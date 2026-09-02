@@ -66,7 +66,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ friends, currentUserId
                       {formatTime(friend.totalStudyTime)}
                     </span>
                     <div className={`w-2 h-2 rounded-full ${
-                      friend.isOnline ? 'bg-green-400' : 'bg-gray-300'
+                      friend.isOnline ? 'bg-green-400' : 'bg-muted/40'
                     }`}></div>
                   </div>
                 </div>

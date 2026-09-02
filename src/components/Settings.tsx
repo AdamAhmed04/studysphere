@@ -213,14 +213,14 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
       {activeSection === 'privacy' && (
         <div className="theme-secondary-bg rounded-2xl shadow-xl p-6">
         <h3 className="text-2xl font-bold text-ink mb-6 flex items-center">
-          <Lock className="mr-3 text-green-500" size={28} />
+          <Lock className="mr-3 text-sand" size={28} />
           Privacy Settings
         </h3>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between p-4 bg-surface rounded-xl">
             <div className="flex items-center space-x-3">
-              {formData.isPublic ? <Globe className="text-green-500" size={20} /> : <Lock className="text-red-500" size={20} />}
+              {formData.isPublic ? <Globe className="text-sand" size={20} /> : <Lock className="text-muted" size={20} />}
               <div>
                 <p className="font-medium text-ink">Public Profile</p>
                 <p className="text-sm text-ink/75">
@@ -231,11 +231,11 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
             <button
               onClick={() => setFormData(prev => ({ ...prev, isPublic: !prev.isPublic }))}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                formData.isPublic ? 'bg-green-600' : 'bg-gray-300'
+                formData.isPublic ? 'bg-sand' : 'bg-surface-high border border-hairline'
               }`}
             >
               <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-surface transition-transform ${
+                className={`inline-block h-4 w-4 transform rounded-full bg-pearl transition-transform ${
                   formData.isPublic ? 'translate-x-6' : 'translate-x-1'
                 }`}
               />
@@ -276,7 +276,7 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
               onClick={handleEnableNotifications}
               disabled={!notificationsSupported || notificationPermission !== 'default'}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                notificationPermission === 'granted' ? 'bg-green-600' : 'bg-gray-300'
+                notificationPermission === 'granted' ? 'bg-sand' : 'bg-surface-high border border-hairline'
               } ${(!notificationsSupported || notificationPermission !== 'default') ? 'cursor-not-allowed opacity-70' : ''}`}
             >
               <span

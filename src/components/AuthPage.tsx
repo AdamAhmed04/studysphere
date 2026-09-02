@@ -619,7 +619,7 @@ export const AuthPage: React.FC = () => {
 
                   <div className="flex items-center justify-between p-4 bg-surface rounded-xl">
                     <div className="flex items-center space-x-3">
-                      {formData.isPublic ? <Globe className="text-green-500" size={20} /> : <Lock className="text-red-500" size={20} />}
+                      {formData.isPublic ? <Globe className="text-sand" size={20} /> : <Lock className="text-muted" size={20} />}
                       <div>
                         <p className="font-medium text-ink">Public Profile</p>
                         <p className="text-sm text-ink/75">
@@ -631,11 +631,11 @@ export const AuthPage: React.FC = () => {
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, isPublic: !prev.isPublic }))}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        formData.isPublic ? 'bg-green-600' : 'bg-gray-300'
+                        formData.isPublic ? 'bg-sand' : 'bg-surface-high border border-hairline'
                       }`}
                     >
                       <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-surface transition-transform ${
+                        className={`inline-block h-4 w-4 transform rounded-full bg-pearl transition-transform ${
                           formData.isPublic ? 'translate-x-6' : 'translate-x-1'
                         }`}
                       />

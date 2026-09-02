@@ -159,7 +159,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
               /* On means private, matching the label beside it. Previously the
                  "on" colour meant public, which read as the opposite. */
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                formData.isPrivate ? 'bg-sand' : 'bg-gray-300'
+                formData.isPrivate ? 'bg-sand' : 'bg-surface-high border border-hairline'
               }`}
             >
               <span

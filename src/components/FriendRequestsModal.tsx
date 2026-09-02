@@ -101,7 +101,7 @@ export const FriendRequestsModal: React.FC<FriendRequestsModalProps> = ({
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => onAccept(request.id)}
-                        className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                        className="flex items-center space-x-2 px-4 py-2 bg-pearl text-on-pearl rounded-lg hover:bg-sand transition-colors"
                         title="Accept"
                       >
                         <Check size={18} />

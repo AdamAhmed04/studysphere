@@ -222,7 +222,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
                   textClassName="text-lg"
                 />
                 <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${
-                  friend.isOnline ? 'bg-green-400' : 'bg-gray-300'
+                  friend.isOnline ? 'bg-green-400' : 'bg-muted/40'
                 }`}></div>
               </div>
               

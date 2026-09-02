@@ -62,7 +62,7 @@ export const UpcomingMeetings: React.FC<UpcomingMeetingsProps> = ({
   const getMeetingTypeIcon = (type: string) => {
     switch (type) {
       case 'video': return <Video size={16} className="text-sand" />;
-      case 'phone': return <Phone size={16} className="text-green-500" />;
+      case 'phone': return <Phone size={16} className="text-muted" />;
       case 'in-person': return <MapPin size={16} className="text-sand" />;
       default: return <Video size={16} className="text-sand" />;
     }

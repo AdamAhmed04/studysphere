@@ -276,7 +276,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   const getMeetingTypeIcon = (type: string) => {
     switch (type) {
       case 'video': return <Video size={16} className="text-sand" />;
-      case 'phone': return <Phone size={16} className="text-green-500" />;
+      case 'phone': return <Phone size={16} className="text-muted" />;
       case 'in-person': return <MapPin size={16} className="text-sand" />;
       default: return <Video size={16} className="text-sand" />;
     }
@@ -611,7 +611,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                   type="button"
                   onClick={() => setEventForm(prev => ({ ...prev, hasReminder: !prev.hasReminder }))}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    eventForm.hasReminder ? 'bg-orange-600' : 'bg-gray-300'
+                    eventForm.hasReminder ? 'bg-sand' : 'bg-surface-high border border-hairline'
                   }`}
                 >
                   <span
@@ -799,7 +799,7 @@ export const Calendar: React.FC<CalendarProps> = ({
               </button>
               <button
                 onClick={handleCreateMeeting}
-                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                className="flex-1 px-4 py-2 bg-pearl text-on-pearl rounded-lg hover:bg-sand transition-colors"
               >
                 Schedule Meeting
               </button>

@@ -172,9 +172,9 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-ink/75 font-medium">Friends</p>
-              <p className="text-2xl font-bold text-emerald-300">{friends.length}</p>
+              <p className="text-2xl font-bold text-ink">{friends.length}</p>
             </div>
-            <Users className="text-green-500" size={32} />
+            <Users className="text-muted" size={32} />
           </div>
         </div>
 
@@ -290,7 +290,7 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
 
               {userProfile.studyField && (
                 <div className="flex items-start space-x-3">
-                  <GraduationCap className="text-green-500 mt-1" size={20} />
+                  <GraduationCap className="text-muted mt-1" size={20} />
                   <div>
                     <p className="font-semibold text-ink">Field of Study</p>
                     <p className="text-ink/75">{userProfile.studyField}</p>

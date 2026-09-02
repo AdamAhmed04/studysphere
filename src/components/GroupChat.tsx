@@ -79,8 +79,8 @@ export const GroupChat: React.FC<GroupChatProps> = ({
 
   const getMessageStyle = (type: string) => {
     switch (type) {
-      case 'note': return 'bg-sand/15 border-l-4 border-yellow-500';
-      case 'resource': return 'bg-emerald-500/15 border-l-4 border-green-500';
+      case 'note': return 'bg-sand/15 border-l-4 border-sand';
+      case 'resource': return 'bg-emerald-500/15 border-l-4 border-emerald-400';
       default: return 'bg-surface';
     }
   };
@@ -139,7 +139,7 @@ export const GroupChat: React.FC<GroupChatProps> = ({
                   <span className="text-xs text-muted">{formatTime(message.timestamp)}</span>
                   {message.type !== 'text' && (
                     <span className={`text-xs px-2 py-1 rounded-full ${
-                      message.type === 'note' ? 'bg-yellow-200 text-sand' : 'bg-green-200 text-emerald-300'
+                      message.type === 'note' ? 'bg-sand/20 text-sand' : 'bg-emerald-500/20 text-emerald-300'
                     }`}>
                       {message.type}
                     </span>
