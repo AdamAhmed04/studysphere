@@ -43,7 +43,7 @@ export const Avatar: React.FC<AvatarProps> = ({
 
   return (
     <div
-      className={`rounded-full bg-gradient-to-r ${gradient} flex items-center justify-center overflow-hidden ${className}`}
+      className={`rounded-full bg-gradient-to-r ${gradient} flex flex-shrink-0 items-center justify-center overflow-hidden ${className}`}
     >
       {src && !failed ? (
         <img

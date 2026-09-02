@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Clock, Users, MessageSquare, BarChart3, Settings, User, Calendar, Search, ChevronDown, Play, Pause, MoreHorizontal } from 'lucide-react';
+import { Clock, Users, MessageSquare, BarChart3, Settings, User, Calendar, Search, Play, Pause, MoreHorizontal } from 'lucide-react';
 import { Avatar } from './Avatar';
 
 interface NavigationProps {
@@ -112,23 +112,18 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
             <div className="relative">
               <button
                 onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-                className="flex items-center space-x-2 md:space-x-3 px-2 md:px-4 py-2 rounded-xl transition-all border border-transparent hover:border-sand/40 hover:bg-surface-high min-h-[44px]"
+                className="flex items-center justify-center p-1 rounded-full transition-all border border-transparent hover:border-sand/40 min-h-[44px] min-w-[44px]"
+                aria-label="Open profile menu"
+                aria-expanded={showProfileDropdown}
+                aria-haspopup="menu"
               >
                 <Avatar
                   name={userProfile.username}
                   src={userProfile.avatar}
                   alt={userProfile.name}
-                  className="w-10 h-10 md:w-12 md:h-12 border-2 border-white shadow-md"
+                  className="w-10 h-10 md:w-11 md:h-11 border-2 border-white/15 shadow-md"
                   textClassName="text-base md:text-lg"
-                  gradient="from-green-400 to-blue-500"
                 />
-                <div className="text-left hidden md:block">
-                  <p className="font-semibold text-ink">{userProfile.username}</p>
-                  <p className="text-sm text-muted">
-                    {userProfile.isPublic ? 'Public' : 'Private'} Profile
-                  </p>
-                </div>
-                <ChevronDown size={18} className="text-muted hidden md:block" />
               </button>
               
               {/* Profile Dropdown */}
