@@ -334,7 +334,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                 setSelectedDate(new Date());
                 setShowMeetingModal(true);
               }}
-              className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 border border-hairline text-ink rounded-lg hover:bg-surface-high transition-colors"
             >
               <Users size={16} />
               <span>Schedule Meeting</span>
