@@ -9,9 +9,22 @@
     <!-- iOS Web App Meta Tags -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <!--
+      black-translucent, not default: it is what lets the page paint underneath
+      the status bar instead of starting below an opaque strip. Only applies
+      once the app is on the Home Screen or inside a native shell; in an
+      ordinary Safari tab that strip belongs to Safari, not to us.
+    -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="StudySphere" />
-    <meta name="theme-color" content="#111a2e" />
+    <!--
+      The app's ground, not the icon's navy. iOS fills the status bar strip
+      with this colour in a Safari tab, and #111a2e sat visibly darker and
+      bluer than the drifting hue below it — the hard line across the top of
+      the screen. #0C0A14 is the same --void the app is built on, so the seam
+      is as close to invisible as a flat colour can be against a gradient.
+    -->
+    <meta name="theme-color" content="#0C0A14" />
 
     <!-- Description and Keywords for Search Engines -->
     <meta name="description" content="StudySphere - A social productivity timer app to help you focus and achieve your study goals with friends." />
