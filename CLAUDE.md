@@ -56,8 +56,15 @@ and the schema rewritten from scratch rather than patched.
   through SECURITY DEFINER helpers (`is_group_member`, `is_group_admin`,
   `can_see_meeting`, `can_notify`). Policies that self-referenced were what
   produced the 42P17 recursion that killed groups, chat and meetings.
-- Reading *other* users goes through the `public_profiles` and
-  `public_leaderboard` views, never the base tables. The views carry a column
+- Reading *other* users goes through the `discoverable_profiles`,
+  `public_profiles` and `public_leaderboard` views, never the base tables.
+  **`discoverable_profiles` is the one to read for identity**: it returns every
+  account, carrying name and avatar always, and blanks bio, school, study
+  field, grade, interests and age unless the row is public, your own, or an
+  accepted friend. `public_profiles` still filters `is_public = true`
+  outright, which is why reading it made a friend who went private vanish from
+  their own friends list and left their chat messages nameless. Age is computed
+  in the view; `date_of_birth` is never exposed. The views carry a column
   allowlist — that is what keeps email, date_of_birth, grade and
   graduation_date private. Never add those columns to a view.
 - `user_stats` has no INSERT/UPDATE policy on purpose. All stat changes go
@@ -131,15 +138,7 @@ logged. They are cheap to reintroduce by accident.
    characters with upper, lower, digit and symbol — the strongest server-side
    password rules Supabase offers — so the specific gap is the
    HaveIBeenPwned check, which no client-side code can stand in for.
-2. `supabase/migrations/20260902010000_discoverable_profiles.sql` is written
-   but **not applied** — it needs database access. Until it is, search still
-   reads `public_profiles`, so private accounts remain entirely invisible
-   rather than findable-but-quiet. `searchService` sets `is_public` and
-   `can_see_details` to `true` literals for exactly this reason; switching the
-   query to `discoverable_profiles` and reading the real columns is the whole
-   client-side change. Do not make that switch before the view exists — search
-   would fail outright.
-3. Direct messages and video calling are unbuilt; both show an honest toast
+2. Direct messages and video calling are unbuilt; both show an honest toast
    rather than faking it. DMs would mean two-member private groups reusing the
    existing chat.
 

@@ -183,7 +183,7 @@ class GroupService {
   /*
    * The profile embed is a LEFT join on purpose - no `!inner`.
    *
-   * `public_profiles` is filtered `where is_public = true`, so an inner join
+   * `discoverable_profiles` returns every account, but an inner join
    * does not merely leave the author nameless, it drops the message. Toggling
    * your own profile to private in Settings therefore removed every message you
    * had ever posted, from every group, for everyone: 20 stored, 0 returned.
@@ -203,7 +203,7 @@ class GroupService {
     try {
       const { data: messages, error } = await supabase
         .from('chat_messages')
-        .select('*, public_profiles(name, avatar_url)')
+        .select('*, discoverable_profiles(name, avatar_url)')
         .eq('group_id', groupId)
         .order('created_at', { ascending: true });
 
@@ -217,8 +217,8 @@ class GroupService {
         type: asOneOf(msg.type, MESSAGE_TYPES, 'text'),
         attachments: orUndefined(msg.attachments),
         created_at: orEmpty(msg.created_at),
-        user_name: orUndefined(msg.public_profiles?.name),
-        user_avatar: orUndefined(msg.public_profiles?.avatar_url)
+        user_name: orUndefined(msg.discoverable_profiles?.name),
+        user_avatar: orUndefined(msg.discoverable_profiles?.avatar_url)
       })) || [];
     } catch (error) {
       console.error('Error fetching group messages:', error);
@@ -245,7 +245,7 @@ class GroupService {
         message: sanitizedMessage,
         type
       })
-      .select('*, public_profiles(name, avatar_url)')
+      .select('*, discoverable_profiles(name, avatar_url)')
       .single();
 
     if (messageError) throw messageError;
@@ -263,8 +263,8 @@ class GroupService {
       type: asOneOf(messageData.type, MESSAGE_TYPES, 'text'),
       attachments: orUndefined(messageData.attachments),
       created_at: orEmpty(messageData.created_at),
-      user_name: orUndefined(messageData.public_profiles?.name),
-      user_avatar: orUndefined(messageData.public_profiles?.avatar_url)
+      user_name: orUndefined(messageData.discoverable_profiles?.name),
+      user_avatar: orUndefined(messageData.discoverable_profiles?.avatar_url)
     };
   }
 
@@ -285,7 +285,7 @@ class GroupService {
           if (!supabase) return;
           const { data: messageWithProfile } = await supabase
             .from('chat_messages')
-            .select('*, public_profiles(name, avatar_url)')
+            .select('*, discoverable_profiles(name, avatar_url)')
             .eq('id', payload.new.id)
             .single();
 
@@ -298,8 +298,8 @@ class GroupService {
               type: asOneOf(messageWithProfile.type, MESSAGE_TYPES, 'text'),
               attachments: orUndefined(messageWithProfile.attachments),
               created_at: orEmpty(messageWithProfile.created_at),
-              user_name: orUndefined(messageWithProfile.public_profiles?.name),
-              user_avatar: orUndefined(messageWithProfile.public_profiles?.avatar_url)
+              user_name: orUndefined(messageWithProfile.discoverable_profiles?.name),
+              user_avatar: orUndefined(messageWithProfile.discoverable_profiles?.avatar_url)
             });
           }
         }

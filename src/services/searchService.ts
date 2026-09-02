@@ -43,12 +43,19 @@ const escapeFilterValue = (value: string): string =>
 
 class SearchService {
   /**
-   * Searches public profiles.
+   * Searches every account, public or private.
    *
-   * Reads the `public_profiles` view rather than `user_profiles`. The view
-   * exposes an explicit column allowlist, which is what keeps email, date of
-   * birth, grade and graduation date out of search results. It also already
-   * filters to is_public = true, so no client-side flag is needed.
+   * Reads `discoverable_profiles` rather than `user_profiles`. The view
+   * exposes an explicit column allowlist — which is what keeps email,
+   * graduation date and the raw date of birth out of search results — and
+   * blanks the detail columns for accounts that are neither public, your own,
+   * nor an accepted friend. A private account still comes back, carrying its
+   * name and photo, so it can be found and sent a request.
+   *
+   * Because the detail columns are null for those rows, the school and study
+   * field filters below simply do not match them. That is the intended
+   * behaviour: you can find a private account by name, not by filtering on
+   * facts it has not shared.
    */
   async searchUsers(query: string, filters?: {
     school?: string;
@@ -62,8 +69,10 @@ class SearchService {
       if (!user) return [];
 
       let profileQuery = supabase
-        .from('public_profiles')
-        .select('user_id, name, avatar_url, bio, school, study_field, interests')
+        .from('discoverable_profiles')
+        .select(
+          'user_id, name, avatar_url, is_public, can_see_details, bio, school, study_field, grade, age, interests'
+        )
         .neq('user_id', user.id);
 
       const trimmed = query?.trim();
@@ -123,10 +132,11 @@ class SearchService {
         study_field: orUndefined(profile.study_field),
         interests: profile.interests || [],
         total_study_time: stats.find(s => s.user_id === profile.user_id)?.total_focus_minutes || 0,
+        grade: orUndefined(profile.grade),
+        age: profile.age ?? undefined,
         is_friend: friendIds.has(orEmpty(profile.user_id)),
-        // public_profiles filters to public rows, so anything here is both.
-        is_public: true,
-        can_see_details: true,
+        is_public: profile.is_public ?? false,
+        can_see_details: profile.can_see_details ?? false,
       }));
     } catch (error) {
       console.error('Error searching users:', error);
@@ -141,11 +151,14 @@ class SearchService {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return null;
 
-      // maybeSingle, not single: a private or non-existent profile is a normal
-      // "not found", not an exception.
+      // maybeSingle, not single: a non-existent profile is a normal "not
+      // found", not an exception. A private profile now returns a row - name
+      // and photo, with the detail columns null.
       const { data: profile, error: profileError } = await supabase
-        .from('public_profiles')
-        .select('user_id, name, avatar_url, bio, school, study_field, interests')
+        .from('discoverable_profiles')
+        .select(
+          'user_id, name, avatar_url, is_public, can_see_details, bio, school, study_field, grade, age, interests'
+        )
         .eq('user_id', userId)
         .maybeSingle();
 
@@ -175,9 +188,11 @@ class SearchService {
         study_field: orUndefined(profile.study_field),
         interests: profile.interests || [],
         total_study_time: statsData.data?.total_focus_minutes || 0,
+        grade: orUndefined(profile.grade),
+        age: profile.age ?? undefined,
         is_friend: !!friendsData.data,
-        is_public: true,
-        can_see_details: true,
+        is_public: profile.is_public ?? false,
+        can_see_details: profile.can_see_details ?? false,
       };
     } catch (error) {
       console.error('Error fetching user:', error);

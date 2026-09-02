@@ -181,7 +181,7 @@ class FriendService {
 
     try {
       const { data: profile, error: profileError } = await supabase
-        .from('public_profiles')
+        .from('discoverable_profiles')
         .select('user_id, name, avatar_url, bio, school, study_field')
         .eq('user_id', friendId)
         .maybeSingle();
@@ -239,7 +239,7 @@ class FriendService {
       );
 
       const [profilesRes, statsRes, presenceRes] = await Promise.all([
-        supabase.from('public_profiles')
+        supabase.from('discoverable_profiles')
           .select('user_id, name, avatar_url, bio, school, study_field')
           .in('user_id', friendIds),
         supabase.from('public_leaderboard')
@@ -294,7 +294,7 @@ class FriendService {
       if (!requests || requests.length === 0) return [];
 
       const { data: profiles } = await supabase
-        .from('public_profiles')
+        .from('discoverable_profiles')
         .select('user_id, name, avatar_url')
         .in('user_id', requests.map(r => r.user_id));
 

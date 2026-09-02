@@ -121,9 +121,18 @@ export type Database = {
             referencedRelation: "user_profiles"
             referencedColumns: ["user_id"]
           },
-          // The same key reaches public_profiles, which is the one the client
-          // must embed: user_profiles is own-row-only under RLS, so an inner
-          // join against it drops every message written by anyone else.
+          // The same key reaches both profile views, and one of them is what
+          // the client must embed: user_profiles is own-row-only under RLS, so
+          // an inner join against it drops every message written by anyone
+          // else. discoverable_profiles is the one to use — public_profiles
+          // omits private accounts, which would leave their messages nameless.
+          {
+            foreignKeyName: "chat_messages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "discoverable_profiles"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "chat_messages_user_id_fkey"
             columns: ["user_id"]
@@ -539,6 +548,22 @@ export type Database = {
       }
     }
     Views: {
+      discoverable_profiles: {
+        Row: {
+          age: number | null
+          avatar_url: string | null
+          bio: string | null
+          can_see_details: boolean | null
+          grade: string | null
+          interests: string[] | null
+          is_public: boolean | null
+          name: string | null
+          school: string | null
+          study_field: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
       public_leaderboard: {
         Row: {
           avatar_url: string | null
@@ -642,6 +667,7 @@ export type Database = {
           user_avatar: string | null
         }[]
       }
+      is_friend_of_caller: { Args: { p_other: string }; Returns: boolean }
       is_group_admin: { Args: { gid: string }; Returns: boolean }
       is_group_member: { Args: { gid: string }; Returns: boolean }
       is_group_public: { Args: { gid: string }; Returns: boolean }
