@@ -19,9 +19,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
 
-      - run: npm ci
+      # Deliberately no npm cache. A clean npm ci from this lockfile succeeds
+      # locally, so the failure is something the runner brings with it, and a
+      # restored cache is the only state carried between runs. Correctness
+      # first; the install takes about twenty seconds either way.
+      - run: npm ci --foreground-scripts
 
       # Each step runs separately rather than relying on `npm run build`, which
       # chains lint and tsc, so a failure names which check broke instead of
