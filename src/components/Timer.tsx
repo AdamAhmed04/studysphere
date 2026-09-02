@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Play, Pause, Square, BookOpen, RotateCcw, Palette, ChevronDown, Maximize, Minimize, Waves, Circle } from 'lucide-react';
+import { Play, Pause, Square, BookOpen, RotateCcw, Maximize, Minimize } from 'lucide-react';
 import { useTimerContext } from '../contexts/TimerContext';
+import { AuroraGround } from './AuroraGround';
 import { Celebration } from './Celebration';
 import { Dial } from './Dial';
-import { colorThemes, getColorTheme } from '../utils/themes';
 import { useTheme } from '../hooks/useTheme';
 import { isNotificationSupported, getNotificationPermission } from '../utils/safeNotification';
 interface TimerProps {
@@ -30,11 +30,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
   const [customMinutes, setCustomMinutes] = useState(25);
   const [breakCount, setBreakCount] = useState(0);
   const [breakDuration, setBreakDuration] = useState(5);
-  const [selectedColorTheme, setSelectedColorTheme] = useState('blue');
-  const [showThemeDropdown, setShowThemeDropdown] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const [backgroundStyle, setBackgroundStyle] = useState<'waves' | 'bubbles' | 'particles' | 'minimal'>('waves');
-  const [showBackgroundDropdown, setShowBackgroundDropdown] = useState(false);
   const [discardedNote, setDiscardedNote] = useState<string | null>(null);
 
   const handleStart = () => {
@@ -113,317 +109,82 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     setCustomMinutes(targetMinutes);
   }, [targetMinutes]);
 
-  const currentColorTheme = getColorTheme(selectedColorTheme);
 
-  const backgroundStyles = [
-    { id: 'waves', name: 'Flowing Waves', icon: Waves },
-    { id: 'bubbles', name: 'Floating Bubbles', icon: Circle },
-    { id: 'particles', name: 'Gentle Particles', icon: Circle },
-    { id: 'minimal', name: 'Minimal', icon: Minimize }
-  ] as const;
-
-  const renderAnimatedBackground = () => {
-    const baseColor = currentColorTheme.color;
-
-    switch (backgroundStyle) {
-      case 'bubbles':
-        return (
-          <div className="absolute inset-0 overflow-hidden">
-            {/* Floating Bubbles */}
-            {[...Array(12)].map((_, i) => (
-              <div
-                key={`bubble-${i}`}
-                className="absolute rounded-full opacity-100 animate-pulse shadow-2xl"
-                style={{
-                  backgroundColor: baseColor,
-                  width: `${20 + (i % 4) * 15}px`,
-                  height: `${20 + (i % 4) * 15}px`,
-                  left: `${(i * 8.33) % 100}%`,
-                  top: `${(i * 7) % 100}%`,
-                  animationDuration: `${4 + (i % 3) * 2}s`,
-                  animationDelay: `${i * 0.5}s`,
-                  transform: `translateY(${Math.sin(i) * 20}px)`,
-                  boxShadow: `0 0 60px ${baseColor}, inset 0 0 30px ${baseColor}, 0 0 100px ${baseColor}80, 0 0 150px ${baseColor}60`
-                }}
-              />
-            ))}
-            
-            {/* Bubble Movement Animation */}
-            <div 
-              className="absolute inset-0 opacity-95"
-              style={{
-                background: `radial-gradient(circle at 30% 70%, ${baseColor}90, transparent 50%), 
-                            radial-gradient(circle at 70% 30%, ${baseColor}80, transparent 50%),
-                            radial-gradient(circle at 50% 90%, ${baseColor}95, transparent 40%)`,
-                animation: 'floatBubbles 25s ease-in-out infinite'
-              }}
-            />
-          </div>
-        );
-
-      case 'particles':
-        return (
-          <div className="absolute inset-0 overflow-hidden">
-            {/* Particle Field */}
-            {[...Array(20)].map((_, i) => (
-              <div
-                key={`particle-${i}`}
-                className="absolute w-6 h-6 rounded-full opacity-100 shadow-2xl"
-                style={{
-                  backgroundColor: baseColor,
-                  left: `${(i * 5) % 100}%`,
-                  top: `${(i * 3.7) % 100}%`,
-                  animation: `floatParticle ${8 + (i % 4) * 2}s ease-in-out infinite`,
-                  animationDelay: `${i * 0.3}s`,
-                  boxShadow: `0 0 40px ${baseColor}, 0 0 60px ${baseColor}80, 0 0 80px ${baseColor}60`
-                }}
-              />
-            ))}
-            
-            {/* Particle Connections */}
-            <div 
-              className="absolute inset-0 opacity-90"
-              style={{
-                background: `linear-gradient(45deg, transparent 20%, ${baseColor}90 50%, transparent 80%),
-                            linear-gradient(-45deg, transparent 30%, ${baseColor}80 60%, transparent 90%)`,
-                backgroundSize: '200% 200%',
-                animation: 'moveParticleField 20s linear infinite'
-              }}
-            />
-          </div>
-        );
-
-      case 'minimal':
-        return (
-          <div className="absolute inset-0 overflow-hidden">
-            {/* Simple Gradient Shift */}
-            <div 
-              className="absolute inset-0 opacity-95"
-              style={{
-                background: `linear-gradient(135deg, ${baseColor}, ${baseColor}90, ${baseColor}80)`,
-                animation: 'gentleShift 30s ease-in-out infinite'
-              }}
-            />
-          </div>
-        );
-
-      default: // waves
-        return (
-          <div className="absolute inset-0 overflow-hidden">
-            {/* Moving Wave Animation */}
-            <div 
-              className="absolute inset-0 opacity-90"
-              style={{
-                background: `linear-gradient(45deg, ${baseColor}90, transparent 20%, ${baseColor}80 50%, transparent 80%)`,
-                backgroundSize: '400% 400%',
-                animation: 'moveWave 20s ease-in-out infinite'
-              }}
-            />
-            
-            {/* Secondary Moving Wave */}
-            <div 
-              className="absolute inset-0 opacity-85"
-              style={{
-                background: `linear-gradient(-45deg, transparent 10%, ${baseColor}85 30%, transparent 60%, ${baseColor}75)`,
-                backgroundSize: '300% 300%',
-                animation: 'moveWave 25s ease-in-out infinite reverse'
-              }}
-            />
-            
-            {/* Gentle Vertical Wave */}
-            <div 
-              className="absolute inset-0 opacity-80"
-              style={{
-                background: `linear-gradient(90deg, transparent, ${baseColor}85 20%, transparent 40%, ${baseColor}90 70%, transparent)`,
-                backgroundSize: '200% 100%',
-                animation: 'moveWaveHorizontal 30s linear infinite'
-              }}
-            />
-          </div>
-        );
-    }
-  };
-
-  // Full-screen timer view
+  /*
+   * Full screen is the same clock on the same ground and nothing else.
+   *
+   * It used to be a second design: its own gradient, its own animated
+   * background, its own set of controls. There is no reason for one app to
+   * look like two, and the dial is the thing worth looking at on an empty
+   * screen anyway.
+   *
+   * AuroraGround is rendered again here rather than relied on from the app
+   * shell. This overlay sits at z-50 and so creates its own stacking context;
+   * the ground outside it would be painted behind the page, not behind this.
+   * Its opaque void is also what hides the screen underneath.
+   */
   if (isFullScreen) {
     return (
-      <div 
-        className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
-        style={{
-          background: `linear-gradient(135deg, ${currentColorTheme.color}, ${currentColorTheme.color}dd)`
-        }}
-      >
-        {/* Animated Background */}
-        {renderAnimatedBackground()}
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center">
+        <AuroraGround />
 
-        <div className="w-full h-full flex flex-col items-center justify-center relative">
-          {/* Minimize Button */}
-          <button
-            onClick={() => setIsFullScreen(false)}
-            className="absolute top-6 right-6 p-3 bg-surface bg-opacity-20 hover:bg-opacity-30 rounded-full transition-all shadow-lg hover:shadow-xl z-10"
-            style={{ color: selectedColorTheme === 'white' ? '#374151' : '#1f2937' }}
-          >
-            <Minimize size={24} />
-          </button>
+        <button
+          onClick={() => setIsFullScreen(false)}
+          className="absolute top-6 right-6 p-3 rounded-full text-muted hover:text-ink transition-colors"
+          aria-label="Leave full screen"
+        >
+          <Minimize size={22} />
+        </button>
 
-          {/* Background Style Selector */}
-          <div className="absolute top-6 left-6 z-10">
-            <div className="relative">
-              <button
-                onClick={() => setShowBackgroundDropdown(!showBackgroundDropdown)}
-                className="flex items-center space-x-2 px-4 py-2 bg-surface bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-all shadow-lg"
-                style={{ color: selectedColorTheme === 'white' ? '#374151' : '#1f2937' }}
-              >
-                {React.createElement(backgroundStyles.find(s => s.id === backgroundStyle)?.icon || Waves, { size: 16 })}
-                <span className="text-sm font-medium">
-                  {backgroundStyles.find(s => s.id === backgroundStyle)?.name}
-                </span>
-                <ChevronDown size={14} />
-              </button>
-              
-              {showBackgroundDropdown && (
-                <div className="absolute left-0 top-full mt-2 bg-surface rounded-lg shadow-xl border border-hairline-soft z-20 min-w-48">
-                  <div className="p-2">
-                    <div className="text-xs font-medium text-muted px-3 py-2">Background Style</div>
-                    {backgroundStyles.map((style) => (
-                      <button
-                        key={style.id}
-                        onClick={() => {
-                          setBackgroundStyle(style.id);
-                          setShowBackgroundDropdown(false);
-                        }}
-                        className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-                          backgroundStyle === style.id ? 'bg-surface-high text-ink' : 'hover:bg-surface-high'
-                        }`}
-                      >
-                        <style.icon size={16} />
-                        <span className="font-medium">{style.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+        <Dial
+          progress={
+            timer.isOnBreak
+              ? (timer.breakDuration ? timer.breakTimeElapsed / timer.breakDuration : 0)
+              : progress / 100
+          }
+          time={timer.isOnBreak ? formatTime(timer.breakTimeElapsed) : formatTime(timer.timeElapsed)}
+          label={timer.isOnBreak ? 'Break' : 'Focus'}
+          running={timer.isActive && !timer.isPaused}
+          size={340}
+        />
 
-          {/* Full-Screen Timer Display */}
-          <div className="text-center mb-12">
-            <div className="mb-8">
-              <div 
-                className="text-9xl font-mono font-bold mb-4"
-                style={{ color: selectedColorTheme === 'white' ? '#374151' : '#1f2937' }}
-              >
-                {timer.isOnBreak ? formatTime(timer.breakTimeElapsed) : formatTime(timer.timeElapsed)}
-              </div>
-              {timer.isOnBreak && (
-                <div 
-                  className="text-3xl font-semibold mb-4"
-                  style={{ color: selectedColorTheme === 'white' ? '#ea580c' : '#ea580c' }}
-                >
-                  Break Time! ({timer.currentBreak}/{timer.breakCount})
-                </div>
-              )}
-              <div 
-                className="text-xl"
-                style={{ color: selectedColorTheme === 'white' ? '#6b7280' : '#4b5563' }}
-              >
-                {timer.isOnBreak 
-                  ? `Break: ${Math.floor(timer.breakDuration / 60)}m`
-                  : `Target: ${Math.floor(targetMinutes / 60) > 0 ? `${Math.floor(targetMinutes / 60)}h ` : ''}${targetMinutes % 60}m`
-                }
-                {timer.breakCount > 0 && !timer.isOnBreak && (
-                  <span className="ml-4" style={{ color: currentColorTheme.color }}>
-                    • {timer.breakCount} breaks ({Math.floor(timer.breakDuration / 60)}m each)
-                  </span>
-                )}
-              </div>
-            </div>
-            
-            {timer.currentSubject && (
-              <div 
-                className="flex items-center justify-center text-2xl mb-8"
-                style={{ color: selectedColorTheme === 'white' ? '#374151' : '#1f2937' }}
-              >
-                <BookOpen size={28} className="mr-3" />
-                {timer.currentSubject}
-              </div>
-            )}
-          </div>
+        {timer.currentSubject && (
+          <p className="mt-10 text-xs tracking-[0.22em] uppercase text-muted">
+            {timer.currentSubject}
+          </p>
+        )}
 
-          {/* Full-Screen Controls */}
-          <div className="flex justify-center space-x-6">
-            {timer.isActive && (
-              <>
-                <button
-                  onClick={timer.isPaused ? resumeTimer : pauseTimer}
-                  className="flex items-center space-x-3 px-8 py-4 bg-yellow-600 text-white rounded-xl hover:bg-yellow-700 transition-colors shadow-lg hover:shadow-xl text-lg font-medium"
-                >
-                  {timer.isPaused ? <Play size={24} /> : <Pause size={24} />}
-                  <span>{timer.isPaused ? 'Resume' : 'Pause'}</span>
-                </button>
-                <button
-                  onClick={handleStop}
-                  className="flex items-center space-x-3 px-8 py-4 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors shadow-lg hover:shadow-xl text-lg font-medium"
-                >
-                  <Square size={24} />
-                  <span>Stop</span>
-                </button>
-              </>
-            )}
-            
-            {!timer.isActive && timer.timeElapsed > 0 && (
-              <button
-                onClick={handleReset}
-                className="flex items-center space-x-3 px-8 py-4 bg-gray-500 hover:bg-gray-600 text-white rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl text-lg"
-              >
-                <RotateCcw size={24} />
-                <span>Reset</span>
-              </button>
-            )}
-          </div>
+        <div className="mt-12 flex items-center gap-3">
+          {timer.isActive && !timer.isPaused && (
+            <button
+              onClick={pauseTimer}
+              className="px-7 py-3 rounded-full bg-pearl text-on-pearl text-sm font-medium min-h-[48px]"
+            >
+              Pause
+            </button>
+          )}
 
-          {/* Full-Screen Progress Bar */}
+          {timer.isActive && timer.isPaused && (
+            <button
+              onClick={resumeTimer}
+              className="px-7 py-3 rounded-full bg-pearl text-on-pearl text-sm font-medium min-h-[48px]"
+            >
+              Resume
+            </button>
+          )}
+
           {timer.isActive && (
-            <div className="absolute bottom-12 left-12 right-12">
-              {timer.isOnBreak ? (
-                <div>
-                  <div className="flex justify-between text-lg text-orange-600 mb-3">
-                    <span>Break Progress</span>
-                    <span>{Math.round((timer.breakTimeElapsed / timer.breakDuration) * 100)}%</span>
-                  </div>
-                  <div className="w-full bg-orange-200 rounded-full h-4">
-                    <div 
-                      className="bg-gradient-to-r from-orange-400 to-yellow-500 h-4 rounded-full transition-all duration-1000"
-                      style={{ width: `${(timer.breakTimeElapsed / timer.breakDuration) * 100}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  <div 
-                    className="flex justify-between text-lg mb-3"
-                    style={{ color: selectedColorTheme === 'white' ? '#374151' : '#1f2937' }}
-                  >
-                    <span>Study Progress</span>
-                    <span>{Math.round(progress)}%</span>
-                  </div>
-                  <div className="w-full bg-surface bg-opacity-30 rounded-full h-4">
-                    <div 
-                      className="h-4 rounded-full transition-all duration-1000"
-                      style={{ 
-                        width: `${progress}%`,
-                        background: `linear-gradient(to right, ${currentColorTheme.color}, ${currentColorTheme.color}dd)`
-                      }}
-                    ></div>
-                  </div>
-                </div>
-              )}
-            </div>
+            <button
+              onClick={handleStop}
+              className="px-7 py-3 rounded-full border border-hairline text-ink text-sm font-medium min-h-[48px]"
+            >
+              Finish
+            </button>
           )}
         </div>
-        
-        <Celebration 
-          isVisible={showCelebration} 
+
+        <Celebration
+          isVisible={showCelebration}
           onComplete={handleCelebrationComplete}
         />
       </div>
@@ -440,87 +201,8 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
             <p className="text-sm md:text-base text-ink/75">Focus and watch your progress move forward</p>
           </div>
           
-          {/* Color Theme Selector */}
-          <div className="relative">
-            <button
-              onClick={() => setShowThemeDropdown(!showThemeDropdown)}
-              className="flex items-center space-x-2 px-3 md:px-4 py-2 bg-surface-high hover:bg-gray-200 rounded-lg transition-colors secondary-btn min-h-[44px]"
-            >
-              <Palette size={16} />
-              <div 
-                className="w-4 h-4 rounded-full"
-                style={{ backgroundColor: colorThemes[selectedColorTheme].color }}
-              />
-              <span className="text-sm font-medium">{colorThemes[selectedColorTheme].name}</span>
-              <ChevronDown size={16} />
-            </button>
-            
-            {showThemeDropdown && (
-              <div className="absolute right-0 top-full mt-2 bg-surface rounded-lg shadow-xl border border-hairline-soft z-10 min-w-48">
-                <div className="p-2">
-                  <div className="text-xs font-medium text-muted px-3 py-2">Choose Color</div>
-                  {Object.entries(colorThemes).map(([key, theme]) => (
-                    <button
-                      key={key}
-                      onClick={() => {
-                        setSelectedColorTheme(key);
-                        setShowThemeDropdown(false);
-                      }}
-                      className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-                        selectedColorTheme === key ? 'bg-surface-high text-ink' : 'hover:bg-surface-high'
-                      }`}
-                    >
-                      <div 
-                        className="w-4 h-4 rounded-full"
-                        style={{ backgroundColor: theme.color }}
-                      />
-                      <span className="font-medium">{theme.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
         </div>
         
-        {/* Background Style Selector for Regular View */}
-        <div className="mt-3 md:mt-4 flex items-center justify-center">
-          <div className="relative">
-            <button
-              onClick={() => setShowBackgroundDropdown(!showBackgroundDropdown)}
-              className="flex items-center space-x-2 px-3 py-2 bg-surface-high hover:bg-gray-200 rounded-lg transition-colors text-sm secondary-btn min-h-[44px]"
-            >
-              {React.createElement(backgroundStyles.find(s => s.id === backgroundStyle)?.icon || Waves, { size: 14 })}
-              <span className="font-medium">
-                {backgroundStyles.find(s => s.id === backgroundStyle)?.name}
-              </span>
-              <ChevronDown size={12} />
-            </button>
-            
-            {showBackgroundDropdown && (
-              <div className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 bg-surface rounded-lg shadow-xl border border-hairline-soft z-10 min-w-48">
-                <div className="p-2">
-                  <div className="text-xs font-medium text-muted px-3 py-2">Background Style</div>
-                  {backgroundStyles.map((style) => (
-                    <button
-                      key={style.id}
-                      onClick={() => {
-                        setBackgroundStyle(style.id);
-                        setShowBackgroundDropdown(false);
-                      }}
-                      className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-                        backgroundStyle === style.id ? 'bg-surface-high text-ink' : 'hover:bg-surface-high'
-                      }`}
-                    >
-                      <style.icon size={14} />
-                      <span className="font-medium">{style.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
         
         {/* Notification Status */}
         <div className="mt-3 md:mt-4 p-3 bg-surface rounded-lg">
@@ -548,9 +230,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
             <button
               onClick={() => !timer.isActive && setShowDurationPicker(true)}
               disabled={timer.isActive}
-              className={`rounded-full transition-opacity ${
-                timer.isActive ? 'cursor-default' : 'cursor-pointer hover:opacity-90'
-              }`}
+              className={`rounded-full ${timer.isActive ? 'cursor-default' : 'cursor-pointer'}`}
               aria-label={timer.isActive ? undefined : 'Change session length'}
             >
               <Dial
