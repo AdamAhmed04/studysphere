@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Clock, Users, MessageSquare, BarChart3, Settings, User, Calendar, Search, ChevronDown, Play, Pause, MoreHorizontal } from 'lucide-react';
-import { useTheme } from '../hooks/useTheme';
 import { Avatar } from './Avatar';
 
 interface NavigationProps {
@@ -20,7 +19,6 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const moreMenuRef = useRef<HTMLDivElement>(null);
-  const { currentTheme } = useTheme();
 
   // Show notification badge if timer is active
   const [isTimerActive, setIsTimerActive] = useState(false);
@@ -105,10 +103,6 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
   }, [showMoreMenu]);
 
 
-  const getButtonFocusStyle = () => ({
-    borderColor: currentTheme.buttonColor,
-    boxShadow: `0 0 0 3px ${currentTheme.buttonColor}20`
-  });
   return (
     <div className="theme-secondary-bg shadow-lg safe-area-top">
       <div className="max-w-7xl mx-auto px-2 md:px-4">
@@ -118,10 +112,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
             <div className="relative">
               <button
                 onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-                className="flex items-center space-x-2 md:space-x-3 px-2 md:px-4 py-2 rounded-xl transition-all border border-hairline-soft hover:bg-surface-high min-h-[44px]"
-                style={{
-                  ...getButtonFocusStyle()
-                }}
+                className="flex items-center space-x-2 md:space-x-3 px-2 md:px-4 py-2 rounded-xl transition-all border border-transparent hover:border-sand/40 hover:bg-surface-high min-h-[44px]"
               >
                 <Avatar
                   name={userProfile.username}
