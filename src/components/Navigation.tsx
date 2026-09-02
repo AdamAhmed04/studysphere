@@ -122,14 +122,6 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                 style={{
                   ...getButtonFocusStyle()
                 }}
-                onFocus={(e) => {
-                  e.currentTarget.style.borderColor = currentTheme.buttonColor;
-                  e.currentTarget.style.boxShadow = `0 0 0 3px ${currentTheme.buttonColor}20`;
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.borderColor = '#d1d5db';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
               >
                 <Avatar
                   name={userProfile.username}
@@ -158,14 +150,6 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                         setShowProfileDropdown(false);
                       }}
                       className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all text-left hover:bg-surface-high"
-                      onFocus={(e) => {
-                        e.currentTarget.style.borderColor = currentTheme.buttonColor;
-                        e.currentTarget.style.boxShadow = `0 0 0 2px ${currentTheme.buttonColor}20`;
-                      }}
-                      onBlur={(e) => {
-                        e.currentTarget.style.borderColor = 'transparent';
-                        e.currentTarget.style.boxShadow = 'none';
-                      }}
                       style={{ border: '1px solid transparent' }}
                     >
                       <User size={18} />
@@ -177,14 +161,6 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                         setShowProfileDropdown(false);
                       }}
                       className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all text-left hover:bg-surface-high"
-                      onFocus={(e) => {
-                        e.currentTarget.style.borderColor = currentTheme.buttonColor;
-                        e.currentTarget.style.boxShadow = `0 0 0 2px ${currentTheme.buttonColor}20`;
-                      }}
-                      onBlur={(e) => {
-                        e.currentTarget.style.borderColor = 'transparent';
-                        e.currentTarget.style.boxShadow = 'none';
-                      }}
                       style={{ border: '1px solid transparent' }}
                     >
                       <Settings size={18} />
@@ -247,16 +223,6 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                         ? 'bg-surface-high text-ink'
                         : 'text-ink/75 hover:text-ink hover:bg-surface-high'
                     }`}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = currentTheme.buttonColor;
-                      e.currentTarget.style.boxShadow = `0 0 0 3px ${currentTheme.buttonColor}20`;
-                    }}
-                    onBlur={(e) => {
-                      if (!isActive) {
-                        e.currentTarget.style.borderColor = 'transparent';
-                      }
-                      e.currentTarget.style.boxShadow = 'none';
-                    }}
                   >
                     <Icon size={20} />
                     <span className="text-sm md:text-base">{tab.label}</span>
@@ -298,16 +264,6 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                       ? 'text-ink'
                       : 'text-ink/75'
                   }`}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = currentTheme.buttonColor;
-                    e.currentTarget.style.boxShadow = `0 0 0 2px ${currentTheme.buttonColor}20`;
-                  }}
-                  onBlur={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.borderColor = 'transparent';
-                    }
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
                 >
                   <Icon size={22} className="shrink-0" />
                   <span className="text-[10px] sm:text-xs font-medium leading-none">{tab.label}</span>
@@ -333,14 +289,6 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                     ? 'text-ink'
                     : 'text-ink/75'
                 }`}
-                onFocus={(e) => {
-                  e.currentTarget.style.borderColor = currentTheme.buttonColor;
-                  e.currentTarget.style.boxShadow = `0 0 0 2px ${currentTheme.buttonColor}20`;
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.borderColor = 'transparent';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
               >
                 <MoreHorizontal size={22} className="shrink-0" />
                 <span className="text-[10px] font-medium leading-none">More</span>

@@ -363,15 +363,19 @@ export const Calendar: React.FC<CalendarProps> = ({
         <div className="grid grid-cols-7 gap-1">
           {/* Day Headers */}
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-            <div key={day} className="p-3 text-center font-semibold text-ink/75 bg-surface rounded-lg">
-              {day}
+            <div
+              key={day}
+              className="p-1 sm:p-3 text-center text-xs sm:text-base font-semibold text-ink/75 bg-surface rounded-lg"
+            >
+              <span className="sm:hidden">{day.slice(0, 1)}</span>
+              <span className="hidden sm:inline">{day}</span>
             </div>
           ))}
           
           {/* Calendar Days */}
           {days.map((day, index) => {
             if (!day) {
-              return <div key={index} className="p-3 h-24"></div>;
+              return <div key={index} className="aspect-square" />;
             }
 
             const dayEvents = getEventsForDate(day);
@@ -380,20 +384,30 @@ export const Calendar: React.FC<CalendarProps> = ({
             return (
               <div
                 key={day.toISOString()}
-                className={`p-2 h-24 border border-hairline-soft rounded-lg hover:bg-surface cursor-pointer transition-colors ${
-                  isToday ? 'bg-surface border-blue-300' : ''
+                className={`aspect-square overflow-hidden p-1 sm:p-2 border border-hairline-soft rounded-lg hover:bg-surface cursor-pointer transition-colors ${
+                  isToday ? 'bg-surface border-sand/50' : ''
                 }`}
                 onClick={() => {
                   setSelectedDate(day);
                   setShowEventModal(true);
                 }}
               >
-                <div className={`text-sm font-medium mb-1 ${
+                <div className={`text-xs sm:text-sm font-medium mb-1 ${
                   isToday ? 'text-sand' : 'text-ink'
                 }`}>
                   {day.getDate()}
                 </div>
-                <div className="space-y-1">
+                <div className="flex sm:hidden flex-wrap gap-0.5">
+                  {dayEvents.slice(0, 4).map(event => (
+                    <span
+                      key={event.id}
+                      className="w-1.5 h-1.5 rounded-full"
+                      style={{ backgroundColor: event.color }}
+                    />
+                  ))}
+                </div>
+
+                <div className="hidden sm:block space-y-1">
                   {dayEvents.slice(0, 2).map(event => (
                     <div
                       key={event.id}
@@ -407,11 +421,6 @@ export const Calendar: React.FC<CalendarProps> = ({
                       {event.title}
                     </div>
                   ))}
-                  {dayEvents.length > 2 && (
-                    <div className="text-xs text-muted">
-                      +{dayEvents.length - 2} more
-                    </div>
-                  )}
                 </div>
               </div>
             );
@@ -421,27 +430,27 @@ export const Calendar: React.FC<CalendarProps> = ({
 
       {/* Upcoming Events */}
       <div className="bg-surface rounded-2xl shadow-xl p-6">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <h3 className="text-xl font-bold text-ink">Upcoming Events</h3>
-          <div className="flex items-center space-x-4 text-sm">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
             <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: eventTypeColors.meeting }}></div>
+              <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: eventTypeColors.meeting }}></div>
               <span>Meeting</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: eventTypeColors.exam }}></div>
+              <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: eventTypeColors.exam }}></div>
               <span>Exam</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: eventTypeColors.class }}></div>
+              <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: eventTypeColors.class }}></div>
               <span>Class</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: eventTypeColors.reminder }}></div>
+              <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: eventTypeColors.reminder }}></div>
               <span>Reminder</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: eventTypeColors.todo }}></div>
+              <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: eventTypeColors.todo }}></div>
               <span>Task</span>
             </div>
           </div>
