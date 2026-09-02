@@ -919,8 +919,8 @@ export const Calendar: React.FC<CalendarProps> = ({
                     })}
                     {selectedEvent.meetingData.inviteeEmails?.map((email: string) => (
                       <div key={email} className="flex items-center space-x-2 text-sm text-ink/75">
-                        <div className="w-4 h-4 rounded-full bg-gray-400 flex items-center justify-center">
-                          <span className="text-white text-xs">@</span>
+                        <div className="w-4 h-4 rounded-full bg-surface-high flex items-center justify-center">
+                          <span className="text-muted text-xs">@</span>
                         </div>
                         <span>{email}</span>
                       </div>

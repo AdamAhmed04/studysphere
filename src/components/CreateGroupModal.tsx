@@ -229,7 +229,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
             <button
               type="submit"
               disabled={!formData.name.trim()}
-              className="flex-1 px-4 py-3 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors btn-primary"
+              className="flex-1 px-4 py-3 rounded-lg disabled:cursor-not-allowed transition-colors btn-primary"
             >
               Create Group
             </button>

@@ -245,7 +245,7 @@ export const SearchPage: React.FC<SearchPageProps> = ({ onAddFriend, currentUser
                         className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                           !isAlreadyFriend
                             ? 'bg-sand text-white hover:bg-sand-lo'
-                            : 'bg-gray-300 text-muted cursor-not-allowed'
+                            : 'bg-surface-high text-muted cursor-not-allowed'
                         }`}
                       >
                         <UserPlus size={16} />

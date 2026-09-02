@@ -167,7 +167,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
                       disabled={user.is_friend}
                       className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
                         user.is_friend
-                          ? 'bg-gray-300 text-muted cursor-not-allowed'
+                          ? 'bg-surface-high text-muted cursor-not-allowed'
                           : 'btn-primary'
                       }`}
                     >

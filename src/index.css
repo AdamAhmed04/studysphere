@@ -177,15 +177,31 @@ input[type='radio'] {
 
 /* Theme-aware button styles */
 .btn-primary {
-  background-color: var(--theme-button-color, #3b82f6);
-  color: var(--theme-button-text, #ffffff);
+  background-color: var(--sand);
+  color: var(--on-pearl);
   transition: all 0.2s ease-in-out;
-  border: 1px solid var(--theme-button-color, #3b82f6);
+  border: 1px solid var(--sand);
 }
 
-.btn-primary:hover {
-  background-color: var(--theme-button-hover, #2563eb);
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--sand-lo);
   border-color: var(--sand-lo);
+}
+
+/*
+ * The disabled state is declared here rather than left to a disabled:bg-*
+ * utility on each button.
+ *
+ * This class is defined after @tailwind utilities, so it outranks them — which
+ * means the disabled:bg-gray-400 those buttons carried never applied at all.
+ * A disabled Start or Create button looked exactly like an active one, which
+ * is worse than the wrong colour: it says press me and then does nothing.
+ */
+.btn-primary:disabled {
+  background-color: var(--surface-high);
+  border-color: var(--hairline);
+  color: var(--muted);
+  cursor: not-allowed;
 }
 
 .btn-primary:focus-visible {

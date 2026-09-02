@@ -459,7 +459,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
               <button
                 onClick={handleStart}
                 disabled={!subject.trim()}
-                className="flex items-center space-x-2 px-6 md:px-8 py-3 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors shadow-lg hover:shadow-xl btn-primary min-h-[48px] text-base md:text-lg"
+                className="flex items-center space-x-2 px-6 md:px-8 py-3 rounded-lg disabled:cursor-not-allowed transition-colors shadow-lg hover:shadow-xl btn-primary min-h-[48px] text-base md:text-lg"
               >
                 <Play size={20} />
                 <span>Start</span>
@@ -487,7 +487,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
           {!timer.isActive && timer.timeElapsed > 0 && (
             <button
               onClick={handleReset}
-              className="flex items-center space-x-2 px-5 md:px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 min-h-[48px]"
+              className="flex items-center space-x-2 px-5 md:px-6 py-3 border border-hairline text-ink hover:bg-surface-high rounded-lg font-medium transition-colors min-h-[48px]"
             >
               <RotateCcw size={20} />
               Reset
