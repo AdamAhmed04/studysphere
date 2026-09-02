@@ -200,18 +200,23 @@ select:focus {
   box-shadow: 0 0 0 3px var(--theme-button-focus-shadow, rgba(59, 130, 246, 0.1));
 }
 
-/* Theme-aware button focus and hover states */
-button:not(.btn-primary):not(.secondary-btn):hover {
-  background-color: var(--theme-button-color, #3b82f6);
-  color: var(--theme-button-text, #ffffff);
-  border-color: var(--theme-button-color, #3b82f6);
-}
-
-button:not(.btn-primary):not(.secondary-btn):focus {
-  background-color: var(--theme-button-color, #3b82f6);
-  color: var(--theme-button-text, #ffffff);
-  border-color: var(--theme-button-color, #3b82f6);
-  box-shadow: 0 0 0 3px var(--theme-button-focus-shadow, rgba(59, 130, 246, 0.1));
+/*
+ * Buttons are styled by their own classes, not by a blanket element rule.
+ *
+ * What used to be here painted every plain button with the accent colour on
+ * hover and on focus. That is why the timer dial tinted amber when the mouse
+ * passed over it — the dial is a button, so it got the treatment, and no
+ * class on the element could outrank an element-level selector setting
+ * background-color directly.
+ *
+ * Keyboard focus still needs to be visible, but as an outline rather than a
+ * fill, so it never covers what it is marking.
+ */
+button:focus-visible,
+a:focus-visible,
+[role='button']:focus-visible {
+  outline: 2px solid var(--sand);
+  outline-offset: 2px;
 }
 
 /* Secondary buttons (keep border-only styling) */

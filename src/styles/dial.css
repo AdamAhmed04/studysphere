@@ -51,9 +51,17 @@
   inset: 0;
   transform-origin: 50% 50%;
   pointer-events: none;
+  /*
+   * Same easing and duration as the arc's stroke-dashoffset, so the hand and
+   * the end of the sand line arrive together on every tick instead of one
+   * trailing the other.
+   */
+  transition-property: transform;
+  transition-timing-function: linear;
 }
 
 .dial-hand::after {
+  transition: opacity 0.3s ease;
   content: '';
   position: absolute;
   left: 50%;
@@ -66,14 +74,11 @@
   box-shadow: 0 0 10px rgba(234, 230, 244, 0.75);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .dial-hand[data-running='true'] {
-    animation: dial-sweep var(--sweep) linear infinite;
-  }
-}
-
-@keyframes dial-sweep {
-  to { transform: rotate(360deg); }
+/* Dimmed while paused: the hand is the one part of the face that says
+   whether anything is actually happening. */
+.dial-hand[data-running='false']::after {
+  opacity: 0.45;
+  box-shadow: none;
 }
 
 .dial-face {
@@ -106,5 +111,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dial-progress { transition: none; }
+  .dial-progress,
+  .dial-hand { transition: none; }
 }

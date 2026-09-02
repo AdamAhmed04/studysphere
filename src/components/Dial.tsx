@@ -7,7 +7,7 @@ interface DialProps {
   time: string;
   /** Small label under the numerals — "Focus", "Break". */
   label?: string;
-  /** The hand only sweeps while the timer is actually running. */
+  /** Dims the hand when false, so a paused timer looks paused. */
   running?: boolean;
   size?: number;
 }
@@ -22,11 +22,14 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
  * sixty elements or sixty SVG lines: no markup, nothing to keep in sync, and
  * it stays crisp at any size.
  *
- * The sweeping hand is the only thing on screen that moves quickly, and it is
- * what makes a stopped timer read as *paused* rather than *broken* — a still
- * dial with no second hand looks like a screenshot. It stops when the timer
- * stops, for the same reason.
+ * The hand sits at the tip of the arc and is driven by the same progress
+ * value, so the two cannot drift apart. It used to sweep on its own sixty
+ * second cycle, which meant it was measuring wall-clock seconds while the arc
+ * measured the session — two different things on one face, visibly out of
+ * step. Both now share the tick duration below so they move as one mark.
  */
+const TICK_MS = 900;
+
 export const Dial: React.FC<DialProps> = ({
   progress,
   time,
@@ -65,7 +68,14 @@ export const Dial: React.FC<DialProps> = ({
         />
       </svg>
 
-      <div className="dial-hand" data-running={running} />
+      <div
+        className="dial-hand"
+        data-running={running}
+        style={{
+          transform: `rotate(${clamped * 360}deg)`,
+          transitionDuration: `${TICK_MS}ms`,
+        }}
+      />
 
       <div className="dial-face">
         <span className="dial-time" role="timer" aria-live="off">{time}</span>
