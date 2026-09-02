@@ -179,8 +179,8 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-purple-600">
+      <div className="bg-surface rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+        <div className="flex items-center justify-between p-6 border-b border-hairline-soft bg-surface-high">
           <div className="flex items-center space-x-3">
             <Calendar className="text-white" size={24} />
             <h3 className="text-xl font-bold text-white">Schedule Meeting</h3>
@@ -196,31 +196,31 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
         <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-80px)]">
           {/* Meeting Title */}
           <div>
-            <label htmlFor="schedulemeetingmodal-meeting-title" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="schedulemeetingmodal-meeting-title" className="block text-sm font-medium text-ink/75 mb-2">
               Meeting Title *
             </label>
             <input id="schedulemeetingmodal-meeting-title"
               type="text"
               value={formData.title}
               onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                errors.title ? 'border-red-500' : 'border-gray-300'
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent ${
+                errors.title ? 'border-red-500' : 'border-hairline'
               }`}
               placeholder="e.g., Calculus Study Session"
               maxLength={200}
             />
-            {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
+            {errors.title && <p className="mt-1 text-sm text-red-300">{errors.title}</p>}
           </div>
 
           {/* Description */}
           <div>
-            <label htmlFor="schedulemeetingmodal-description" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="schedulemeetingmodal-description" className="block text-sm font-medium text-ink/75 mb-2">
               Description
             </label>
             <textarea id="schedulemeetingmodal-description"
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent resize-none"
               rows={3}
               placeholder="Meeting agenda, topics to cover, materials needed..."
               maxLength={2000}
@@ -230,7 +230,7 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
           {/* Date and Time */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="schedulemeetingmodal-date" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="schedulemeetingmodal-date" className="block text-sm font-medium text-ink/75 mb-2">
                 Date *
               </label>
               <input id="schedulemeetingmodal-date"
@@ -238,32 +238,32 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                 value={formData.date}
                 onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
                 min={todayLocalDateString()}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.date ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent ${
+                  errors.date ? 'border-red-500' : 'border-hairline'
                 }`}
               />
-              {errors.date && <p className="mt-1 text-sm text-red-600">{errors.date}</p>}
+              {errors.date && <p className="mt-1 text-sm text-red-300">{errors.date}</p>}
             </div>
 
             <div>
-              <label htmlFor="schedulemeetingmodal-time" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="schedulemeetingmodal-time" className="block text-sm font-medium text-ink/75 mb-2">
                 Time *
               </label>
               <input id="schedulemeetingmodal-time"
                 type="time"
                 value={formData.time}
                 onChange={(e) => setFormData(prev => ({ ...prev, time: e.target.value }))}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.time ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent ${
+                  errors.time ? 'border-red-500' : 'border-hairline'
                 }`}
               />
-              {errors.time && <p className="mt-1 text-sm text-red-600">{errors.time}</p>}
+              {errors.time && <p className="mt-1 text-sm text-red-300">{errors.time}</p>}
             </div>
           </div>
 
           {/* Duration */}
           <div>
-            <label htmlFor="schedulemeetingmodal-duration-minutes" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="schedulemeetingmodal-duration-minutes" className="block text-sm font-medium text-ink/75 mb-2">
               Duration (minutes)
             </label>
             <div className="flex items-center space-x-4">
@@ -273,8 +273,8 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                 onChange={(e) => setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) || 60 }))}
                 min="15"
                 max="480"
-                className={`w-32 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.duration ? 'border-red-500' : 'border-gray-300'
+                className={`w-32 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent ${
+                  errors.duration ? 'border-red-500' : 'border-hairline'
                 }`}
               />
               <div className="flex space-x-2">
@@ -286,7 +286,7 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                     className={`px-3 py-1 text-sm rounded-lg transition-colors ${
                       formData.duration === duration
                         ? 'btn-primary'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 secondary-btn'
+                        : 'bg-surface-high text-ink/75 hover:bg-gray-200 secondary-btn'
                     }`}
                   >
                     {duration}m
@@ -294,12 +294,12 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                 ))}
               </div>
             </div>
-            {errors.duration && <p className="mt-1 text-sm text-red-600">{errors.duration}</p>}
+            {errors.duration && <p className="mt-1 text-sm text-red-300">{errors.duration}</p>}
           </div>
 
           {/* Meeting Type */}
           <div>
-            <div id="meeting-type-label" className="block text-sm font-medium text-gray-700 mb-3">
+            <div id="meeting-type-label" className="block text-sm font-medium text-ink/75 mb-3">
               Meeting Type
             </div>
             <div role="group" aria-labelledby="meeting-type-label" className="grid grid-cols-3 gap-3">
@@ -314,8 +314,8 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                   onClick={() => setFormData(prev => ({ ...prev, meetingType: type }))}
                   className={`flex flex-col items-center p-4 border-2 rounded-lg transition-all ${
                     formData.meetingType === type
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-sand bg-surface text-ink'
+                      : 'border-hairline-soft hover:border-gray-300'
                   }`}
                 >
                   <Icon size={24} className="mb-2" />
@@ -328,32 +328,32 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
           {/* Location (for in-person meetings) */}
           {formData.meetingType === 'in-person' && (
             <div>
-              <label htmlFor="schedulemeetingmodal-location" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="schedulemeetingmodal-location" className="block text-sm font-medium text-ink/75 mb-2">
                 Location *
               </label>
               <input id="schedulemeetingmodal-location"
                 type="text"
                 value={formData.location}
                 onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.location ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent ${
+                  errors.location ? 'border-red-500' : 'border-hairline'
                 }`}
                 placeholder="e.g., Library Study Room 3, Coffee Shop on Main St"
                 maxLength={300}
               />
-              {errors.location && <p className="mt-1 text-sm text-red-600">{errors.location}</p>}
+              {errors.location && <p className="mt-1 text-sm text-red-300">{errors.location}</p>}
             </div>
           )}
 
           {/* Participants */}
           {!selectedGroup && (
             <div>
-              <div id="meeting-participants-label" className="block text-sm font-medium text-gray-700 mb-3">
+              <div id="meeting-participants-label" className="block text-sm font-medium text-ink/75 mb-3">
                 Participants ({formData.selectedParticipants.length} selected)
               </div>
-              <div role="group" aria-labelledby="meeting-participants-label" className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg">
+              <div role="group" aria-labelledby="meeting-participants-label" className="max-h-48 overflow-y-auto border border-hairline-soft rounded-lg">
                 {friends.length === 0 ? (
-                  <div className="p-4 text-center text-gray-500">
+                  <div className="p-4 text-center text-muted">
                     <Users size={32} className="mx-auto mb-2 opacity-50" />
                     <p>No friends available</p>
                   </div>
@@ -362,7 +362,7 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                     {friends.map(friend => (
                       <div
                         key={friend.id}
-                        className="flex items-center p-3 hover:bg-gray-50 cursor-pointer"
+                        className="flex items-center p-3 hover:bg-surface cursor-pointer"
                         onClick={() => toggleParticipant(friend.id)}
                       >
                         <Avatar
@@ -372,15 +372,15 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                           textClassName="text-sm"
                         />
                         <div className="flex-1">
-                          <p className="font-medium text-gray-800">{friend.name}</p>
-                          <p className="text-sm text-gray-500">
+                          <p className="font-medium text-ink">{friend.name}</p>
+                          <p className="text-sm text-muted">
                             {friend.isOnline ? 'Online' : 'Offline'}
                           </p>
                         </div>
                         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                           formData.selectedParticipants.includes(friend.id)
-                            ? 'bg-blue-600 border-blue-600'
-                            : 'border-gray-300'
+                            ? 'bg-sand border-sand'
+                            : 'border-hairline'
                         }`}>
                           {formData.selectedParticipants.includes(friend.id) && (
                             <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -393,13 +393,13 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                   </div>
                 )}
               </div>
-              {errors.participants && <p className="mt-1 text-sm text-red-600">{errors.participants}</p>}
+              {errors.participants && <p className="mt-1 text-sm text-red-300">{errors.participants}</p>}
             </div>
           )}
 
           {/* Reminders */}
           <div>
-            <div id="meeting-reminders-label" className="block text-sm font-medium text-gray-700 mb-3">
+            <div id="meeting-reminders-label" className="block text-sm font-medium text-ink/75 mb-3">
               Reminders
             </div>
             <div role="group" aria-labelledby="meeting-reminders-label" className="flex flex-wrap gap-2">
@@ -411,7 +411,7 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                   className={`px-3 py-2 text-sm rounded-lg transition-colors ${
                     formData.reminders.includes(minutes)
                       ? 'btn-primary'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 secondary-btn'
+                      : 'bg-surface-high text-ink/75 hover:bg-gray-200 secondary-btn'
                   }`}
                 >
                   {minutes < 60 ? `${minutes} min` : minutes === 60 ? '1 hour' : '1 day'} before
@@ -421,11 +421,11 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
           </div>
 
           {/* Submit Buttons */}
-          <div className="flex space-x-3 pt-4 border-t border-gray-200">
+          <div className="flex space-x-3 pt-4 border-t border-hairline-soft">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex-1 px-4 py-3 border border-hairline text-ink/75 rounded-lg hover:bg-surface transition-colors"
             >
               Cancel
             </button>

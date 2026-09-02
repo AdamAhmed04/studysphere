@@ -80,15 +80,15 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
 };
 
 const STYLES: Record<ToastVariant, { wrap: string; icon: typeof Info }> = {
-  success: { wrap: 'bg-white border-green-200 text-gray-800', icon: CheckCircle2 },
-  error:   { wrap: 'bg-white border-red-200 text-gray-800',   icon: AlertTriangle },
-  info:    { wrap: 'bg-white border-blue-200 text-gray-800',  icon: Info },
+  success: { wrap: 'bg-surface border-emerald-500/30 text-ink', icon: CheckCircle2 },
+  error:   { wrap: 'bg-surface border-red-500/30 text-ink',   icon: AlertTriangle },
+  info:    { wrap: 'bg-surface border-hairline text-ink',  icon: Info },
 };
 
 const ICON_COLOR: Record<ToastVariant, string> = {
-  success: 'text-green-600',
-  error: 'text-red-600',
-  info: 'text-blue-600',
+  success: 'text-emerald-300',
+  error: 'text-red-300',
+  info: 'text-sand',
 };
 
 const ToastHost = ({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id: number) => void }) => (
@@ -110,13 +110,13 @@ const ToastHost = ({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id: num
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium">{toast.message}</p>
             {toast.detail && (
-              <p className="text-xs text-gray-500 mt-1 break-words">{toast.detail}</p>
+              <p className="text-xs text-muted mt-1 break-words">{toast.detail}</p>
             )}
           </div>
           <button
             onClick={() => onDismiss(toast.id)}
             aria-label="Dismiss"
-            className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+            className="flex-shrink-0 text-muted hover:text-ink transition-colors"
           >
             <X size={16} />
           </button>

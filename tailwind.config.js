@@ -33,6 +33,13 @@ export default {
         ink: '#F2EFF8',
         muted: '#A9A2C0',
         pearl: '#EAE6F4',
+        'on-pearl': '#191327',
+        /* Translucent, so the drifting ground shows through a row rather than
+         * being covered by it. Solid panels would hide the hue entirely. */
+        surface: 'rgba(234, 230, 244, 0.055)',
+        'surface-high': 'rgba(234, 230, 244, 0.10)',
+        hairline: 'rgba(234, 230, 244, 0.11)',
+        'hairline-soft': 'rgba(234, 230, 244, 0.075)',
       },
       fontFamily: {
         display: ['Fraunces', 'Georgia', 'serif'],

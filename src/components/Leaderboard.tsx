@@ -16,9 +16,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ friends, currentUserId
   const getRankIcon = (index: number) => {
     switch (index) {
       case 0: return <Crown className="text-yellow-500" size={24} />;
-      case 1: return <Trophy className="text-gray-400" size={24} />;
+      case 1: return <Trophy className="text-muted" size={24} />;
       case 2: return <Medal className="text-orange-400" size={24} />;
-      default: return <Target className="text-gray-400" size={20} />;
+      default: return <Target className="text-muted" size={20} />;
     }
   };
 
@@ -32,7 +32,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ friends, currentUserId
 
   return (
     <div className="theme-secondary-bg rounded-2xl shadow-xl p-6">
-      <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+      <h3 className="text-2xl font-bold text-ink mb-6 flex items-center">
         <Trophy className="mr-3 text-yellow-500" size={28} />
         Study Leaderboard
       </h3>
@@ -42,7 +42,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ friends, currentUserId
           <div 
             key={friend.id}
             className={`flex items-center justify-between p-4 rounded-xl transition-all hover:shadow-md ${
-              friend.id === currentUserId ? 'bg-blue-50 border-2 border-blue-200' : 'bg-gray-50'
+              friend.id === currentUserId ? 'bg-surface border-2 border-hairline' : 'bg-surface'
             }`}
           >
             <div className="flex items-center space-x-4">
@@ -58,11 +58,11 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ friends, currentUserId
                   gradient="from-blue-400 to-purple-500"
                 />
                 <div>
-                  <p className="font-semibold text-gray-800">
+                  <p className="font-semibold text-ink">
                     {friend.name} {friend.id === currentUserId && '(You)'}
                   </p>
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-ink/75">
                       {formatTime(friend.totalStudyTime)}
                     </span>
                     <div className={`w-2 h-2 rounded-full ${
@@ -74,11 +74,11 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ friends, currentUserId
             </div>
 
             <div className="flex items-center space-x-2">
-              <span className="text-lg font-bold text-gray-700">#{index + 1}</span>
+              <span className="text-lg font-bold text-ink/75">#{index + 1}</span>
               {friend.totalStudyTime === highestStudyTime && friend.totalStudyTime > 60 && friend.id !== currentUserId && (
                 <button
                   onClick={() => onSendStar(friend.id)}
-                  className="px-3 py-1 text-xs bg-yellow-100 text-yellow-600 rounded-full hover:bg-yellow-200 transition-colors flex items-center space-x-1"
+                  className="px-3 py-1 text-xs bg-sand/15 text-yellow-600 rounded-full hover:bg-yellow-200 transition-colors flex items-center space-x-1"
                 >
                   <Star size={12} />
                   <span>Send Star</span>
@@ -87,7 +87,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ friends, currentUserId
               {friend.totalStudyTime === lowestStudyTime && friend.totalStudyTime < 60 && (
                 <button
                   onClick={() => onCallOut(friend.id)}
-                  className="px-3 py-1 text-xs bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition-colors"
+                  className="px-3 py-1 text-xs bg-red-500/15 text-red-300 rounded-full hover:bg-red-200 transition-colors"
                 >
                   Call Out
                 </button>
@@ -98,7 +98,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ friends, currentUserId
       </div>
 
       {sortedFriends.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-muted">
           <Target size={48} className="mx-auto mb-4 opacity-50" />
           <p>Add friends to see the leaderboard!</p>
         </div>

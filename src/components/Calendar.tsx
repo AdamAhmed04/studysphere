@@ -273,10 +273,10 @@ export const Calendar: React.FC<CalendarProps> = ({
 
   const getMeetingTypeIcon = (type: string) => {
     switch (type) {
-      case 'video': return <Video size={16} className="text-blue-500" />;
+      case 'video': return <Video size={16} className="text-sand" />;
       case 'phone': return <Phone size={16} className="text-green-500" />;
-      case 'in-person': return <MapPin size={16} className="text-purple-500" />;
-      default: return <Video size={16} className="text-blue-500" />;
+      case 'in-person': return <MapPin size={16} className="text-sand" />;
+      default: return <Video size={16} className="text-sand" />;
     }
   };
 
@@ -300,11 +300,11 @@ export const Calendar: React.FC<CalendarProps> = ({
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Calendar Header */}
-      <div className="bg-white rounded-2xl shadow-xl p-6">
+      <div className="bg-surface rounded-2xl shadow-xl p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
-            <CalendarIcon className="text-blue-500" size={28} />
-            <h2 className="text-2xl font-bold text-gray-800">Calendar</h2>
+            <CalendarIcon className="text-sand" size={28} />
+            <h2 className="text-2xl font-bold text-ink">Calendar</h2>
           </div>
           <div className="flex space-x-2">
             <button
@@ -312,7 +312,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                 setSelectedDate(new Date());
                 setShowEventModal(true);
               }}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-sand text-white rounded-lg hover:bg-sand-lo transition-colors"
             >
               <Plus size={16} />
               <span>Add Event</span>
@@ -344,16 +344,16 @@ export const Calendar: React.FC<CalendarProps> = ({
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => navigateMonth('prev')}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-surface-high rounded-lg transition-colors"
           >
             <ChevronLeft size={20} />
           </button>
-          <h3 className="text-xl font-semibold text-gray-800">
+          <h3 className="text-xl font-semibold text-ink">
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
           </h3>
           <button
             onClick={() => navigateMonth('next')}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-surface-high rounded-lg transition-colors"
           >
             <ChevronRight size={20} />
           </button>
@@ -363,7 +363,7 @@ export const Calendar: React.FC<CalendarProps> = ({
         <div className="grid grid-cols-7 gap-1">
           {/* Day Headers */}
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-            <div key={day} className="p-3 text-center font-semibold text-gray-600 bg-gray-50 rounded-lg">
+            <div key={day} className="p-3 text-center font-semibold text-ink/75 bg-surface rounded-lg">
               {day}
             </div>
           ))}
@@ -380,8 +380,8 @@ export const Calendar: React.FC<CalendarProps> = ({
             return (
               <div
                 key={day.toISOString()}
-                className={`p-2 h-24 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors ${
-                  isToday ? 'bg-blue-50 border-blue-300' : ''
+                className={`p-2 h-24 border border-hairline-soft rounded-lg hover:bg-surface cursor-pointer transition-colors ${
+                  isToday ? 'bg-surface border-blue-300' : ''
                 }`}
                 onClick={() => {
                   setSelectedDate(day);
@@ -389,7 +389,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                 }}
               >
                 <div className={`text-sm font-medium mb-1 ${
-                  isToday ? 'text-blue-600' : 'text-gray-800'
+                  isToday ? 'text-sand' : 'text-ink'
                 }`}>
                   {day.getDate()}
                 </div>
@@ -408,7 +408,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                     </div>
                   ))}
                   {dayEvents.length > 2 && (
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-muted">
                       +{dayEvents.length - 2} more
                     </div>
                   )}
@@ -420,9 +420,9 @@ export const Calendar: React.FC<CalendarProps> = ({
       </div>
 
       {/* Upcoming Events */}
-      <div className="bg-white rounded-2xl shadow-xl p-6">
+      <div className="bg-surface rounded-2xl shadow-xl p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-gray-800">Upcoming Events</h3>
+          <h3 className="text-xl font-bold text-ink">Upcoming Events</h3>
           <div className="flex items-center space-x-4 text-sm">
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 rounded-full" style={{ backgroundColor: eventTypeColors.meeting }}></div>
@@ -466,10 +466,10 @@ export const Calendar: React.FC<CalendarProps> = ({
             .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
             .slice(0, 5)
             .map(event => (
-              <div key={event.id} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
+              <div key={event.id} className="flex items-center space-x-4 p-4 bg-surface rounded-xl">
                 <button
                   onClick={() => handleEventClick(event)}
-                  className="flex-1 text-left hover:bg-gray-100 rounded-lg p-2 transition-colors"
+                  className="flex-1 text-left hover:bg-surface-high rounded-lg p-2 transition-colors"
                 >
                   <div className="flex items-center space-x-4">
                     <div
@@ -477,13 +477,13 @@ export const Calendar: React.FC<CalendarProps> = ({
                       style={{ backgroundColor: event.color }}
                     ></div>
                     <div className="flex-1">
-                      <p className="font-semibold text-gray-800">{event.title}</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="font-semibold text-ink">{event.title}</p>
+                      <p className="text-sm text-ink/75">
                         {new Date(event.date).toLocaleDateString()} at{' '}
                         {new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </p>
                       {event.description && (
-                        <p className="text-sm text-gray-500 mt-1">{event.description}</p>
+                        <p className="text-sm text-muted mt-1">{event.description}</p>
                       )}
                     </div>
                     <div 
@@ -502,42 +502,42 @@ export const Calendar: React.FC<CalendarProps> = ({
       {/* Event Modal */}
       {showEventModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
-            <h4 className="text-xl font-bold text-gray-800 mb-4">Create Event</h4>
+          <div className="bg-surface rounded-2xl p-6 max-w-md w-full mx-4">
+            <h4 className="text-xl font-bold text-ink mb-4">Create Event</h4>
             <div className="space-y-4">
               <div>
-                <label htmlFor="calendar-title-3" className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                <label htmlFor="calendar-title-3" className="block text-sm font-medium text-ink/75 mb-2">Title</label>
                 <input id="calendar-title-3"
                   type="text"
                   value={eventForm.title}
                   onChange={(e) => setEventForm(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                   placeholder="Event title"
                   maxLength={200}
                 />
               </div>
               <div>
-                <label htmlFor="calendar-description-3" className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <label htmlFor="calendar-description-3" className="block text-sm font-medium text-ink/75 mb-2">Description</label>
                 <textarea id="calendar-description-3"
                   value={eventForm.description}
                   onChange={(e) => setEventForm(prev => ({ ...prev, description: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent resize-none"
                   rows={3}
                   placeholder="Event description"
                   maxLength={2000}
                 />
               </div>
               <div>
-                <label htmlFor="calendar-time-3" className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                <label htmlFor="calendar-time-3" className="block text-sm font-medium text-ink/75 mb-2">Time</label>
                 <input id="calendar-time-3"
                   type="time"
                   value={eventForm.time}
                   onChange={(e) => setEventForm(prev => ({ ...prev, time: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                 />
               </div>
               <div>
-                <label htmlFor="calendar-type" className="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                <label htmlFor="calendar-type" className="block text-sm font-medium text-ink/75 mb-2">Type</label>
                 <select id="calendar-type"
                   value={eventForm.type}
                   onChange={(e) => setEventForm(prev => ({ 
@@ -545,7 +545,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                     type: asOneOf(e.target.value, SELECTABLE_EVENT_TYPES, 'study'),
                     color: getEventTypeColor(asOneOf(e.target.value, SELECTABLE_EVENT_TYPES, 'study'))
                   }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                 >
                   <option value="reminder">Reminder</option>
                   <option value="study">Study Session</option>
@@ -555,13 +555,13 @@ export const Calendar: React.FC<CalendarProps> = ({
                 </select>
               </div>
               <div>
-                <span className="block text-sm font-medium text-gray-700 mb-2">Preview</span>
-                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                <span className="block text-sm font-medium text-ink/75 mb-2">Preview</span>
+                <div className="flex items-center space-x-3 p-3 bg-surface rounded-lg">
                   <div
                     className="w-4 h-4 rounded-full"
                     style={{ backgroundColor: getEventTypeColor(eventForm.type) }}
                   ></div>
-                  <span className="font-medium text-gray-800">{eventForm.title || 'Event Title'}</span>
+                  <span className="font-medium text-ink">{eventForm.title || 'Event Title'}</span>
                   <span 
                     className="text-xs px-2 py-1 text-white rounded-full capitalize"
                     style={{ backgroundColor: getEventTypeColor(eventForm.type) }}
@@ -570,12 +570,12 @@ export const Calendar: React.FC<CalendarProps> = ({
                   </span>
                 </div>
               </div>
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+              <div className="flex items-center justify-between p-4 bg-surface rounded-xl">
                 <div className="flex items-center space-x-3">
                   <Bell className="text-orange-500" size={20} />
                   <div>
-                    <p className="font-medium text-gray-800">Add Reminder</p>
-                    <p className="text-sm text-gray-600">Get notified before this event</p>
+                    <p className="font-medium text-ink">Add Reminder</p>
+                    <p className="text-sm text-ink/75">Get notified before this event</p>
                   </div>
                 </div>
                 <button
@@ -586,7 +586,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                   }`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    className={`inline-block h-4 w-4 transform rounded-full bg-surface transition-transform ${
                       eventForm.hasReminder ? 'translate-x-6' : 'translate-x-1'
                     }`}
                   />
@@ -594,11 +594,11 @@ export const Calendar: React.FC<CalendarProps> = ({
               </div>
               {eventForm.hasReminder && (
                 <div>
-                  <label htmlFor="calendar-remind-me" className="block text-sm font-medium text-gray-700 mb-2">Remind me</label>
+                  <label htmlFor="calendar-remind-me" className="block text-sm font-medium text-ink/75 mb-2">Remind me</label>
                   <select id="calendar-remind-me"
                     value={eventForm.reminderMinutes}
                     onChange={(e) => setEventForm(prev => ({ ...prev, reminderMinutes: parseInt(e.target.value) }))}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                   >
                     <option value={5}>5 minutes before</option>
                     <option value={15}>15 minutes before</option>
@@ -612,13 +612,13 @@ export const Calendar: React.FC<CalendarProps> = ({
             <div className="flex space-x-3 mt-6">
               <button
                 onClick={() => setShowEventModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2 border border-hairline text-ink/75 rounded-lg hover:bg-surface transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreateEvent}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex-1 px-4 py-2 bg-sand text-white rounded-lg hover:bg-sand-lo transition-colors"
               >
                 Create Event
               </button>
@@ -630,26 +630,26 @@ export const Calendar: React.FC<CalendarProps> = ({
       {/* Reminder Modal */}
       {showReminderModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
-            <h4 className="text-xl font-bold text-gray-800 mb-4">Create Reminder</h4>
+          <div className="bg-surface rounded-2xl p-6 max-w-md w-full mx-4">
+            <h4 className="text-xl font-bold text-ink mb-4">Create Reminder</h4>
             <div className="space-y-4">
               <div>
-                <label htmlFor="calendar-title-2" className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                <label htmlFor="calendar-title-2" className="block text-sm font-medium text-ink/75 mb-2">Title</label>
                 <input id="calendar-title-2"
                   type="text"
                   value={reminderForm.title}
                   onChange={(e) => setReminderForm(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   placeholder="Reminder title"
                   maxLength={200}
                 />
               </div>
               <div>
-                <label htmlFor="calendar-description-2" className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <label htmlFor="calendar-description-2" className="block text-sm font-medium text-ink/75 mb-2">Description</label>
                 <textarea id="calendar-description-2"
                   value={reminderForm.description}
                   onChange={(e) => setReminderForm(prev => ({ ...prev, description: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
                   rows={3}
                   placeholder="What do you want to be reminded about?"
                   maxLength={2000}
@@ -657,31 +657,31 @@ export const Calendar: React.FC<CalendarProps> = ({
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="calendar-date" className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                  <label htmlFor="calendar-date" className="block text-sm font-medium text-ink/75 mb-2">Date</label>
                   <input id="calendar-date"
                     type="date"
                     value={reminderForm.date}
                     onChange={(e) => setReminderForm(prev => ({ ...prev, date: e.target.value }))}
                     min={todayLocalDateString()}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label htmlFor="calendar-time-2" className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                  <label htmlFor="calendar-time-2" className="block text-sm font-medium text-ink/75 mb-2">Time</label>
                   <input id="calendar-time-2"
                     type="time"
                     value={reminderForm.time}
                     onChange={(e) => setReminderForm(prev => ({ ...prev, time: e.target.value }))}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
               </div>
               <div>
-                <label htmlFor="calendar-link-to-event-optional" className="block text-sm font-medium text-gray-700 mb-2">Link to Event (Optional)</label>
+                <label htmlFor="calendar-link-to-event-optional" className="block text-sm font-medium text-ink/75 mb-2">Link to Event (Optional)</label>
                 <select id="calendar-link-to-event-optional"
                   value={reminderForm.linkedEventId}
                   onChange={(e) => setReminderForm(prev => ({ ...prev, linkedEventId: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 >
                   <option value="">No linked event</option>
                   {events.filter(e => new Date(e.date) >= new Date()).map(event => (
@@ -695,7 +695,7 @@ export const Calendar: React.FC<CalendarProps> = ({
             <div className="flex space-x-3 mt-6">
               <button
                 onClick={() => setShowReminderModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2 border border-hairline text-ink/75 rounded-lg hover:bg-surface transition-colors"
               >
                 Cancel
               </button>
@@ -713,26 +713,26 @@ export const Calendar: React.FC<CalendarProps> = ({
       {/* Meeting Modal */}
       {showMeetingModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
-            <h4 className="text-xl font-bold text-gray-800 mb-4">Schedule Meeting</h4>
+          <div className="bg-surface rounded-2xl p-6 max-w-md w-full mx-4">
+            <h4 className="text-xl font-bold text-ink mb-4">Schedule Meeting</h4>
             <div className="space-y-4">
               <div>
-                <label htmlFor="calendar-title" className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                <label htmlFor="calendar-title" className="block text-sm font-medium text-ink/75 mb-2">Title</label>
                 <input id="calendar-title"
                   type="text"
                   value={meetingForm.title}
                   onChange={(e) => setMeetingForm(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                   placeholder="Meeting title"
                   maxLength={200}
                 />
               </div>
               <div>
-                <label htmlFor="calendar-description" className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <label htmlFor="calendar-description" className="block text-sm font-medium text-ink/75 mb-2">Description</label>
                 <textarea id="calendar-description"
                   value={meetingForm.description}
                   onChange={(e) => setMeetingForm(prev => ({ ...prev, description: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent resize-none"
                   rows={3}
                   placeholder="Meeting description"
                   maxLength={2000}
@@ -740,21 +740,21 @@ export const Calendar: React.FC<CalendarProps> = ({
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="calendar-time" className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                  <label htmlFor="calendar-time" className="block text-sm font-medium text-ink/75 mb-2">Time</label>
                   <input id="calendar-time"
                     type="time"
                     value={meetingForm.time}
                     onChange={(e) => setMeetingForm(prev => ({ ...prev, time: e.target.value }))}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label htmlFor="calendar-duration-min" className="block text-sm font-medium text-gray-700 mb-2">Duration (min)</label>
+                  <label htmlFor="calendar-duration-min" className="block text-sm font-medium text-ink/75 mb-2">Duration (min)</label>
                   <input id="calendar-duration-min"
                     type="number"
                     value={meetingForm.duration}
                     onChange={(e) => setMeetingForm(prev => ({ ...prev, duration: parseInt(e.target.value) || 60 }))}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                     min="15"
                     max="480"
                   />
@@ -764,7 +764,7 @@ export const Calendar: React.FC<CalendarProps> = ({
             <div className="flex space-x-3 mt-6">
               <button
                 onClick={() => setShowMeetingModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2 border border-hairline text-ink/75 rounded-lg hover:bg-surface transition-colors"
               >
                 Cancel
               </button>
@@ -782,12 +782,12 @@ export const Calendar: React.FC<CalendarProps> = ({
       {/* Event Details Modal */}
       {showEventDetails && selectedEvent && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+          <div className="bg-surface rounded-2xl p-6 max-w-md w-full mx-4">
             <div className="flex items-center justify-between mb-6">
-              <h4 className="text-xl font-bold text-gray-800">Event Details</h4>
+              <h4 className="text-xl font-bold text-ink">Event Details</h4>
               <button
                 onClick={() => setShowEventDetails(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-surface-high rounded-lg transition-colors"
               >
                 <X size={20} />
               </button>
@@ -796,20 +796,20 @@ export const Calendar: React.FC<CalendarProps> = ({
             <div className="space-y-4">
               {/* Event Title */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">{selectedEvent.title}</h3>
+                <h3 className="text-lg font-semibold text-ink mb-2">{selectedEvent.title}</h3>
                 <div className="flex items-center space-x-2 mb-2">
                   <div
                     className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: selectedEvent.color }}
                   ></div>
-                  <span className="text-sm px-2 py-1 bg-gray-100 text-gray-700 rounded-full capitalize">
+                  <span className="text-sm px-2 py-1 bg-surface-high text-ink/75 rounded-full capitalize">
                     {selectedEvent.type}
                   </span>
                 </div>
               </div>
 
               {/* Date and Time */}
-              <div className="flex items-center space-x-2 text-gray-600">
+              <div className="flex items-center space-x-2 text-ink/75">
                 <CalendarIcon size={16} />
                 <span>{new Date(selectedEvent.date).toLocaleDateString('en-US', { 
                   weekday: 'long',
@@ -819,7 +819,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                 })}</span>
               </div>
 
-              <div className="flex items-center space-x-2 text-gray-600">
+              <div className="flex items-center space-x-2 text-ink/75">
                 <Clock size={16} />
                 <span>{new Date(selectedEvent.date).toLocaleTimeString([], { 
                   hour: '2-digit', 
@@ -827,21 +827,21 @@ export const Calendar: React.FC<CalendarProps> = ({
                   hour12: true 
                 })}</span>
                 {selectedEvent.meetingData && (
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-muted">
                     ({selectedEvent.meetingData.duration} minutes)
                   </span>
                 )}
               </div>
 
               {/* Host Information */}
-              <div className="flex items-center space-x-2 text-gray-600">
+              <div className="flex items-center space-x-2 text-ink/75">
                 <UserIcon size={16} />
                 <span>Hosted by {getHostName(selectedEvent.createdBy)}</span>
               </div>
 
               {/* Meeting Type (for meetings) */}
               {selectedEvent.meetingData && (
-                <div className="flex items-center space-x-2 text-gray-600">
+                <div className="flex items-center space-x-2 text-ink/75">
                   {getMeetingTypeIcon(selectedEvent.meetingData.meetingType)}
                   <span className="capitalize">{selectedEvent.meetingData.meetingType} meeting</span>
                 </div>
@@ -849,7 +849,7 @@ export const Calendar: React.FC<CalendarProps> = ({
 
               {/* Location (for in-person meetings) */}
               {selectedEvent.meetingData?.location && (
-                <div className="flex items-center space-x-2 text-gray-600">
+                <div className="flex items-center space-x-2 text-ink/75">
                   <MapPin size={16} />
                   <span>{selectedEvent.meetingData.location}</span>
                 </div>
@@ -857,11 +857,11 @@ export const Calendar: React.FC<CalendarProps> = ({
 
               {/* Participants (for meetings) */}
               {selectedEvent.meetingData && (
-                <div className="flex items-center space-x-2 text-gray-600">
+                <div className="flex items-center space-x-2 text-ink/75">
                   <Users size={16} />
                   <span>{selectedEvent.meetingData.participants.length} participants</span>
                   {(selectedEvent.meetingData.invitees?.length > 0 || selectedEvent.meetingData.inviteeEmails?.length > 0) && (
-                    <span className="text-sm text-blue-600">
+                    <span className="text-sm text-sand">
                       • {(selectedEvent.meetingData.invitees?.length || 0) + (selectedEvent.meetingData.inviteeEmails?.length || 0)} invited
                     </span>
                   )}
@@ -871,12 +871,12 @@ export const Calendar: React.FC<CalendarProps> = ({
               {/* Invitees List (for meetings) */}
               {selectedEvent.meetingData && (selectedEvent.meetingData.invitees?.length > 0 || selectedEvent.meetingData.inviteeEmails?.length > 0) && (
                 <div>
-                  <p className="text-sm font-medium text-gray-700 mb-2">Invited People:</p>
+                  <p className="text-sm font-medium text-ink/75 mb-2">Invited People:</p>
                   <div className="space-y-1">
                     {selectedEvent.meetingData.invitees?.map((inviteeId: string) => {
                       const friend = friends.find(f => f.id === inviteeId);
                       return friend ? (
-                        <div key={inviteeId} className="flex items-center space-x-2 text-sm text-gray-600">
+                        <div key={inviteeId} className="flex items-center space-x-2 text-sm text-ink/75">
                           <Avatar
                             name={friend.name}
                             src={friend.avatar}
@@ -889,7 +889,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                       ) : null;
                     })}
                     {selectedEvent.meetingData.inviteeEmails?.map((email: string) => (
-                      <div key={email} className="flex items-center space-x-2 text-sm text-gray-600">
+                      <div key={email} className="flex items-center space-x-2 text-sm text-ink/75">
                         <div className="w-4 h-4 rounded-full bg-gray-400 flex items-center justify-center">
                           <span className="text-white text-xs">@</span>
                         </div>
@@ -903,8 +903,8 @@ export const Calendar: React.FC<CalendarProps> = ({
               {/* Description */}
               {selectedEvent.description && (
                 <div>
-                  <p className="text-sm font-medium text-gray-700 mb-1">Description:</p>
-                  <p className="text-gray-600">{selectedEvent.description}</p>
+                  <p className="text-sm font-medium text-ink/75 mb-1">Description:</p>
+                  <p className="text-ink/75">{selectedEvent.description}</p>
                 </div>
               )}
             </div>
@@ -918,7 +918,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                       onJoinMeeting(selectedEvent.id);
                       setShowEventDetails(false);
                     }}
-                    className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-sand text-white rounded-lg hover:bg-sand-lo transition-colors"
                   >
                     {getMeetingTypeIcon(selectedEvent.meetingData.meetingType)}
                     <span>Join Meeting</span>
@@ -930,7 +930,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                         onOpenChat(selectedEvent.meetingData!.groupId!);
                         setShowEventDetails(false);
                       }}
-                      className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 border border-hairline text-ink/75 rounded-lg hover:bg-surface transition-colors"
                     >
                       <MessageCircle size={16} />
                       <span>Open Chat</span>

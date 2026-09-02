@@ -61,10 +61,10 @@ export const UpcomingMeetings: React.FC<UpcomingMeetingsProps> = ({
 
   const getMeetingTypeIcon = (type: string) => {
     switch (type) {
-      case 'video': return <Video size={16} className="text-blue-500" />;
+      case 'video': return <Video size={16} className="text-sand" />;
       case 'phone': return <Phone size={16} className="text-green-500" />;
-      case 'in-person': return <MapPin size={16} className="text-purple-500" />;
-      default: return <Video size={16} className="text-blue-500" />;
+      case 'in-person': return <MapPin size={16} className="text-sand" />;
+      default: return <Video size={16} className="text-sand" />;
     }
   };
 
@@ -84,10 +84,10 @@ export const UpcomingMeetings: React.FC<UpcomingMeetingsProps> = ({
     return (
       <div className="theme-secondary-bg rounded-2xl shadow-xl p-6">
         <div className="flex items-center space-x-3 mb-4">
-          <Calendar className="text-blue-500" size={24} />
-          <h3 className="text-xl font-bold text-gray-800">Upcoming Meetings</h3>
+          <Calendar className="text-sand" size={24} />
+          <h3 className="text-xl font-bold text-ink">Upcoming Meetings</h3>
         </div>
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-muted">
           <Calendar size={48} className="mx-auto mb-4 opacity-50" />
           <p>No upcoming meetings scheduled</p>
           <p className="text-sm mt-1">Schedule a meeting from any chat group!</p>
@@ -99,8 +99,8 @@ export const UpcomingMeetings: React.FC<UpcomingMeetingsProps> = ({
   return (
     <div className="theme-secondary-bg rounded-2xl shadow-xl p-6">
       <div className="flex items-center space-x-3 mb-6">
-        <Calendar className="text-blue-500" size={24} />
-        <h3 className="text-xl font-bold text-gray-800">Upcoming Meetings</h3>
+        <Calendar className="text-sand" size={24} />
+        <h3 className="text-xl font-bold text-ink">Upcoming Meetings</h3>
       </div>
 
       <div className="space-y-4">
@@ -114,29 +114,29 @@ export const UpcomingMeetings: React.FC<UpcomingMeetingsProps> = ({
               key={meeting.id}
               className={`p-4 rounded-xl border-2 transition-all hover:shadow-md ${
                 startingSoon 
-                  ? 'border-orange-300 bg-orange-50' 
-                  : 'border-gray-200 hover:border-blue-300'
+                  ? 'border-orange-300 bg-sand/10' 
+                  : 'border-hairline-soft hover:border-sand/40'
               }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-2">
-                    <h4 className="font-semibold text-gray-800">{meeting.title}</h4>
+                    <h4 className="font-semibold text-ink">{meeting.title}</h4>
                     {startingSoon && (
-                      <span className="px-2 py-1 text-xs bg-orange-200 text-orange-800 rounded-full font-medium">
+                      <span className="px-2 py-1 text-xs bg-orange-200 text-sand rounded-full font-medium">
                         Starting Soon
                       </span>
                     )}
                   </div>
                   
                   {groupName && (
-                    <p className="text-sm text-blue-600 mb-2 flex items-center">
+                    <p className="text-sm text-sand mb-2 flex items-center">
                       <Users size={14} className="mr-1" />
                       {groupName}
                     </p>
                   )}
                   
-                  <div className="flex items-center space-x-4 text-sm text-gray-600 mb-2">
+                  <div className="flex items-center space-x-4 text-sm text-ink/75 mb-2">
                     <div className="flex items-center space-x-1">
                       <Calendar size={14} />
                       <span>{date}</span>
@@ -152,19 +152,19 @@ export const UpcomingMeetings: React.FC<UpcomingMeetingsProps> = ({
                   </div>
 
                   {meeting.location && (
-                    <div className="flex items-center space-x-1 text-sm text-gray-600 mb-2">
+                    <div className="flex items-center space-x-1 text-sm text-ink/75 mb-2">
                       <MapPin size={14} />
                       <span>{meeting.location}</span>
                     </div>
                   )}
 
                   {meeting.description && (
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    <p className="text-sm text-ink/75 mb-3 line-clamp-2">
                       {meeting.description}
                     </p>
                   )}
 
-                  <div className="flex items-center space-x-2 text-xs text-gray-500">
+                  <div className="flex items-center space-x-2 text-xs text-muted">
                     <span>{meeting.duration} minutes</span>
                     <span>•</span>
                     <span>{meeting.participants.length} participants</span>
@@ -193,7 +193,7 @@ export const UpcomingMeetings: React.FC<UpcomingMeetingsProps> = ({
                   {meeting.groupId && (
                     <button
                       onClick={() => onOpenChat(meeting.groupId!)}
-                      className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium transition-colors"
+                      className="flex items-center space-x-2 px-4 py-2 border border-hairline text-ink/75 rounded-lg hover:bg-surface text-sm font-medium transition-colors"
                     >
                       <MessageCircle size={16} />
                       <span>Chatroom</span>
@@ -208,7 +208,7 @@ export const UpcomingMeetings: React.FC<UpcomingMeetingsProps> = ({
 
       {meetings.filter(m => new Date(m.scheduledTime) > new Date()).length > 5 && (
         <div className="mt-4 text-center">
-          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors">
+          <button className="text-sand hover:text-ink text-sm font-medium transition-colors">
             View All Meetings ({meetings.filter(m => new Date(m.scheduledTime) > new Date()).length})
           </button>
         </div>

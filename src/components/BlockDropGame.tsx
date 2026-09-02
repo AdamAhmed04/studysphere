@@ -338,7 +338,7 @@ export const BlockDropGame: React.FC<BlockDropGameProps> = ({ isOpen, onClose })
         {row.map((cell, x) => (
           <div
             key={`${x}-${y}`}
-            className="border border-gray-300"
+            className="border border-hairline"
             style={{
               width: BLOCK_SIZE,
               height: BLOCK_SIZE,
@@ -364,7 +364,7 @@ export const BlockDropGame: React.FC<BlockDropGameProps> = ({ isOpen, onClose })
             {row.map((cell, x) => (
               <div
                 key={`${x}-${y}`}
-                className="border border-gray-200"
+                className="border border-hairline-soft"
                 style={{
                   width: 15,
                   height: 15,
@@ -382,12 +382,12 @@ export const BlockDropGame: React.FC<BlockDropGameProps> = ({ isOpen, onClose })
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
+      <div className="bg-surface rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
         {/* Header */}
         <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-4 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-surface bg-opacity-20 rounded-full flex items-center justify-center">
                 <Trophy size={16} />
               </div>
               <h3 className="text-xl font-bold">Block Drop</h3>
@@ -404,7 +404,7 @@ export const BlockDropGame: React.FC<BlockDropGameProps> = ({ isOpen, onClose })
         <div className="p-6 flex gap-6">
           {/* Game Board */}
           <div className="flex-1">
-            <div className="bg-gray-100 p-4 rounded-lg inline-block">
+            <div className="bg-surface-high p-4 rounded-lg inline-block">
               {renderBoard()}
             </div>
           </div>
@@ -412,8 +412,8 @@ export const BlockDropGame: React.FC<BlockDropGameProps> = ({ isOpen, onClose })
           {/* Game Info & Controls */}
           <div className="w-64 space-y-4">
             {/* Stats */}
-            <div className="bg-gray-50 rounded-lg p-4">
-              <h4 className="font-bold text-gray-800 mb-3">Stats</h4>
+            <div className="bg-surface rounded-lg p-4">
+              <h4 className="font-bold text-ink mb-3">Stats</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span>Score:</span>
@@ -435,16 +435,16 @@ export const BlockDropGame: React.FC<BlockDropGameProps> = ({ isOpen, onClose })
             </div>
 
             {/* Next Piece */}
-            <div className="bg-gray-50 rounded-lg p-4">
-              <h4 className="font-bold text-gray-800 mb-3">Next</h4>
+            <div className="bg-surface rounded-lg p-4">
+              <h4 className="font-bold text-ink mb-3">Next</h4>
               <div className="flex justify-center">
                 {renderNextPiece()}
               </div>
             </div>
 
             {/* Controls */}
-            <div className="bg-gray-50 rounded-lg p-4">
-              <h4 className="font-bold text-gray-800 mb-3">Controls</h4>
+            <div className="bg-surface rounded-lg p-4">
+              <h4 className="font-bold text-ink mb-3">Controls</h4>
               <div className="space-y-2 text-xs">
                 <div className="flex items-center space-x-2">
                   <ArrowLeft size={12} />

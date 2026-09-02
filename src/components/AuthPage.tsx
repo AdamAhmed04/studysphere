@@ -265,66 +265,66 @@ export const AuthPage: React.FC = () => {
     setResetError('');
   };
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-6xl w-full grid lg:grid-cols-2 gap-8 items-center">
         
         {/* Left Side - Branding & Features */}
         <div className="hidden lg:block space-y-8">
           <div className="text-center lg:text-left">
             <div className="flex items-center justify-center lg:justify-start space-x-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-surface-high rounded-xl flex items-center justify-center">
                 <Clock className="text-white" size={28} />
               </div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold text-ink">
                 StudySphere
               </h1>
             </div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+            <h2 className="text-3xl font-bold text-ink mb-4">
               Transform Your Study Experience
             </h2>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl text-ink/75 mb-8">
               Join thousands of students who are boosting their productivity with our social study timer
             </p>
           </div>
 
           <div className="space-y-6">
             <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Clock className="text-blue-600" size={24} />
+              <div className="w-12 h-12 bg-surface-high rounded-xl flex items-center justify-center flex-shrink-0">
+                <Clock className="text-sand" size={24} />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Smart Study Timer</h3>
-                <p className="text-gray-600">Customizable timers with breaks, themes, and progress tracking</p>
+                <h3 className="text-lg font-semibold text-ink mb-2">Smart Study Timer</h3>
+                <p className="text-ink/75">Customizable timers with breaks, themes, and progress tracking</p>
               </div>
             </div>
 
             <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Users className="text-green-600" size={24} />
+              <div className="w-12 h-12 bg-emerald-500/15 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Users className="text-emerald-300" size={24} />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Study with Friends</h3>
-                <p className="text-gray-600">Connect with study buddies and stay motivated together</p>
+                <h3 className="text-lg font-semibold text-ink mb-2">Study with Friends</h3>
+                <p className="text-ink/75">Connect with study buddies and stay motivated together</p>
               </div>
             </div>
 
             <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Trophy className="text-purple-600" size={24} />
+              <div className="w-12 h-12 bg-surface-high rounded-xl flex items-center justify-center flex-shrink-0">
+                <Trophy className="text-sand" size={24} />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Track Progress</h3>
-                <p className="text-gray-600">Monitor your study streaks and compete on leaderboards</p>
+                <h3 className="text-lg font-semibold text-ink mb-2">Track Progress</h3>
+                <p className="text-ink/75">Monitor your study streaks and compete on leaderboards</p>
               </div>
             </div>
 
             <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 bg-sand/15 rounded-xl flex items-center justify-center flex-shrink-0">
                 <BookOpen className="text-orange-600" size={24} />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Share Resources</h3>
-                <p className="text-gray-600">Exchange notes and study materials with your network</p>
+                <h3 className="text-lg font-semibold text-ink mb-2">Share Resources</h3>
+                <p className="text-ink/75">Exchange notes and study materials with your network</p>
               </div>
             </div>
           </div>
@@ -332,25 +332,25 @@ export const AuthPage: React.FC = () => {
 
         {/* Right Side - Auth Form */}
         <div className="w-full max-w-md mx-auto">
-          <div className="bg-white rounded-2xl shadow-2xl p-8">
+          <div className="bg-surface rounded-2xl shadow-2xl p-8">
             
             {/* Mobile Branding */}
             <div className="lg:hidden text-center mb-8">
               <div className="flex items-center justify-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-surface-high rounded-lg flex items-center justify-center">
                   <Clock className="text-white" size={20} />
                 </div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold text-ink">
                   StudySphere
                 </h1>
               </div>
             </div>
 
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              <h2 className="text-2xl font-bold text-ink mb-2">
                 {isSignUp ? (signUpStep === 1 ? 'Create Account' : 'Complete Profile') : 'Welcome Back'}
               </h2>
-              <p className="text-gray-600">
+              <p className="text-ink/75">
                 {isSignUp 
                   ? (signUpStep === 1 ? 'Join the community and start studying smarter' : 'Tell us more about yourself')
                   : 'Sign in to continue your study journey'
@@ -361,18 +361,18 @@ export const AuthPage: React.FC = () => {
             {showForgotPassword ? (
               <form onSubmit={handleForgotPassword} className="space-y-6">
                 <div>
-                  <label htmlFor="authpage-email-address-2" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="authpage-email-address-2" className="block text-sm font-medium text-ink/75 mb-2">
                     Email Address
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Mail className="h-5 w-5 text-gray-400" />
+                      <Mail className="h-5 w-5 text-muted" />
                     </div>
                     <input id="authpage-email-address-2"
                       type="email"
                       value={resetEmail}
                       onChange={(e) => setResetEmail(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full pl-10 pr-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                       placeholder="Enter your email"
                       disabled={resetLoading}
                     />
@@ -398,7 +398,7 @@ export const AuthPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleBackToSignIn}
-                    className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                    className="text-sand hover:text-ink font-medium transition-colors"
                   >
                     Back to Sign In
                   </button>
@@ -410,25 +410,25 @@ export const AuthPage: React.FC = () => {
               {isSignUp && signUpStep === 1 && (
                 <>
                   <div>
-                    <label htmlFor="authpage-username" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="authpage-username" className="block text-sm font-medium text-ink/75 mb-2">
                       Username
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <User className="h-5 w-5 text-gray-400" />
+                        <User className="h-5 w-5 text-muted" />
                       </div>
                       <input id="authpage-username"
                         type="text"
                         value={formData.username}
                         onChange={(e) => handleInputChange('username', e.target.value)}
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                          errors.username ? 'border-red-500' : 'border-gray-300'
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent transition-all ${
+                          errors.username ? 'border-red-500' : 'border-hairline'
                         }`}
                         placeholder="Choose a username"
                         maxLength={100}
                       />
                     </div>
-                    {errors.username && <p className="mt-1 text-sm text-red-600">{errors.username}</p>}
+                    {errors.username && <p className="mt-1 text-sm text-red-300">{errors.username}</p>}
                   </div>
                 </>
               )}
@@ -438,7 +438,7 @@ export const AuthPage: React.FC = () => {
                 <div>
                   {/* Profile Photo Upload */}
                   <div className="mb-6">
-                    <div id="authpage-profile-photo" className="block text-sm font-medium text-gray-700 mb-3">
+                    <div id="authpage-profile-photo" className="block text-sm font-medium text-ink/75 mb-3">
                       Profile Photo (Optional)
                     </div>
                     <div role="group" aria-labelledby="authpage-profile-photo" className="flex items-center space-x-4">
@@ -448,7 +448,7 @@ export const AuthPage: React.FC = () => {
                             <img
                               src={avatarPreview}
                               alt="Profile preview"
-                              className="w-20 h-20 rounded-full object-cover border-4 border-gray-200"
+                              className="w-20 h-20 rounded-full object-cover border-4 border-hairline-soft"
                             />
                             <button
                               type="button"
@@ -459,7 +459,7 @@ export const AuthPage: React.FC = () => {
                             </button>
                           </div>
                         ) : (
-                          <div className="w-20 h-20 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center">
+                          <div className="w-20 h-20 rounded-full bg-surface-high flex items-center justify-center">
                             <Camera className="text-white" size={24} />
                           </div>
                         )}
@@ -475,16 +475,16 @@ export const AuthPage: React.FC = () => {
                         />
                         <label
                           htmlFor="avatar-upload"
-                          className="flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer transition-colors"
+                          className="flex items-center space-x-2 px-4 py-2 bg-surface-high hover:bg-gray-200 text-ink/75 rounded-lg cursor-pointer transition-colors"
                         >
                           <Upload size={16} />
                           <span>{avatarPreview ? 'Change Photo' : 'Upload Photo'}</span>
                         </label>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-muted mt-1">
                           JPG, PNG, GIF up to 5MB
                         </p>
                         {errors.avatar && (
-                          <p className="text-xs text-red-600 mt-1">{errors.avatar}</p>
+                          <p className="text-xs text-red-300 mt-1">{errors.avatar}</p>
                         )}
                       </div>
                     </div>
@@ -492,25 +492,25 @@ export const AuthPage: React.FC = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="authpage-date-of-birth" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="authpage-date-of-birth" className="block text-sm font-medium text-ink/75 mb-2">
                         Date of Birth
                       </label>
                       <input id="authpage-date-of-birth"
                         type="date"
                         value={formData.dateOfBirth}
                         onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                       />
                     </div>
 
                     <div>
-                      <label htmlFor="authpage-grade-year" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="authpage-grade-year" className="block text-sm font-medium text-ink/75 mb-2">
                         Grade/Year
                       </label>
                       <select id="authpage-grade-year"
                         value={formData.grade}
                         onChange={(e) => handleInputChange('grade', e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                       >
                         <option value="">Select Grade</option>
                         <option value="9th Grade">9th Grade</option>
@@ -528,7 +528,7 @@ export const AuthPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="authpage-bio" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="authpage-bio" className="block text-sm font-medium text-ink/75 mb-2">
                       Bio
                     </label>
                     <textarea id="authpage-bio"
@@ -537,13 +537,13 @@ export const AuthPage: React.FC = () => {
                       placeholder="Tell us about yourself..."
                       maxLength={2000}
                       rows={3}
-                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none theme-textbox"
+                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent resize-none theme-textbox"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="authpage-school-university" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="authpage-school-university" className="block text-sm font-medium text-ink/75 mb-2">
                         School/University
                       </label>
                       <input id="authpage-school-university"
@@ -552,12 +552,12 @@ export const AuthPage: React.FC = () => {
                         onChange={(e) => handleInputChange('school', e.target.value)}
                         placeholder="e.g., Harvard University"
                         maxLength={200}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                       />
                     </div>
 
                     <div>
-                      <label htmlFor="authpage-field-of-study" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="authpage-field-of-study" className="block text-sm font-medium text-ink/75 mb-2">
                         Field of Study
                       </label>
                       <input id="authpage-field-of-study"
@@ -566,25 +566,25 @@ export const AuthPage: React.FC = () => {
                         onChange={(e) => handleInputChange('studyField', e.target.value)}
                         placeholder="e.g., Computer Science"
                         maxLength={200}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="authpage-expected-graduation-date" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="authpage-expected-graduation-date" className="block text-sm font-medium text-ink/75 mb-2">
                       Expected Graduation Date
                     </label>
                     <input id="authpage-expected-graduation-date"
                       type="date"
                       value={formData.graduationDate}
                       onChange={(e) => handleInputChange('graduationDate', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="authpage-interests" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="authpage-interests" className="block text-sm font-medium text-ink/75 mb-2">
                       Interests
                     </label>
                     <div className="flex space-x-3 mb-3">
@@ -594,12 +594,12 @@ export const AuthPage: React.FC = () => {
                         onChange={(e) => setNewInterest(e.target.value)}
                         placeholder="Add an interest (e.g., Mathematics, History)"
                         maxLength={50}
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="flex-1 px-4 py-2 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                       />
                       <button
                         type="button"
                         onClick={addInterest}
-                        className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors secondary-btn"
+                        className="px-3 py-1 text-sm bg-surface-high text-ink/75 rounded-lg hover:bg-gray-200 transition-colors secondary-btn"
                       >
                         Add
                       </button>
@@ -608,7 +608,7 @@ export const AuthPage: React.FC = () => {
                       {formData.interests.map(interest => (
                         <span
                           key={interest}
-                          className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm cursor-pointer hover:bg-blue-200 transition-colors"
+                          className="inline-flex items-center px-3 py-1 bg-surface-high text-ink rounded-full text-sm cursor-pointer hover:bg-blue-200 transition-colors"
                           onClick={() => removeInterest(interest)}
                         >
                           {interest} ✕
@@ -617,12 +617,12 @@ export const AuthPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                  <div className="flex items-center justify-between p-4 bg-surface rounded-xl">
                     <div className="flex items-center space-x-3">
                       {formData.isPublic ? <Globe className="text-green-500" size={20} /> : <Lock className="text-red-500" size={20} />}
                       <div>
-                        <p className="font-medium text-gray-800">Public Profile</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="font-medium text-ink">Public Profile</p>
+                        <p className="text-sm text-ink/75">
                           Allow others to find and add you as a friend
                         </p>
                       </div>
@@ -635,7 +635,7 @@ export const AuthPage: React.FC = () => {
                       }`}
                     >
                       <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        className={`inline-block h-4 w-4 transform rounded-full bg-surface transition-transform ${
                           formData.isPublic ? 'translate-x-6' : 'translate-x-1'
                         }`}
                       />
@@ -646,42 +646,42 @@ export const AuthPage: React.FC = () => {
 
               {(!isSignUp || signUpStep === 1) && (
                 <div>
-                  <label htmlFor="authpage-email-address" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="authpage-email-address" className="block text-sm font-medium text-ink/75 mb-2">
                     Email Address
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Mail className="h-5 w-5 text-gray-400" />
+                      <Mail className="h-5 w-5 text-muted" />
                     </div>
                     <input id="authpage-email-address"
                       type="email"
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
-                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                        errors.email ? 'border-red-500' : 'border-gray-300'
+                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent transition-all ${
+                        errors.email ? 'border-red-500' : 'border-hairline'
                       }`}
                       placeholder="Enter your email"
                     />
                   </div>
-                  {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+                  {errors.email && <p className="mt-1 text-sm text-red-300">{errors.email}</p>}
                 </div>
               )}
 
               {(!isSignUp || signUpStep === 1) && (
                 <div>
-                  <label htmlFor="authpage-password" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="authpage-password" className="block text-sm font-medium text-ink/75 mb-2">
                     Password
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Lock className="h-5 w-5 text-gray-400" />
+                      <Lock className="h-5 w-5 text-muted" />
                     </div>
                     <input id="authpage-password"
                       type={showPassword ? 'text' : 'password'}
                       value={formData.password}
                       onChange={(e) => handleInputChange('password', e.target.value)}
-                      className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                        errors.password ? 'border-red-500' : 'border-gray-300'
+                      className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent transition-all ${
+                        errors.password ? 'border-red-500' : 'border-hairline'
                       }`}
                       placeholder="Enter your password"
                     />
@@ -691,45 +691,45 @@ export const AuthPage: React.FC = () => {
                       className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     >
                       {showPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                        <EyeOff className="h-5 w-5 text-muted hover:text-ink" />
                       ) : (
-                        <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                        <Eye className="h-5 w-5 text-muted hover:text-ink" />
                       )}
                     </button>
                   </div>
-                  {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+                  {errors.password && <p className="mt-1 text-sm text-red-300">{errors.password}</p>}
                   
                   {/* Password Strength Indicator for Sign Up */}
                   {isSignUp && formData.password && (
-                    <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                      <p className="text-sm font-medium text-gray-700 mb-2">Password Requirements:</p>
+                    <div className="mt-3 p-3 bg-surface rounded-lg">
+                      <p className="text-sm font-medium text-ink/75 mb-2">Password Requirements:</p>
                       <div className="space-y-1">
                         <div className={`flex items-center text-xs ${
-                          passwordStrength.minLength ? 'text-green-600' : 'text-gray-500'
+                          passwordStrength.minLength ? 'text-emerald-300' : 'text-muted'
                         }`}>
                           <span className="mr-2">{passwordStrength.minLength ? '✓' : '○'}</span>
                           At least 8 characters
                         </div>
                         <div className={`flex items-center text-xs ${
-                          passwordStrength.hasUppercase ? 'text-green-600' : 'text-gray-500'
+                          passwordStrength.hasUppercase ? 'text-emerald-300' : 'text-muted'
                         }`}>
                           <span className="mr-2">{passwordStrength.hasUppercase ? '✓' : '○'}</span>
                           One uppercase letter (A-Z)
                         </div>
                         <div className={`flex items-center text-xs ${
-                          passwordStrength.hasLowercase ? 'text-green-600' : 'text-gray-500'
+                          passwordStrength.hasLowercase ? 'text-emerald-300' : 'text-muted'
                         }`}>
                           <span className="mr-2">{passwordStrength.hasLowercase ? '✓' : '○'}</span>
                           One lowercase letter (a-z)
                         </div>
                         <div className={`flex items-center text-xs ${
-                          passwordStrength.hasNumber ? 'text-green-600' : 'text-gray-500'
+                          passwordStrength.hasNumber ? 'text-emerald-300' : 'text-muted'
                         }`}>
                           <span className="mr-2">{passwordStrength.hasNumber ? '✓' : '○'}</span>
                           One number (0-9)
                         </div>
                         <div className={`flex items-center text-xs ${
-                          passwordStrength.hasSymbol ? 'text-green-600' : 'text-gray-500'
+                          passwordStrength.hasSymbol ? 'text-emerald-300' : 'text-muted'
                         }`}>
                           <span className="mr-2">{passwordStrength.hasSymbol ? '✓' : '○'}</span>
                           One symbol (!@#$%^&*...)
@@ -742,19 +742,19 @@ export const AuthPage: React.FC = () => {
 
               {isSignUp && signUpStep === 1 && (
                 <div>
-                  <label htmlFor="authpage-confirm-password" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="authpage-confirm-password" className="block text-sm font-medium text-ink/75 mb-2">
                     Confirm Password
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Lock className="h-5 w-5 text-gray-400" />
+                      <Lock className="h-5 w-5 text-muted" />
                     </div>
                     <input id="authpage-confirm-password"
                       type={showConfirmPassword ? 'text' : 'password'}
                       value={formData.confirmPassword}
                       onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                      className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                        errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                      className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent transition-all ${
+                        errors.confirmPassword ? 'border-red-500' : 'border-hairline'
                       }`}
                       placeholder="Confirm your password"
                     />
@@ -764,13 +764,13 @@ export const AuthPage: React.FC = () => {
                       className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     >
                       {showConfirmPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                        <EyeOff className="h-5 w-5 text-muted hover:text-ink" />
                       ) : (
-                        <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                        <Eye className="h-5 w-5 text-muted hover:text-ink" />
                       )}
                     </button>
                   </div>
-                  {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
+                  {errors.confirmPassword && <p className="mt-1 text-sm text-red-300">{errors.confirmPassword}</p>}
                 </div>
               )}
 
@@ -780,7 +780,7 @@ export const AuthPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={goBackToStep1}
-                    className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex-1 px-4 py-3 border border-hairline text-ink/75 rounded-lg hover:bg-surface transition-colors"
                   >
                     Back
                   </button>
@@ -810,7 +810,7 @@ export const AuthPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowForgotPassword(true)}
-                  className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                  className="text-sm text-sand hover:text-ink font-medium transition-colors"
                 >
                   Forgot your password?
                 </button>
@@ -819,11 +819,11 @@ export const AuthPage: React.FC = () => {
 
             {signUpStep === 1 && !showForgotPassword && (
               <div className="mt-6 text-center">
-                <p className="text-gray-600">
+                <p className="text-ink/75">
                   {isSignUp ? 'Already have an account?' : "Don't have an account?"}
                   <button
                     onClick={toggleMode}
-                    className="ml-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                    className="ml-2 text-sand hover:text-ink font-medium transition-colors"
                   >
                     {isSignUp ? 'Sign In' : 'Sign Up'}
                   </button>
@@ -833,8 +833,8 @@ export const AuthPage: React.FC = () => {
 
             {/* Demo Account Info */}
             {!isSignUp && !error && !showForgotPassword && (
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-800 text-center">
+              <div className="mt-6 p-4 bg-surface rounded-lg">
+                <p className="text-sm text-ink text-center">
                   <strong>Note:</strong> Create an account or sign in with your credentials
                 </p>
               </div>
@@ -842,10 +842,10 @@ export const AuthPage: React.FC = () => {
             
             {/* Error Display */}
             {error && !showForgotPassword && (
-              <div className="mt-6 p-4 bg-red-50 rounded-lg">
+              <div className="mt-6 p-4 bg-red-500/10 rounded-lg">
                 {error.includes('User already registered') || error.includes('user_already_exists') ? (
                   <div className="text-center">
-                    <p className="text-sm text-red-800 mb-2">
+                    <p className="text-sm text-red-300 mb-2">
                       An account with this email already exists.
                     </p>
                     <button
@@ -854,29 +854,29 @@ export const AuthPage: React.FC = () => {
                         setSignUpStep(1);
                         setErrors({});
                       }}
-                      className="text-sm text-blue-600 hover:text-blue-700 font-medium underline"
+                      className="text-sm text-sand hover:text-ink font-medium underline"
                     >
                       Sign in instead
                     </button>
                   </div>
                 ) : error.includes('Invalid login credentials') || error.includes('invalid_credentials') || error.includes('Invalid') ? (
                   <div className="text-center">
-                    <p className="text-sm text-red-800 mb-2">
+                    <p className="text-sm text-red-300 mb-2">
                       Invalid email or password. Please check your credentials and try again.
                     </p>
                     <button
                       onClick={() => setShowForgotPassword(true)}
-                      className="text-sm text-blue-600 hover:text-blue-700 font-medium underline"
+                      className="text-sm text-sand hover:text-ink font-medium underline"
                     >
                       Forgot your password?
                     </button>
                   </div>
                 ) : error.includes('Email not confirmed') ? (
-                  <p className="text-sm text-red-800 text-center">
+                  <p className="text-sm text-red-300 text-center">
                     Please check your email and confirm your account before signing in.
                   </p>
                 ) : (
-                  <p className="text-sm text-red-800 text-center">
+                  <p className="text-sm text-red-300 text-center">
                     {error}
                   </p>
                 )}
@@ -885,8 +885,8 @@ export const AuthPage: React.FC = () => {
             
             {/* Reset Success Message */}
             {resetMessage && showForgotPassword && (
-              <div className="mt-6 p-4 bg-green-50 rounded-lg">
-                <p className="text-sm text-green-800 text-center">
+              <div className="mt-6 p-4 bg-emerald-500/10 rounded-lg">
+                <p className="text-sm text-emerald-300 text-center">
                   {resetMessage}
                 </p>
               </div>
@@ -894,8 +894,8 @@ export const AuthPage: React.FC = () => {
 
             {/* Reset Error Display */}
             {resetError && showForgotPassword && (
-              <div className="mt-6 p-4 bg-red-50 rounded-lg">
-                <p className="text-sm text-red-800 text-center">
+              <div className="mt-6 p-4 bg-red-500/10 rounded-lg">
+                <p className="text-sm text-red-300 text-center">
                   {resetError}
                 </p>
               </div>

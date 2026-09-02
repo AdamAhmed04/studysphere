@@ -44,13 +44,13 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
     return (
       <div className="theme-secondary-bg rounded-2xl shadow-xl p-6">
         <div className="flex items-center space-x-3 mb-4">
-          <MessageCircle className="text-blue-500" size={24} />
-          <h3 className="text-xl font-bold text-gray-800">Social</h3>
+          <MessageCircle className="text-sand" size={24} />
+          <h3 className="text-xl font-bold text-ink">Social</h3>
         </div>
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-muted">
           <MessageCircle size={48} className="mx-auto mb-4 opacity-50" />
-          <p className="text-gray-600 mb-2">No recent messages</p>
-          <p className="text-sm text-gray-500">Start chatting with your study buddies!</p>
+          <p className="text-ink/75 mb-2">No recent messages</p>
+          <p className="text-sm text-muted">Start chatting with your study buddies!</p>
         </div>
       </div>
     );
@@ -60,11 +60,11 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
     <div className="theme-secondary-bg rounded-2xl shadow-xl p-4 md:p-6 h-fit">
       <div className="flex items-center justify-between mb-4 md:mb-6">
         <div className="flex items-center space-x-2 md:space-x-3">
-          <MessageCircle className="text-blue-500" size={18} />
-          <h3 className="text-base md:text-lg font-bold text-gray-800">Social</h3>
+          <MessageCircle className="text-sand" size={18} />
+          <h3 className="text-base md:text-lg font-bold text-ink">Social</h3>
         </div>
         {recentMessages.length > 0 && (
-          <span className="text-xs text-gray-500">{recentMessages.length} recent</span>
+          <span className="text-xs text-muted">{recentMessages.length} recent</span>
         )}
       </div>
 
@@ -79,13 +79,13 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
             <div
               key={message.id}
               onClick={() => onOpenChat(message.groupId!)}
-              className="flex items-start space-x-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors group"
+              className="flex items-start space-x-3 p-3 rounded-xl hover:bg-surface cursor-pointer transition-colors group"
             >
               {/* Chat Avatar */}
               <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                 isIndividual
                   ? 'bg-gradient-to-r from-green-400 to-blue-500'
-                  : 'bg-gradient-to-r from-blue-400 to-purple-500'
+                  : 'bg-surface-high'
               }`}>
                 {isIndividual ? (
                   <User className="text-white" size={16} />
@@ -100,16 +100,16 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center space-x-2">
-                    <h4 className="text-sm font-semibold text-gray-800 truncate">
+                    <h4 className="text-sm font-semibold text-ink truncate">
                       {group.name}
                     </h4>
                     {group.subject && !isIndividual && (
-                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                      <span className="text-xs bg-surface-high text-ink px-2 py-1 rounded-full">
                         {group.subject}
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center space-x-1 text-xs text-gray-500">
+                  <div className="flex items-center space-x-1 text-xs text-muted">
                     <Clock size={12} />
                     <span>{formatTime(message.timestamp)}</span>
                   </div>

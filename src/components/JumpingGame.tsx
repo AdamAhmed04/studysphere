@@ -191,12 +191,12 @@ export const JumpingGame: React.FC<JumpingGameProps> = ({ isOpen, onClose }) => 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-hidden shadow-2xl">
+      <div className="bg-surface rounded-2xl max-w-lg w-full max-h-[90vh] overflow-hidden shadow-2xl">
         {/* Header */}
         <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-surface bg-opacity-20 rounded-full flex items-center justify-center">
                 <Zap size={16} />
               </div>
               <h3 className="text-xl font-bold">Jump Runner</h3>
@@ -274,10 +274,10 @@ export const JumpingGame: React.FC<JumpingGameProps> = ({ isOpen, onClose }) => 
             {/* Game Over Overlay */}
             {gameOver && (
               <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                <div className="bg-white rounded-xl p-6 text-center shadow-xl">
+                <div className="bg-surface rounded-xl p-6 text-center shadow-xl">
                   <Trophy className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-                  <h4 className="text-xl font-bold text-gray-800 mb-2">Game Over!</h4>
-                  <p className="text-gray-600 mb-2">Final Score: <span className="font-bold text-green-600">{score}</span></p>
+                  <h4 className="text-xl font-bold text-ink mb-2">Game Over!</h4>
+                  <p className="text-ink/75 mb-2">Final Score: <span className="font-bold text-green-600">{score}</span></p>
                   {score === highScore && score > 0 && (
                     <p className="text-sm text-yellow-600 font-medium mb-4">🎉 New High Score!</p>
                   )}
@@ -294,9 +294,9 @@ export const JumpingGame: React.FC<JumpingGameProps> = ({ isOpen, onClose }) => 
             {/* Instructions */}
             {!isPlaying && !gameOver && (
               <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-                <div className="bg-white rounded-xl p-6 text-center shadow-xl max-w-xs">
-                  <h4 className="text-lg font-bold text-gray-800 mb-3">How to Play</h4>
-                  <p className="text-sm text-gray-600 mb-4">
+                <div className="bg-surface rounded-xl p-6 text-center shadow-xl max-w-xs">
+                  <h4 className="text-lg font-bold text-ink mb-3">How to Play</h4>
+                  <p className="text-sm text-ink/75 mb-4">
                     Tap anywhere or press SPACE to jump! Avoid the red obstacles and see how far you can run.
                   </p>
                   <button
@@ -313,7 +313,7 @@ export const JumpingGame: React.FC<JumpingGameProps> = ({ isOpen, onClose }) => 
         </div>
 
         {/* Controls */}
-        <div className="p-4 bg-gray-50 border-t">
+        <div className="p-4 bg-surface border-t">
           <div className="flex items-center justify-center space-x-3 mb-3">
             {isPlaying ? (
               <button
@@ -351,7 +351,7 @@ export const JumpingGame: React.FC<JumpingGameProps> = ({ isOpen, onClose }) => 
             </button>
           </div>
           
-          <p className="text-xs text-gray-500 text-center">
+          <p className="text-xs text-muted text-center">
             Tap anywhere, press SPACE, or use the JUMP button! 🏃‍♂️
           </p>
         </div>

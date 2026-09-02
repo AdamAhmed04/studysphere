@@ -65,10 +65,10 @@ export const Celebration: React.FC<CelebrationProps> = ({ isVisible, onComplete 
             <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></div>
             
             {/* Additional sparkles */}
-            <div className="absolute top-0 left-1/2 w-1 h-1 bg-white rounded-full animate-ping" style={{ animationDelay: '0.4s' }}></div>
-            <div className="absolute bottom-0 left-1/2 w-1 h-1 bg-white rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
-            <div className="absolute left-0 top-1/2 w-1 h-1 bg-white rounded-full animate-ping" style={{ animationDelay: '0.6s' }}></div>
-            <div className="absolute right-0 top-1/2 w-1 h-1 bg-white rounded-full animate-ping" style={{ animationDelay: '0.7s' }}></div>
+            <div className="absolute top-0 left-1/2 w-1 h-1 bg-surface rounded-full animate-ping" style={{ animationDelay: '0.4s' }}></div>
+            <div className="absolute bottom-0 left-1/2 w-1 h-1 bg-surface rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
+            <div className="absolute left-0 top-1/2 w-1 h-1 bg-surface rounded-full animate-ping" style={{ animationDelay: '0.6s' }}></div>
+            <div className="absolute right-0 top-1/2 w-1 h-1 bg-surface rounded-full animate-ping" style={{ animationDelay: '0.7s' }}></div>
           </div>
         </div>
       ))}
@@ -78,8 +78,8 @@ export const Celebration: React.FC<CelebrationProps> = ({ isVisible, onComplete 
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-2xl animate-bounce">
           <div className="text-center">
             <div className="text-6xl mb-4">🎉</div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">Study Complete!</h2>
-            <p className="text-lg text-gray-600">Great job on finishing your session!</p>
+            <h2 className="text-3xl font-bold text-ink mb-2">Study Complete!</h2>
+            <p className="text-lg text-ink/75">Great job on finishing your session!</p>
           </div>
         </div>
       </div>

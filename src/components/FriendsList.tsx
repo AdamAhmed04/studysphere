@@ -86,8 +86,8 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
   return (
     <div className="theme-secondary-bg rounded-2xl shadow-xl p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-2xl font-bold text-gray-800 flex items-center">
-          <Users className="mr-3 text-blue-500" size={28} />
+        <h3 className="text-2xl font-bold text-ink flex items-center">
+          <Users className="mr-3 text-sand" size={28} />
           Study Buddies
         </h3>
         <button
@@ -100,28 +100,28 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
       </div>
 
       {showAddFriend && (
-        <div className="mb-6 p-4 bg-gray-50 rounded-xl">
+        <div className="mb-6 p-4 bg-surface rounded-xl">
           <div className="mb-4">
-            <label htmlFor="friendslist-search-for-friends" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="friendslist-search-for-friends" className="block text-sm font-medium text-ink/75 mb-2">
               Search for Friends
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
+                <Search className="h-5 w-5 text-muted" />
               </div>
               <input id="friendslist-search-for-friends"
                 type="text"
                 placeholder="Search by name, school, or subject..."
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
-                className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-10 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
               />
               {searchQuery && (
                 <button
                   onClick={clearSearch}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 >
-                  <X className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                  <X className="h-5 w-5 text-muted hover:text-ink" />
                 </button>
               )}
             </div>
@@ -129,20 +129,20 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
 
           {/* Search Results */}
           {isSearching && (
-            <div className="mb-4 p-4 bg-white rounded-lg border border-gray-200">
+            <div className="mb-4 p-4 bg-surface rounded-lg border border-hairline-soft">
               <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                <span className="ml-2 text-gray-600">Searching...</span>
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sand"></div>
+                <span className="ml-2 text-ink/75">Searching...</span>
               </div>
             </div>
           )}
 
           {searchResults.length > 0 && (
             <div className="mb-4 max-h-64 overflow-y-auto">
-              <div className="text-sm font-medium text-gray-700 mb-2">Search Results</div>
+              <div className="text-sm font-medium text-ink/75 mb-2">Search Results</div>
               <div className="space-y-2">
                 {searchResults.map(user => (
-                  <div key={user.user_id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
+                  <div key={user.user_id} className="flex items-center justify-between p-3 bg-surface rounded-lg border border-hairline-soft hover:border-sand/40 transition-colors">
                     <div className="flex items-center space-x-3">
                       <Avatar
                         name={user.name}
@@ -153,11 +153,11 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
                       <div>
                         {/* No "Private" badge: private profiles are filtered out
                             by the public_profiles view and never reach here. */}
-                        <p className="font-semibold text-gray-800">{user.name}</p>
+                        <p className="font-semibold text-ink">{user.name}</p>
                         {/* Email is no longer readable, so school is the useful
                             public identifier. */}
-                        <p className="text-sm text-gray-600">{user.school || user.study_field || 'No details shared'}</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-sm text-ink/75">{user.school || user.study_field || 'No details shared'}</p>
+                        <p className="text-xs text-muted">
                           Study time: {formatTime(user.total_study_time)}
                         </p>
                       </div>
@@ -167,7 +167,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
                       disabled={user.is_friend}
                       className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
                         user.is_friend
-                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          ? 'bg-gray-300 text-muted cursor-not-allowed'
                           : 'btn-primary'
                       }`}
                     >
@@ -180,14 +180,14 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
           )}
 
           {searchQuery && !isSearching && searchResults.length === 0 && (
-            <div className="mb-4 p-4 bg-white rounded-lg border border-gray-200 text-center text-gray-500">
+            <div className="mb-4 p-4 bg-surface rounded-lg border border-hairline-soft text-center text-muted">
               No users found matching "{searchQuery}"
             </div>
           )}
 
-          <div className="border-t border-gray-200 pt-4">
+          <div className="border-t border-hairline-soft pt-4">
             <form onSubmit={handleAddFriend}>
-              <label htmlFor="friendslist-or-add-by-email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="friendslist-or-add-by-email" className="block text-sm font-medium text-ink/75 mb-2">
                 Or add by email directly
               </label>
               <div className="flex space-x-3">
@@ -196,7 +196,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
                   placeholder="Friend's email address"
                   value={friendEmail}
                   onChange={(e) => setFriendEmail(e.target.value)}
-                  className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent theme-textbox"
+                  className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent theme-textbox"
                 />
                 <button
                   type="submit"
@@ -212,7 +212,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
 
       <div className="space-y-3">
         {friends.map(friend => (
-          <div key={friend.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+          <div key={friend.id} className="flex items-center justify-between p-4 bg-surface rounded-xl hover:bg-surface-high transition-colors">
             <div className="flex items-center space-x-3">
               <div className="relative">
                 <Avatar
@@ -227,8 +227,8 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
               </div>
               
               <div>
-                <p className="font-semibold text-gray-800">{friend.name}</p>
-                <p className="text-sm text-gray-600">
+                <p className="font-semibold text-ink">{friend.name}</p>
+                <p className="text-sm text-ink/75">
                   Study time: {formatTime(friend.totalStudyTime)}
                 </p>
               </div>
@@ -236,7 +236,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
 
             <button
               onClick={() => onStartChat(friend.id)}
-              className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+              className="p-2 text-sand hover:bg-surface-high rounded-lg transition-colors"
             >
               <MessageCircle size={20} />
             </button>
@@ -245,7 +245,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({ friends, onAddFriend, 
       </div>
 
       {friends.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-muted">
           <Users size={48} className="mx-auto mb-4 opacity-50" />
           <p>No study buddies yet. Add some friends to get started!</p>
         </div>

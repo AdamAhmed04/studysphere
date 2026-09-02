@@ -71,12 +71,12 @@ const UNRESOLVED_AUTHOR = 'StudySphere user';
  * loading screen, so switching tabs does not flash something unfamiliar.
  */
 const AppLoading = () => (
-  <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 flex items-center justify-center">
+  <div className="min-h-screen flex items-center justify-center">
     <div className="text-center">
-      <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+      <div className="w-16 h-16 bg-surface-high rounded-xl flex items-center justify-center mx-auto mb-4">
         <Clock className="text-white animate-spin" size={32} />
       </div>
-      <p className="text-gray-600">Loading…</p>
+      <p className="text-ink/75">Loading…</p>
     </div>
   </div>
 );
@@ -674,13 +674,13 @@ function App() {
   // Show loading or auth page
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-surface-high rounded-xl flex items-center justify-center mx-auto mb-4">
             <Clock className="text-white animate-spin" size={32} />
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">StudySphere</h2>
-          <p className="text-gray-600">Loading your study space...</p>
+          <h2 className="text-2xl font-bold text-ink mb-2">StudySphere</h2>
+          <p className="text-ink/75">Loading your study space...</p>
         </div>
       </div>
     );
@@ -737,8 +737,8 @@ function App() {
                     <div className="w-16 h-16 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
                       <span className="text-2xl">🫧</span>
                     </div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">Need a Break?</h3>
-                    <p className="text-sm text-gray-600 mb-4">
+                    <h3 className="text-lg font-bold text-ink mb-2">Need a Break?</h3>
+                    <p className="text-sm text-ink/75 mb-4">
                       Take a quick mental break with our relaxing bubble-popping game!
                     </p>
                     <button
@@ -753,16 +753,16 @@ function App() {
                 {/* Block Drop Tetris Game */}
                 <div className="theme-secondary-bg rounded-2xl shadow-xl p-6">
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 bg-surface-high rounded-full flex items-center justify-center mx-auto mb-4">
                       <span className="text-2xl">🧩</span>
                     </div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">Puzzle Challenge</h3>
-                    <p className="text-sm text-gray-600 mb-4">
+                    <h3 className="text-lg font-bold text-ink mb-2">Puzzle Challenge</h3>
+                    <p className="text-sm text-ink/75 mb-4">
                       Exercise your mind with this classic block-stacking puzzle game!
                     </p>
                     <button
                       onClick={() => setShowBlockDropGame(true)}
-                      className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                      className="px-6 py-3 bg-surface-high text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
                     >
                       Play Block Drop 🎯
                     </button>
@@ -780,8 +780,8 @@ function App() {
                     <div className="w-16 h-16 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
                       <span className="text-2xl">🏃</span>
                     </div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">Quick Reflexes</h3>
-                    <p className="text-sm text-gray-600 mb-4">
+                    <h3 className="text-lg font-bold text-ink mb-2">Quick Reflexes</h3>
+                    <p className="text-sm text-ink/75 mb-4">
                       Jump the obstacles and see how far you can get before your break is over!
                     </p>
                     <button
@@ -823,14 +823,14 @@ function App() {
       case 'stats':
         return (
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-xl p-6">
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Recent Sessions</h3>
+            <div className="bg-surface rounded-2xl shadow-xl p-6">
+              <h3 className="text-2xl font-bold text-ink mb-4">Recent Sessions</h3>
 
               {/* Without this a new account sees a bare heading over nothing,
                   which reads as a page that failed to load. */}
               {sessions.length === 0 && (
-                <div className="text-center py-10 text-gray-500">
-                  <p className="font-medium text-gray-700">No sessions yet</p>
+                <div className="text-center py-10 text-muted">
+                  <p className="font-medium text-ink/75">No sessions yet</p>
                   <p className="text-sm mt-1">
                     Finish a study session on the Home tab and it will show up here.
                   </p>
@@ -839,14 +839,14 @@ function App() {
 
               <div className="space-y-3">
                 {sessions.slice(0, 5).map(session => (
-                  <div key={session.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                  <div key={session.id} className="flex items-center justify-between p-4 bg-surface rounded-xl">
                     <div>
-                      <p className="font-semibold text-gray-800">{session.subject}</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="font-semibold text-ink">{session.subject}</p>
+                      <p className="text-sm text-ink/75">
                         {new Date(session.startTime).toLocaleDateString()}
                       </p>
                     </div>
-                    <span className="text-lg font-bold text-blue-600">
+                    <span className="text-lg font-bold text-sand">
                       {session.duration >= 60 ? `${Math.floor(session.duration / 60)}h ` : ''}
                       {session.duration % 60}m
                     </span>
@@ -1028,13 +1028,13 @@ function App() {
         {pendingRequests.length > 0 && (
           <button
             onClick={() => setShowFriendRequests(true)}
-            className="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg relative text-sm md:text-base min-h-[44px] min-w-[44px]"
+            className="px-3 py-2 md:px-4 md:py-2 bg-sand text-white rounded-lg hover:bg-sand-lo transition-colors font-medium shadow-lg relative text-sm md:text-base min-h-[44px] min-w-[44px]"
           >
             {pendingRequests.length} Friend Request{pendingRequests.length !== 1 ? 's' : ''}
             <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
           </button>
         )}
-        <div className="bg-white rounded-lg shadow-lg p-1 min-h-[44px] min-w-[44px]">
+        <div className="bg-surface rounded-lg shadow-lg p-1 min-h-[44px] min-w-[44px]">
           <NotificationsDropdown
             notifications={notifications}
             unreadCount={unreadCount}

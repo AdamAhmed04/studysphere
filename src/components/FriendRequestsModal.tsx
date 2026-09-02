@@ -42,22 +42,22 @@ export const FriendRequestsModal: React.FC<FriendRequestsModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-hidden">
-        <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
+      <div className="bg-surface rounded-2xl max-w-lg w-full max-h-[80vh] overflow-hidden">
+        <div className="p-6 border-b border-hairline-soft ">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <UserPlus className="text-blue-600" size={24} />
-              <h2 className="text-2xl font-bold text-gray-800">Friend Requests</h2>
+              <UserPlus className="text-sand" size={24} />
+              <h2 className="text-2xl font-bold text-ink">Friend Requests</h2>
             </div>
             <button
               onClick={onClose}
               className="p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-colors"
             >
-              <X size={24} className="text-gray-600" />
+              <X size={24} className="text-ink/75" />
             </button>
           </div>
           {requests.length > 0 && (
-            <p className="text-sm text-gray-600 mt-2">
+            <p className="text-sm text-ink/75 mt-2">
               You have {requests.length} pending request{requests.length !== 1 ? 's' : ''}
             </p>
           )}
@@ -66,9 +66,9 @@ export const FriendRequestsModal: React.FC<FriendRequestsModalProps> = ({
         <div className="overflow-y-auto max-h-[calc(80vh-120px)]">
           {requests.length === 0 ? (
             <div className="p-12 text-center">
-              <UserPlus size={64} className="mx-auto mb-4 text-gray-300" />
-              <p className="text-gray-500 text-lg font-medium">No pending friend requests</p>
-              <p className="text-gray-400 text-sm mt-2">
+              <UserPlus size={64} className="mx-auto mb-4 text-muted" />
+              <p className="text-muted text-lg font-medium">No pending friend requests</p>
+              <p className="text-muted text-sm mt-2">
                 When someone sends you a friend request, it will appear here
               </p>
             </div>
@@ -77,7 +77,7 @@ export const FriendRequestsModal: React.FC<FriendRequestsModalProps> = ({
               {requests.map((request) => (
                 <div
                   key={request.id}
-                  className="p-6 hover:bg-gray-50 transition-colors"
+                  className="p-6 hover:bg-surface transition-colors"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
@@ -89,10 +89,10 @@ export const FriendRequestsModal: React.FC<FriendRequestsModalProps> = ({
                         gradient="from-blue-500 to-purple-500"
                       />
                       <div>
-                        <p className="font-semibold text-gray-800 text-lg">
+                        <p className="font-semibold text-ink text-lg">
                           {request.senderName}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted">
                           {formatTime(request.createdAt)}
                         </p>
                       </div>

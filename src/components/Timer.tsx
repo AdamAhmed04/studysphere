@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Play, Pause, Square, BookOpen, RotateCcw, Palette, ChevronDown, Maximize, Minimize, Waves, Circle } from 'lucide-react';
 import { useTimerContext } from '../contexts/TimerContext';
 import { Celebration } from './Celebration';
+import { Dial } from './Dial';
 import { colorThemes, getColorTheme } from '../utils/themes';
 import { useTheme } from '../hooks/useTheme';
 import { isNotificationSupported, getNotificationPermission } from '../utils/safeNotification';
@@ -259,7 +260,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
           {/* Minimize Button */}
           <button
             onClick={() => setIsFullScreen(false)}
-            className="absolute top-6 right-6 p-3 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full transition-all shadow-lg hover:shadow-xl z-10"
+            className="absolute top-6 right-6 p-3 bg-surface bg-opacity-20 hover:bg-opacity-30 rounded-full transition-all shadow-lg hover:shadow-xl z-10"
             style={{ color: selectedColorTheme === 'white' ? '#374151' : '#1f2937' }}
           >
             <Minimize size={24} />
@@ -270,7 +271,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
             <div className="relative">
               <button
                 onClick={() => setShowBackgroundDropdown(!showBackgroundDropdown)}
-                className="flex items-center space-x-2 px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-all shadow-lg"
+                className="flex items-center space-x-2 px-4 py-2 bg-surface bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-all shadow-lg"
                 style={{ color: selectedColorTheme === 'white' ? '#374151' : '#1f2937' }}
               >
                 {React.createElement(backgroundStyles.find(s => s.id === backgroundStyle)?.icon || Waves, { size: 16 })}
@@ -281,9 +282,9 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
               </button>
               
               {showBackgroundDropdown && (
-                <div className="absolute left-0 top-full mt-2 bg-white rounded-lg shadow-xl border border-gray-200 z-20 min-w-48">
+                <div className="absolute left-0 top-full mt-2 bg-surface rounded-lg shadow-xl border border-hairline-soft z-20 min-w-48">
                   <div className="p-2">
-                    <div className="text-xs font-medium text-gray-500 px-3 py-2">Background Style</div>
+                    <div className="text-xs font-medium text-muted px-3 py-2">Background Style</div>
                     {backgroundStyles.map((style) => (
                       <button
                         key={style.id}
@@ -292,7 +293,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
                           setShowBackgroundDropdown(false);
                         }}
                         className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-                          backgroundStyle === style.id ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100'
+                          backgroundStyle === style.id ? 'bg-surface-high text-ink' : 'hover:bg-surface-high'
                         }`}
                       >
                         <style.icon size={16} />
@@ -406,7 +407,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
                     <span>Study Progress</span>
                     <span>{Math.round(progress)}%</span>
                   </div>
-                  <div className="w-full bg-white bg-opacity-30 rounded-full h-4">
+                  <div className="w-full bg-surface bg-opacity-30 rounded-full h-4">
                     <div 
                       className="h-4 rounded-full transition-all duration-1000"
                       style={{ 
@@ -435,15 +436,15 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
       <div className="text-center mb-4 md:mb-8">
         <div className="flex flex-col md:flex-row items-center justify-between mb-4 space-y-3 md:space-y-0">
           <div className="flex-1 text-center md:text-left">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-1 md:mb-2">Study Timer</h2>
-            <p className="text-sm md:text-base text-gray-600">Focus and watch your progress move forward</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-ink mb-1 md:mb-2">Study Timer</h2>
+            <p className="text-sm md:text-base text-ink/75">Focus and watch your progress move forward</p>
           </div>
           
           {/* Color Theme Selector */}
           <div className="relative">
             <button
               onClick={() => setShowThemeDropdown(!showThemeDropdown)}
-              className="flex items-center space-x-2 px-3 md:px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors secondary-btn min-h-[44px]"
+              className="flex items-center space-x-2 px-3 md:px-4 py-2 bg-surface-high hover:bg-gray-200 rounded-lg transition-colors secondary-btn min-h-[44px]"
             >
               <Palette size={16} />
               <div 
@@ -455,9 +456,9 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
             </button>
             
             {showThemeDropdown && (
-              <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-xl border border-gray-200 z-10 min-w-48">
+              <div className="absolute right-0 top-full mt-2 bg-surface rounded-lg shadow-xl border border-hairline-soft z-10 min-w-48">
                 <div className="p-2">
-                  <div className="text-xs font-medium text-gray-500 px-3 py-2">Choose Color</div>
+                  <div className="text-xs font-medium text-muted px-3 py-2">Choose Color</div>
                   {Object.entries(colorThemes).map(([key, theme]) => (
                     <button
                       key={key}
@@ -466,7 +467,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
                         setShowThemeDropdown(false);
                       }}
                       className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-                        selectedColorTheme === key ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100'
+                        selectedColorTheme === key ? 'bg-surface-high text-ink' : 'hover:bg-surface-high'
                       }`}
                     >
                       <div 
@@ -487,7 +488,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
           <div className="relative">
             <button
               onClick={() => setShowBackgroundDropdown(!showBackgroundDropdown)}
-              className="flex items-center space-x-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-sm secondary-btn min-h-[44px]"
+              className="flex items-center space-x-2 px-3 py-2 bg-surface-high hover:bg-gray-200 rounded-lg transition-colors text-sm secondary-btn min-h-[44px]"
             >
               {React.createElement(backgroundStyles.find(s => s.id === backgroundStyle)?.icon || Waves, { size: 14 })}
               <span className="font-medium">
@@ -497,9 +498,9 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
             </button>
             
             {showBackgroundDropdown && (
-              <div className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 bg-white rounded-lg shadow-xl border border-gray-200 z-10 min-w-48">
+              <div className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 bg-surface rounded-lg shadow-xl border border-hairline-soft z-10 min-w-48">
                 <div className="p-2">
-                  <div className="text-xs font-medium text-gray-500 px-3 py-2">Background Style</div>
+                  <div className="text-xs font-medium text-muted px-3 py-2">Background Style</div>
                   {backgroundStyles.map((style) => (
                     <button
                       key={style.id}
@@ -508,7 +509,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
                         setShowBackgroundDropdown(false);
                       }}
                       className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-                        backgroundStyle === style.id ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100'
+                        backgroundStyle === style.id ? 'bg-surface-high text-ink' : 'hover:bg-surface-high'
                       }`}
                     >
                       <style.icon size={14} />
@@ -522,13 +523,13 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
         </div>
         
         {/* Notification Status */}
-        <div className="mt-3 md:mt-4 p-3 bg-blue-50 rounded-lg">
+        <div className="mt-3 md:mt-4 p-3 bg-surface rounded-lg">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-blue-700 font-medium">Break Notifications:</span>
-            <span className="text-blue-600">{getNotificationStatus()}</span>
+            <span className="text-ink font-medium">Break Notifications:</span>
+            <span className="text-sand">{getNotificationStatus()}</span>
           </div>
           {isNotificationSupported() && getNotificationPermission() !== 'granted' && (
-            <p className="text-xs text-blue-600 mt-1">Enable notifications to get break reminders when away from the app.</p>
+            <p className="text-xs text-sand mt-1">Enable notifications to get break reminders when away from the app.</p>
           )}
         </div>
       </div>
@@ -536,22 +537,40 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
       <div className="mt-4 md:mt-8">
         {/* Timer display */}
         <div className="text-center mb-4 md:mb-8">
-          <div className="mb-3 md:mb-4">
+          <div className="mb-3 md:mb-4 flex flex-col items-center">
+            {/*
+              * The dial replaces both the numerals and the separate progress
+              * bar underneath — the arc is the progress, so keeping a second
+              * readout of the same fact was just clutter.
+              *
+              * Still the control for session length when the timer is idle.
+              */}
             <button
               onClick={() => !timer.isActive && setShowDurationPicker(true)}
               disabled={timer.isActive}
-              className={`text-4xl md:text-6xl font-mono font-bold text-gray-800 mb-2 block mx-auto ${
-                !timer.isActive ? 'hover:text-blue-600 cursor-pointer transition-colors' : 'cursor-default'
+              className={`rounded-full transition-opacity ${
+                timer.isActive ? 'cursor-default' : 'cursor-pointer hover:opacity-90'
               }`}
+              aria-label={timer.isActive ? undefined : 'Change session length'}
             >
-              {timer.isOnBreak ? formatTime(timer.breakTimeElapsed) : formatTime(timer.timeElapsed)}
+              <Dial
+                progress={
+                  timer.isOnBreak
+                    ? (timer.breakDuration ? timer.breakTimeElapsed / timer.breakDuration : 0)
+                    : progress / 100
+                }
+                time={timer.isOnBreak ? formatTime(timer.breakTimeElapsed) : formatTime(timer.timeElapsed)}
+                label={timer.isOnBreak ? 'Break' : 'Focus'}
+                running={timer.isActive && !timer.isPaused}
+                size={244}
+              />
             </button>
             
             {/* Full-Screen Button */}
             {timer.isActive && (
               <button
                 onClick={() => setIsFullScreen(true)}
-                className="mt-2 md:mt-3 flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors mx-auto min-h-[44px]"
+                className="mt-2 md:mt-3 flex items-center space-x-2 px-4 py-2 bg-surface-high hover:bg-gray-200 text-ink/75 rounded-lg transition-colors mx-auto min-h-[44px]"
               >
                 <Maximize size={16} />
                 <span>Full Screen</span>
@@ -559,17 +578,17 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
             )}
             
             {timer.isOnBreak && (
-              <div className="text-lg font-semibold text-orange-600 mb-2">
-                Break Time! ({timer.currentBreak}/{timer.breakCount})
+              <div className="mt-4 text-base font-medium text-sand">
+                Break {timer.currentBreak} of {timer.breakCount}
               </div>
             )}
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-muted">
               {timer.isOnBreak 
                 ? `Break: ${Math.floor(timer.breakDuration / 60)}m`
                 : `Target: ${Math.floor(targetMinutes / 60) > 0 ? `${Math.floor(targetMinutes / 60)}h ` : ''}${targetMinutes % 60}m`
               }
               {timer.breakCount > 0 && !timer.isOnBreak && (
-                <span className="ml-2 text-blue-600">
+                <span className="ml-2 text-sand">
                   • {timer.breakCount} breaks ({Math.floor(timer.breakDuration / 60)}m each)
                 </span>
               )}
@@ -577,7 +596,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
           </div>
           
           {timer.currentSubject && (
-            <div className="flex items-center justify-center text-lg text-gray-600">
+            <div className="flex items-center justify-center text-lg text-ink/75">
               <BookOpen size={20} className="mr-2" />
               {timer.currentSubject}
             </div>
@@ -587,10 +606,10 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
         {/* Duration picker modal */}
         {showDurationPicker && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4">
-              <h4 className="text-xl font-bold text-gray-800 mb-4">Set Study Duration</h4>
+            <div className="bg-surface rounded-2xl p-6 max-w-sm w-full mx-4">
+              <h4 className="text-xl font-bold text-ink mb-4">Set Study Duration</h4>
               <div className="mb-6">
-                <label htmlFor="timer-study-duration-minutes" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="timer-study-duration-minutes" className="block text-sm font-medium text-ink/75 mb-2">
                   Study Duration (minutes)
                 </label>
                 <input id="timer-study-duration-minutes"
@@ -599,7 +618,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
                   max="480"
                   value={customMinutes}
                   onChange={(e) => setCustomMinutes(parseInt(e.target.value) || 1)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-2xl font-mono"
+                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent text-center text-2xl font-mono"
                 />
                 <div className="mt-2 flex justify-center space-x-2">
                   {[15, 25, 45, 60, 90].map(minutes => (
@@ -607,7 +626,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
                       key={minutes}
                       type="button"
                       onClick={() => setCustomMinutes(minutes)}
-                      className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                      className="px-3 py-1 text-sm bg-surface-high text-ink/75 rounded-lg hover:bg-gray-200 transition-colors"
                     >
                       {minutes}m
                     </button>
@@ -616,7 +635,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
               </div>
               
               <div className="mb-6">
-                <label htmlFor="timer-number-of-breaks" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="timer-number-of-breaks" className="block text-sm font-medium text-ink/75 mb-2">
                   Number of Breaks
                 </label>
                 <input id="timer-number-of-breaks"
@@ -625,7 +644,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
                   max="10"
                   value={breakCount}
                   onChange={(e) => setBreakCount(parseInt(e.target.value) || 0)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-xl font-mono"
+                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent text-center text-xl font-mono"
                 />
                 <div className="mt-2 flex justify-center space-x-2">
                   {[0, 1, 2, 3, 4].map(count => (
@@ -633,7 +652,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
                       key={count}
                       type="button"
                       onClick={() => setBreakCount(count)}
-                      className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                      className="px-3 py-1 text-sm bg-surface-high text-ink/75 rounded-lg hover:bg-gray-200 transition-colors"
                     >
                       {count}
                     </button>
@@ -643,7 +662,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
               
               {breakCount > 0 && (
                 <div className="mb-6">
-                  <label htmlFor="timer-break-duration-minutes" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="timer-break-duration-minutes" className="block text-sm font-medium text-ink/75 mb-2">
                     Break Duration (minutes)
                   </label>
                   <input id="timer-break-duration-minutes"
@@ -652,7 +671,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
                     max="30"
                     value={breakDuration}
                     onChange={(e) => setBreakDuration(parseInt(e.target.value) || 5)}
-                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-xl font-mono theme-textbox"
+                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent text-center text-xl font-mono theme-textbox"
                   />
                   <div className="mt-2 flex justify-center space-x-2">
                     {[5, 10, 15, 20].map(minutes => (
@@ -660,7 +679,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
                         key={minutes}
                         type="button"
                         onClick={() => setBreakDuration(minutes)}
-                        className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                        className="px-3 py-1 text-sm bg-surface-high text-ink/75 rounded-lg hover:bg-gray-200 transition-colors"
                       >
                         {minutes}m
                       </button>
@@ -672,7 +691,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
               <div className="flex space-x-3">
                 <button
                   onClick={() => setShowDurationPicker(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex-1 px-4 py-2 border border-hairline text-ink/75 rounded-lg hover:bg-surface transition-colors"
                 >
                   Cancel
                 </button>
@@ -695,7 +714,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
         {discardedNote && (
           <div
             role="status"
-            className="mb-4 px-4 py-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800"
+            className="mb-4 px-4 py-3 rounded-lg bg-sand/10 border border-amber-200 text-sm text-sand"
           >
             {discardedNote}
           </div>
@@ -704,7 +723,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
         {/* Subject input */}
         {!timer.isActive && (
           <div className="mb-4 md:mb-6">
-            <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="subject" className="block text-sm font-medium text-ink/75 mb-2">
               What are you studying?
             </label>
             <input
@@ -714,7 +733,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
               onChange={(e) => setSubject(e.target.value)}
               placeholder="e.g., Mathematics, History, Programming..."
               maxLength={200}
-              className="w-full px-4 py-3 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-base min-h-[44px]"
+              className="w-full px-4 py-3 md:py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent transition-all text-base min-h-[44px]"
             />
           </div>
         )}
@@ -762,41 +781,8 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
           )}
         </div>
 
-        {/* Progress bar */}
-        {timer.isActive && (
-          <div className="mt-6">
-            {timer.isOnBreak ? (
-              <div>
-                <div className="flex justify-between text-sm text-orange-600 mb-2">
-                  <span>Break Progress</span>
-                  <span>{Math.round((timer.breakTimeElapsed / timer.breakDuration) * 100)}%</span>
-                </div>
-                <div className="w-full bg-orange-200 rounded-full h-2">
-                  <div 
-                    className="bg-gradient-to-r from-orange-400 to-yellow-500 h-2 rounded-full transition-all duration-1000"
-                    style={{ width: `${(timer.breakTimeElapsed / timer.breakDuration) * 100}%` }}
-                  ></div>
-                </div>
-              </div>
-            ) : (
-              <div>
-                <div className="flex justify-between text-sm text-gray-600 mb-2">
-                  <span>Study Progress</span>
-                  <span>{Math.round(progress)}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="h-2 rounded-full transition-all duration-1000"
-                    style={{ 
-                      width: `${progress}%`,
-                      background: `linear-gradient(to right, ${currentColorTheme.color}, ${currentColorTheme.color}dd)`
-                    }}
-                  ></div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+        {/* The linear progress bar lived here. The dial's arc says the same
+            thing, in the same glance, so showing both was redundant. */}
       </div>
       
       <Celebration 

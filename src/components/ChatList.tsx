@@ -126,9 +126,9 @@ export const ChatList: React.FC<ChatListProps> = ({
     }
   };
   return (
-    <div className="bg-white rounded-2xl shadow-xl overflow-hidden h-full max-h-[600px]">
+    <div className="bg-surface rounded-2xl shadow-xl overflow-hidden h-full max-h-[600px]">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4">
+      <div className="bg-surface-high p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
             <MessageCircle className="text-white" size={24} />
@@ -136,19 +136,19 @@ export const ChatList: React.FC<ChatListProps> = ({
           </div>
           <button
             onClick={onCreateGroup}
-            className="p-2 bg-white bg-opacity-20 text-white rounded-lg hover:bg-opacity-30 transition-all"
+            className="p-2 bg-surface bg-opacity-20 text-white rounded-lg hover:bg-opacity-30 transition-all"
           >
             <Plus size={20} />
           </button>
         </div>
         
         {/* Category Tabs */}
-        <div className="flex space-x-1 bg-white bg-opacity-20 rounded-lg p-1 mb-4">
+        <div className="flex space-x-1 bg-surface bg-opacity-20 rounded-lg p-1 mb-4">
           <button
             onClick={() => setActiveCategory('all')}
             className={`flex-1 flex items-center justify-center space-x-2 px-3 py-2 rounded-lg transition-all text-sm font-medium ${
               activeCategory === 'all'
-                ? 'bg-white text-blue-600 shadow-sm'
+                ? 'bg-surface text-sand shadow-sm'
                 : 'text-white hover:bg-white hover:bg-opacity-10'
             }`}
           >
@@ -159,7 +159,7 @@ export const ChatList: React.FC<ChatListProps> = ({
             onClick={() => setActiveCategory('groups')}
             className={`flex-1 flex items-center justify-center space-x-2 px-3 py-2 rounded-lg transition-all text-sm font-medium ${
               activeCategory === 'groups'
-                ? 'bg-white text-blue-600 shadow-sm'
+                ? 'bg-surface text-sand shadow-sm'
                 : 'text-white hover:bg-white hover:bg-opacity-10'
             }`}
           >
@@ -170,7 +170,7 @@ export const ChatList: React.FC<ChatListProps> = ({
             onClick={() => setActiveCategory('individual')}
             className={`flex-1 flex items-center justify-center space-x-2 px-3 py-2 rounded-lg transition-all text-sm font-medium ${
               activeCategory === 'individual'
-                ? 'bg-white text-blue-600 shadow-sm'
+                ? 'bg-surface text-sand shadow-sm'
                 : 'text-white hover:bg-white hover:bg-opacity-10'
             }`}
           >
@@ -182,14 +182,14 @@ export const ChatList: React.FC<ChatListProps> = ({
         {/* Search Bar */}
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-4 w-4 text-gray-400" />
+            <Search className="h-4 w-4 text-muted" />
           </div>
           <input
             type="text"
             placeholder={`Search ${activeCategory === 'all' ? 'all chats' : activeCategory === 'groups' ? 'group chats' : 'direct messages'}...`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white bg-opacity-20 text-white placeholder-gray-300 rounded-lg focus:bg-opacity-30 focus:outline-none transition-all"
+            className="w-full pl-10 pr-4 py-2 bg-surface bg-opacity-20 text-white placeholder-gray-300 rounded-lg focus:bg-opacity-30 focus:outline-none transition-all"
           />
         </div>
       </div>
@@ -200,8 +200,8 @@ export const ChatList: React.FC<ChatListProps> = ({
           <div className="text-center py-12 px-4">
             {searchQuery ? (
               <>
-                <Search size={48} className="mx-auto mb-4 text-gray-400" />
-                <p className="text-gray-600">
+                <Search size={48} className="mx-auto mb-4 text-muted" />
+                <p className="text-ink/75">
                   No {activeCategory === 'all' ? 'chats' : activeCategory === 'groups' ? 'group chats' : 'direct messages'} found matching "{searchQuery}"
                 </p>
               </>
@@ -209,21 +209,21 @@ export const ChatList: React.FC<ChatListProps> = ({
               <>
                 {activeCategory === 'groups' ? (
                   <>
-                    <Users size={48} className="mx-auto mb-4 text-gray-400" />
-                    <p className="text-gray-600 mb-2">No group chats yet</p>
-                    <p className="text-sm text-gray-500">Create a group to start chatting with multiple study buddies!</p>
+                    <Users size={48} className="mx-auto mb-4 text-muted" />
+                    <p className="text-ink/75 mb-2">No group chats yet</p>
+                    <p className="text-sm text-muted">Create a group to start chatting with multiple study buddies!</p>
                   </>
                 ) : activeCategory === 'individual' ? (
                   <>
-                    <UserIcon size={48} className="mx-auto mb-4 text-gray-400" />
-                    <p className="text-gray-600 mb-2">No direct messages yet</p>
-                    <p className="text-sm text-gray-500">Start a one-on-one conversation with a friend!</p>
+                    <UserIcon size={48} className="mx-auto mb-4 text-muted" />
+                    <p className="text-ink/75 mb-2">No direct messages yet</p>
+                    <p className="text-sm text-muted">Start a one-on-one conversation with a friend!</p>
                   </>
                 ) : (
                   <>
-                    <MessageCircle size={48} className="mx-auto mb-4 text-gray-400" />
-                    <p className="text-gray-600 mb-2">No chats yet</p>
-                    <p className="text-sm text-gray-500">Create a group or start a direct message to begin chatting!</p>
+                    <MessageCircle size={48} className="mx-auto mb-4 text-muted" />
+                    <p className="text-ink/75 mb-2">No chats yet</p>
+                    <p className="text-sm text-muted">Create a group or start a direct message to begin chatting!</p>
                   </>
                 )}
               </>
@@ -235,7 +235,7 @@ export const ChatList: React.FC<ChatListProps> = ({
               <div
                 key={group.id}
                 onClick={() => onSelectGroup(group.id)}
-                className="flex items-center p-4 hover:bg-gray-50 cursor-pointer transition-colors active:bg-gray-100"
+                className="flex items-center p-4 hover:bg-surface cursor-pointer transition-colors active:bg-surface-high"
               >
                 {/* Group Avatar */}
                 <div className="flex-shrink-0 mr-3">
@@ -257,21 +257,21 @@ export const ChatList: React.FC<ChatListProps> = ({
                 {/* Chat Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
-                    <h4 className="text-base font-semibold text-gray-900 truncate">
+                    <h4 className="text-base font-semibold text-ink truncate">
                       {isIndividualChat() ? getIndividualChatName(group) : group.name}
                     </h4>
-                    <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
+                    <span className="text-xs text-muted flex-shrink-0 ml-2">
                       {formatTime(group.lastActivity)}
                     </span>
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <p className="text-sm text-gray-600 truncate">
+                    <p className="text-sm text-ink/75 truncate">
                       {getMessagePreview(group)}
                     </p>
                     
                     {/* Member count */}
-                    <div className="flex items-center text-xs text-gray-400 flex-shrink-0 ml-2">
+                    <div className="flex items-center text-xs text-muted flex-shrink-0 ml-2">
                       {isIndividualChat() ? (
                         <>
                           <UserIcon size={12} />
@@ -289,7 +289,7 @@ export const ChatList: React.FC<ChatListProps> = ({
                   {/* Subject tag */}
                   {group.subject && !isIndividualChat() && (
                     <div className="mt-1">
-                      <span className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">
+                      <span className="inline-block px-2 py-1 text-xs bg-surface-high text-ink rounded-full">
                         {group.subject}
                       </span>
                     </div>
@@ -298,7 +298,7 @@ export const ChatList: React.FC<ChatListProps> = ({
 
                 {/* More options */}
                 <div className="flex-shrink-0 ml-2">
-                  <button className="p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors">
+                  <button className="p-1 text-muted hover:text-ink rounded-full hover:bg-surface-high transition-colors">
                     <MoreVertical size={16} />
                   </button>
                 </div>

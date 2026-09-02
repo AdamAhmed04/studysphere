@@ -82,10 +82,10 @@ export const TodoList: React.FC<TodoListProps> = ({
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'text-red-600 bg-red-100';
-      case 'medium': return 'text-yellow-600 bg-yellow-100';
-      case 'low': return 'text-green-600 bg-green-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'high': return 'text-red-300 bg-red-500/15';
+      case 'medium': return 'text-yellow-600 bg-sand/15';
+      case 'low': return 'text-emerald-300 bg-emerald-500/15';
+      default: return 'text-ink/75 bg-surface-high';
     }
   };
 
@@ -100,22 +100,22 @@ export const TodoList: React.FC<TodoListProps> = ({
 
   const formatDueDate = (date: Date) => {
     if (!date) {
-      return { text: 'No due date', color: 'text-gray-500' };
+      return { text: 'No due date', color: 'text-muted' };
     }
     
     const now = new Date();
     const diffInDays = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
     
     if (diffInDays < 0) {
-      return { text: `${Math.abs(diffInDays)} ${Math.abs(diffInDays) === 1 ? 'day' : 'days'} overdue`, color: 'text-red-600' };
+      return { text: `${Math.abs(diffInDays)} ${Math.abs(diffInDays) === 1 ? 'day' : 'days'} overdue`, color: 'text-red-300' };
     } else if (diffInDays === 0) {
       return { text: 'Due today', color: 'text-orange-600' };
     } else if (diffInDays === 1) {
       return { text: 'Due tomorrow', color: 'text-yellow-600' };
     } else if (diffInDays <= 7) {
-      return { text: `Due in ${diffInDays} ${diffInDays === 1 ? 'day' : 'days'}`, color: 'text-blue-600' };
+      return { text: `Due in ${diffInDays} ${diffInDays === 1 ? 'day' : 'days'}`, color: 'text-sand' };
     } else {
-      return { text: date.toLocaleDateString(), color: 'text-gray-600' };
+      return { text: date.toLocaleDateString(), color: 'text-ink/75' };
     }
   };
 
@@ -144,9 +144,9 @@ export const TodoList: React.FC<TodoListProps> = ({
     <div className="theme-secondary-bg rounded-2xl shadow-xl p-4 md:p-6 h-fit">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-6 space-y-3 md:space-y-0">
         <div className="flex items-center space-x-2 md:space-x-3">
-          <CheckSquare className="text-purple-500" size={20} />
-          <h3 className="text-lg md:text-xl font-bold text-gray-800">To-Do List</h3>
-          <span className="text-xs md:text-sm text-gray-500">
+          <CheckSquare className="text-sand" size={20} />
+          <h3 className="text-lg md:text-xl font-bold text-ink">To-Do List</h3>
+          <span className="text-xs md:text-sm text-muted">
             ({incompleteTodos.length} pending)
           </span>
         </div>
@@ -171,7 +171,7 @@ export const TodoList: React.FC<TodoListProps> = ({
 
       {/* Add/Edit Form */}
       {showAddForm && (
-        <div className="mb-6 p-4 bg-gray-50 rounded-xl">
+        <div className="mb-6 p-4 bg-surface rounded-xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <input
@@ -180,7 +180,7 @@ export const TodoList: React.FC<TodoListProps> = ({
                 maxLength={500}
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[44px] text-base"
+                className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[44px] text-base"
                 required
               />
             </div>
@@ -191,29 +191,29 @@ export const TodoList: React.FC<TodoListProps> = ({
                 maxLength={2000}
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
                 rows={2}
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               <div>
-                <label htmlFor="todolist-due-date" className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                <label htmlFor="todolist-due-date" className="block text-sm font-medium text-ink/75 mb-1">Due Date</label>
                 <input id="todolist-due-date"
                   type="date"
                   value={formData.dueDate}
                   onChange={(e) => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
                   min={todayLocalDateString()}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[44px] text-base"
+                  className="w-full px-3 py-2 border border-hairline rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[44px] text-base"
                 />
               </div>
 
               <div>
-                <label htmlFor="todolist-priority" className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                <label htmlFor="todolist-priority" className="block text-sm font-medium text-ink/75 mb-1">Priority</label>
                 <select id="todolist-priority"
                   value={formData.priority}
                   onChange={(e) => setFormData(prev => ({ ...prev, priority: asOneOf(e.target.value, PRIORITIES, 'medium') }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[44px] text-base"
+                  className="w-full px-3 py-2 border border-hairline rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[44px] text-base"
                 >
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>
@@ -222,14 +222,14 @@ export const TodoList: React.FC<TodoListProps> = ({
               </div>
 
               <div>
-                <label htmlFor="todolist-category" className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <label htmlFor="todolist-category" className="block text-sm font-medium text-ink/75 mb-1">Category</label>
                 <input id="todolist-category"
                   type="text"
                   placeholder="e.g., Study, Work"
                   maxLength={100}
                   value={formData.category}
                   onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[44px] text-base"
+                  className="w-full px-3 py-2 border border-hairline rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[44px] text-base"
                 />
               </div>
             </div>
@@ -241,7 +241,7 @@ export const TodoList: React.FC<TodoListProps> = ({
                   setShowAddForm(false);
                   setEditingId(null);
                 }}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors min-h-[44px]"
+                className="flex-1 px-4 py-2 border border-hairline text-ink/75 rounded-lg hover:bg-surface transition-colors min-h-[44px]"
               >
                 Cancel
               </button>
@@ -262,25 +262,25 @@ export const TodoList: React.FC<TodoListProps> = ({
         {incompleteTodos.map(todo => (
           <div
             key={todo.id}
-            className="flex items-start space-x-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-purple-300 transition-colors"
+            className="flex items-start space-x-3 p-4 bg-surface rounded-xl border border-hairline-soft hover:border-purple-300 transition-colors"
           >
             <button
               onClick={() => handleToggleComplete(todo.id, todo.isCompleted)}
-              className="mt-1 p-1 rounded-full hover:bg-gray-100 transition-colors"
+              className="mt-1 p-1 rounded-full hover:bg-surface-high transition-colors"
             >
-              <div className="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center hover:border-purple-500 transition-colors">
-                {todo.isCompleted && <Check size={12} className="text-purple-600" />}
+              <div className="w-5 h-5 border-2 border-hairline rounded-full flex items-center justify-center hover:border-purple-500 transition-colors">
+                {todo.isCompleted && <Check size={12} className="text-sand" />}
               </div>
             </button>
 
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h4 className={`font-semibold ${todo.isCompleted ? 'line-through text-gray-500' : 'text-gray-800'}`}>
+                  <h4 className={`font-semibold ${todo.isCompleted ? 'line-through text-muted' : 'text-ink'}`}>
                     {todo.title}
                   </h4>
                   {todo.description && (
-                    <p className={`text-sm mt-1 ${todo.isCompleted ? 'line-through text-gray-400' : 'text-gray-600'}`}>
+                    <p className={`text-sm mt-1 ${todo.isCompleted ? 'line-through text-muted' : 'text-ink/75'}`}>
                       {todo.description}
                     </p>
                   )}
@@ -294,7 +294,7 @@ export const TodoList: React.FC<TodoListProps> = ({
 
                     {/* Category */}
                     {todo.category && (
-                      <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                      <span className="px-2 py-1 bg-surface-high text-ink rounded-full text-xs font-medium">
                         {todo.category}
                       </span>
                     )}
@@ -314,13 +314,13 @@ export const TodoList: React.FC<TodoListProps> = ({
                 <div className="flex items-center space-x-1 ml-2">
                   <button
                     onClick={() => handleEdit(todo)}
-                    className="p-1 text-gray-400 hover:text-blue-600 rounded transition-colors"
+                    className="p-1 text-muted hover:text-sand rounded transition-colors"
                   >
                     <Edit3 size={14} />
                   </button>
                   <button
                     onClick={() => onDeleteTodo(todo.id)}
-                    className="p-1 text-gray-400 hover:text-red-600 rounded transition-colors"
+                    className="p-1 text-muted hover:text-red-300 rounded transition-colors"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -333,15 +333,15 @@ export const TodoList: React.FC<TodoListProps> = ({
         {/* Completed Tasks */}
         {completedTodos.length > 0 && (
           <>
-            <div className="pt-4 border-t border-gray-200">
-              <h5 className="text-sm font-medium text-gray-500 mb-3">
+            <div className="pt-4 border-t border-hairline-soft">
+              <h5 className="text-sm font-medium text-muted mb-3">
                 Completed ({completedTodos.length})
               </h5>
             </div>
             {completedTodos.slice(0, 3).map(todo => (
               <div
                 key={todo.id}
-                className="flex items-start space-x-3 p-3 bg-gray-50 rounded-xl opacity-75"
+                className="flex items-start space-x-3 p-3 bg-surface rounded-xl opacity-75"
               >
                 <button
                   onClick={() => handleToggleComplete(todo.id, todo.isCompleted)}
@@ -353,9 +353,9 @@ export const TodoList: React.FC<TodoListProps> = ({
                 </button>
 
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-medium line-through text-gray-500">{todo.title}</h4>
+                  <h4 className="font-medium line-through text-muted">{todo.title}</h4>
                   {todo.completedAt && (
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-xs text-muted mt-1">
                       Completed {todo.completedAt.toLocaleDateString()}
                     </p>
                   )}
@@ -363,14 +363,14 @@ export const TodoList: React.FC<TodoListProps> = ({
 
                 <button
                   onClick={() => onDeleteTodo(todo.id)}
-                  className="p-1 text-gray-400 hover:text-red-600 rounded transition-colors"
+                  className="p-1 text-muted hover:text-red-300 rounded transition-colors"
                 >
                   <Trash2 size={14} />
                 </button>
               </div>
             ))}
             {completedTodos.length > 3 && (
-              <p className="text-xs text-gray-500 text-center">
+              <p className="text-xs text-muted text-center">
                 +{completedTodos.length - 3} more completed tasks
               </p>
             )}
@@ -378,7 +378,7 @@ export const TodoList: React.FC<TodoListProps> = ({
         )}
 
         {todos.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-muted">
             <CheckSquare size={48} className="mx-auto mb-4 opacity-50" />
             <p>No tasks yet</p>
             <p className="text-sm mt-1">Add your first task to get started!</p>

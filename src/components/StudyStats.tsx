@@ -36,18 +36,18 @@ export const StudyStats: React.FC<StudyStatsProps> = ({ sessions, stats }) => {
       <div className="theme-secondary-bg rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-gray-600 font-medium">Today</p>
-            <p className="text-2xl font-bold text-blue-600">{formatMinutes(todaysTime)}</p>
+            <p className="text-sm text-ink/75 font-medium">Today</p>
+            <p className="text-2xl font-bold text-sand">{formatMinutes(todaysTime)}</p>
           </div>
-          <Clock className="text-blue-500" size={32} />
+          <Clock className="text-sand" size={32} />
         </div>
       </div>
 
       <div className="theme-secondary-bg rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-gray-600 font-medium">Total Time</p>
-            <p className="text-2xl font-bold text-green-600">{formatMinutes(totalTime)}</p>
+            <p className="text-sm text-ink/75 font-medium">Total Time</p>
+            <p className="text-2xl font-bold text-emerald-300">{formatMinutes(totalTime)}</p>
           </div>
           <Target className="text-green-500" size={32} />
         </div>
@@ -56,7 +56,7 @@ export const StudyStats: React.FC<StudyStatsProps> = ({ sessions, stats }) => {
       <div className="theme-secondary-bg rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-gray-600 font-medium">Streak</p>
+            <p className="text-sm text-ink/75 font-medium">Streak</p>
             <p className="text-2xl font-bold text-orange-600">{streak} {streak === 1 ? "day" : "days"}</p>
           </div>
           <Flame className="text-orange-500" size={32} />
@@ -66,17 +66,17 @@ export const StudyStats: React.FC<StudyStatsProps> = ({ sessions, stats }) => {
       <div className="theme-secondary-bg rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-gray-600 font-medium">Sessions</p>
-            <p className="text-2xl font-bold text-purple-600">{totalSessions}</p>
+            <p className="text-sm text-ink/75 font-medium">Sessions</p>
+            <p className="text-2xl font-bold text-sand">{totalSessions}</p>
           </div>
-          <Calendar className="text-purple-500" size={32} />
+          <Calendar className="text-sand" size={32} />
         </div>
       </div>
 
       <div className="theme-secondary-bg rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-gray-600 font-medium">Tasks Done</p>
+            <p className="text-sm text-ink/75 font-medium">Tasks Done</p>
             <p className="text-2xl font-bold text-teal-600">{tasksCompleted}</p>
           </div>
           <CheckCircle2 className="text-teal-500" size={32} />

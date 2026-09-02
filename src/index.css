@@ -96,6 +96,35 @@ input, textarea, select {
   border-radius: 8px;
 }
 
+/*
+ * Form controls fall back to the browser's own white background. Against the
+ * old light UI that was invisible; against this one it is white-on-white with
+ * light text, so the surface treatment has to be stated rather than assumed.
+ */
+input, textarea, select {
+  background-color: var(--surface);
+  color: var(--ink);
+  border-color: var(--hairline);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted);
+  opacity: 1; /* Firefox dims placeholders again on top of the colour */
+}
+
+/* The dropdown list is drawn by the OS and does not inherit the field. */
+select option {
+  background-color: #171326;
+  color: var(--ink);
+}
+
+/* Checkboxes and radios keep the accent rather than the browser's blue. */
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: var(--sand);
+}
+
 /* Prevent zoom on input focus for iOS */
 @media screen and (max-width: 768px) {
   input, textarea, select {

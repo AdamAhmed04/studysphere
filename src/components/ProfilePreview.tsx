@@ -48,14 +48,14 @@ export const ProfilePreview: React.FC<ProfilePreviewProps> = ({ user, onAddFrien
       role="presentation"
     >
       <div
-        className="w-full max-w-md max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-xl"
+        className="w-full max-w-md max-h-[90vh] overflow-y-auto bg-surface rounded-2xl shadow-xl"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="profile-preview-name"
       >
         <div className="relative">
-          <div className="h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-t-2xl" />
+          <div className="h-24 bg-surface-high rounded-t-2xl" />
 
           <button
             onClick={onClose}
@@ -77,11 +77,11 @@ export const ProfilePreview: React.FC<ProfilePreviewProps> = ({ user, onAddFrien
             </div>
 
             <div className="flex items-center flex-wrap gap-2 mb-1">
-              <h3 id="profile-preview-name" className="text-2xl font-bold text-gray-800">
+              <h3 id="profile-preview-name" className="text-2xl font-bold text-ink">
                 {user.name}
               </h3>
               {!user.is_public && (
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-medium">
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-surface-high text-ink/75 text-xs font-medium">
                   <Lock size={12} />
                   Private
                 </span>
@@ -90,19 +90,19 @@ export const ProfilePreview: React.FC<ProfilePreviewProps> = ({ user, onAddFrien
 
             {user.can_see_details ? (
               <>
-                <p className="text-sm text-gray-500 mb-4">
+                <p className="text-sm text-muted mb-4">
                   Study time: {formatStudyTime(user.total_study_time)}
                 </p>
 
-                {user.bio && <p className="text-gray-700 mb-4">{user.bio}</p>}
+                {user.bio && <p className="text-ink/75 mb-4">{user.bio}</p>}
 
                 {details.length > 0 && (
                   <dl className="space-y-3 mb-4">
                     {details.map(({ icon: Icon, label, value }) => (
                       <div key={label} className="flex items-center gap-3">
-                        <Icon className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                        <Icon className="h-4 w-4 text-sand flex-shrink-0" />
                         <dt className="sr-only">{label}</dt>
-                        <dd className="text-sm text-gray-700">{value}</dd>
+                        <dd className="text-sm text-ink/75">{value}</dd>
                       </div>
                     ))}
                   </dl>
@@ -110,12 +110,12 @@ export const ProfilePreview: React.FC<ProfilePreviewProps> = ({ user, onAddFrien
 
                 {user.interests.length > 0 && (
                   <div className="mb-4">
-                    <p className="text-sm font-medium text-gray-700 mb-2">Interests</p>
+                    <p className="text-sm font-medium text-ink/75 mb-2">Interests</p>
                     <div className="flex flex-wrap gap-2">
                       {user.interests.map(interest => (
                         <span
                           key={interest}
-                          className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                          className="px-3 py-1 bg-surface-high text-ink rounded-full text-sm"
                         >
                           {interest}
                         </span>
@@ -125,10 +125,10 @@ export const ProfilePreview: React.FC<ProfilePreviewProps> = ({ user, onAddFrien
                 )}
               </>
             ) : (
-              <div className="my-4 p-4 bg-gray-50 rounded-xl text-center">
-                <Lock className="h-6 w-6 text-gray-400 mx-auto mb-2" />
-                <p className="text-sm text-gray-700 font-medium mb-1">This account is private</p>
-                <p className="text-sm text-gray-500">
+              <div className="my-4 p-4 bg-surface rounded-xl text-center">
+                <Lock className="h-6 w-6 text-muted mx-auto mb-2" />
+                <p className="text-sm text-ink/75 font-medium mb-1">This account is private</p>
+                <p className="text-sm text-muted">
                   Send {user.name.split(' ')[0]} a friend request to see their profile.
                 </p>
               </div>
@@ -139,8 +139,8 @@ export const ProfilePreview: React.FC<ProfilePreviewProps> = ({ user, onAddFrien
               disabled={user.is_friend}
               className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-colors ${
                 user.is_friend
-                  ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                  ? 'bg-surface-high text-muted cursor-not-allowed'
+                  : 'bg-sand text-white hover:bg-sand-lo'
               }`}
             >
               {user.is_friend ? <Check size={18} /> : <UserPlus size={18} />}

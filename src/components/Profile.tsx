@@ -92,8 +92,8 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Profile Header */}
-      <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 h-32"></div>
+      <div className="bg-surface rounded-2xl shadow-xl overflow-hidden">
+        <div className="bg-surface-high h-32"></div>
         <div className="relative px-6 pb-6">
           <div className="flex items-end space-x-6 -mt-16">
             <div className="relative">
@@ -108,7 +108,7 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
 
               <label
                 htmlFor="profile-photo"
-                className="absolute bottom-1 right-1 flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white border-2 border-white shadow-md cursor-pointer hover:bg-blue-700 transition-colors"
+                className="absolute bottom-1 right-1 flex items-center justify-center w-10 h-10 rounded-full bg-sand text-white border-2 border-white shadow-md cursor-pointer hover:bg-sand-lo transition-colors"
               >
                 {avatarBusy
                   ? <Loader2 size={18} className="animate-spin" />
@@ -129,13 +129,13 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
             <div className="flex-1 pt-16">
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-800">{userProfile.name}</h1>
-                  <p className="text-gray-600">{userProfile.email}</p>
-                  {age && <p className="text-sm text-gray-500">Age: {age}</p>}
+                  <h1 className="text-3xl font-bold text-ink">{userProfile.name}</h1>
+                  <p className="text-ink/75">{userProfile.email}</p>
+                  {age && <p className="text-sm text-muted">Age: {age}</p>}
                 </div>
                 <button
                   onClick={() => setIsEditing(!isEditing)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 bg-sand text-white rounded-lg hover:bg-sand-lo transition-colors"
                 >
                   <Edit3 size={16} />
                   <span>{isEditing ? 'Cancel' : 'Edit Profile'}</span>
@@ -148,81 +148,81 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
 
       {/* Profile Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="bg-surface rounded-xl shadow-lg p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 font-medium">Study Hours</p>
-              <p className="text-2xl font-bold text-blue-600">{totalStudyHours}h</p>
+              <p className="text-sm text-ink/75 font-medium">Study Hours</p>
+              <p className="text-2xl font-bold text-sand">{totalStudyHours}h</p>
             </div>
-            <BookOpen className="text-blue-500" size={32} />
+            <BookOpen className="text-sand" size={32} />
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="bg-surface rounded-xl shadow-lg p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 font-medium">Streak</p>
+              <p className="text-sm text-ink/75 font-medium">Streak</p>
               <p className="text-2xl font-bold text-orange-600">{userProfile.currentStreak}</p>
             </div>
             <Trophy className="text-orange-500" size={32} />
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="bg-surface rounded-xl shadow-lg p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 font-medium">Friends</p>
-              <p className="text-2xl font-bold text-green-600">{friends.length}</p>
+              <p className="text-sm text-ink/75 font-medium">Friends</p>
+              <p className="text-2xl font-bold text-emerald-300">{friends.length}</p>
             </div>
             <Users className="text-green-500" size={32} />
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="bg-surface rounded-xl shadow-lg p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 font-medium">Sessions</p>
-              <p className="text-2xl font-bold text-purple-600">{sessions.length}</p>
+              <p className="text-sm text-ink/75 font-medium">Sessions</p>
+              <p className="text-2xl font-bold text-sand">{sessions.length}</p>
             </div>
-            <Calendar className="text-purple-500" size={32} />
+            <Calendar className="text-sand" size={32} />
           </div>
         </div>
       </div>
 
       {/* Profile Details */}
-      <div className="bg-white rounded-2xl shadow-xl p-6">
-        <h3 className="text-2xl font-bold text-gray-800 mb-6">Profile Information</h3>
+      <div className="bg-surface rounded-2xl shadow-xl p-6">
+        <h3 className="text-2xl font-bold text-ink mb-6">Profile Information</h3>
         
         {isEditing ? (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="profile-name" className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                <label htmlFor="profile-name" className="block text-sm font-medium text-ink/75 mb-2">Name</label>
                 <input id="profile-name"
                   type="text"
                   value={editData.name}
                   onChange={(e) => setEditData(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                 />
               </div>
               <div>
-                <label htmlFor="profile-email" className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <label htmlFor="profile-email" className="block text-sm font-medium text-ink/75 mb-2">Email</label>
                 <input id="profile-email"
                   type="email"
                   value={editData.email}
                   onChange={(e) => setEditData(prev => ({ ...prev, email: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="profile-bio" className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+              <label htmlFor="profile-bio" className="block text-sm font-medium text-ink/75 mb-2">Bio</label>
               <textarea id="profile-bio"
                 value={editData.bio || ''}
                 onChange={(e) => setEditData(prev => ({ ...prev, bio: e.target.value }))}
                 rows={3}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent resize-none"
                 placeholder="Tell us about yourself..."
                 maxLength={2000}
               />
@@ -230,23 +230,23 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="profile-school-university" className="block text-sm font-medium text-gray-700 mb-2">School/University</label>
+                <label htmlFor="profile-school-university" className="block text-sm font-medium text-ink/75 mb-2">School/University</label>
                 <input id="profile-school-university"
                   type="text"
                   value={editData.school || ''}
                   onChange={(e) => setEditData(prev => ({ ...prev, school: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                   placeholder="e.g., Harvard University"
                   maxLength={200}
                 />
               </div>
               <div>
-                <label htmlFor="profile-field-of-study" className="block text-sm font-medium text-gray-700 mb-2">Field of Study</label>
+                <label htmlFor="profile-field-of-study" className="block text-sm font-medium text-ink/75 mb-2">Field of Study</label>
                 <input id="profile-field-of-study"
                   type="text"
                   value={editData.studyField || ''}
                   onChange={(e) => setEditData(prev => ({ ...prev, studyField: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                   placeholder="e.g., Computer Science"
                   maxLength={200}
                 />
@@ -256,7 +256,7 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setIsEditing(false)}
-                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-6 py-2 border border-hairline text-ink/75 rounded-lg hover:bg-surface transition-colors"
               >
                 Cancel
               </button>
@@ -272,18 +272,18 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
           <div className="space-y-6">
             {userProfile.bio && (
               <div>
-                <h4 className="text-lg font-semibold text-gray-800 mb-2">About</h4>
-                <p className="text-gray-600">{userProfile.bio}</p>
+                <h4 className="text-lg font-semibold text-ink mb-2">About</h4>
+                <p className="text-ink/75">{userProfile.bio}</p>
               </div>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {userProfile.school && (
                 <div className="flex items-start space-x-3">
-                  <School className="text-blue-500 mt-1" size={20} />
+                  <School className="text-sand mt-1" size={20} />
                   <div>
-                    <p className="font-semibold text-gray-800">School</p>
-                    <p className="text-gray-600">{userProfile.school}</p>
+                    <p className="font-semibold text-ink">School</p>
+                    <p className="text-ink/75">{userProfile.school}</p>
                   </div>
                 </div>
               )}
@@ -292,18 +292,18 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
                 <div className="flex items-start space-x-3">
                   <GraduationCap className="text-green-500 mt-1" size={20} />
                   <div>
-                    <p className="font-semibold text-gray-800">Field of Study</p>
-                    <p className="text-gray-600">{userProfile.studyField}</p>
+                    <p className="font-semibold text-ink">Field of Study</p>
+                    <p className="text-ink/75">{userProfile.studyField}</p>
                   </div>
                 </div>
               )}
 
               {userProfile.grade && (
                 <div className="flex items-start space-x-3">
-                  <Trophy className="text-purple-500 mt-1" size={20} />
+                  <Trophy className="text-sand mt-1" size={20} />
                   <div>
-                    <p className="font-semibold text-gray-800">Grade/Year</p>
-                    <p className="text-gray-600">{userProfile.grade}</p>
+                    <p className="font-semibold text-ink">Grade/Year</p>
+                    <p className="text-ink/75">{userProfile.grade}</p>
                   </div>
                 </div>
               )}
@@ -312,8 +312,8 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
                 <div className="flex items-start space-x-3">
                   <Calendar className="text-orange-500 mt-1" size={20} />
                   <div>
-                    <p className="font-semibold text-gray-800">Graduation</p>
-                    <p className="text-gray-600">{formatDate(userProfile.graduationDate)}</p>
+                    <p className="font-semibold text-ink">Graduation</p>
+                    <p className="text-ink/75">{formatDate(userProfile.graduationDate)}</p>
                   </div>
                 </div>
               )}
@@ -321,12 +321,12 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
 
             {userProfile.interests.length > 0 && (
               <div>
-                <h4 className="text-lg font-semibold text-gray-800 mb-3">Interests</h4>
+                <h4 className="text-lg font-semibold text-ink mb-3">Interests</h4>
                 <div className="flex flex-wrap gap-2">
                   {userProfile.interests.map(interest => (
                     <span
                       key={interest}
-                      className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                      className="px-3 py-1 bg-surface-high text-ink rounded-full text-sm"
                     >
                       {interest}
                     </span>
@@ -335,8 +335,8 @@ export const Profile: React.FC<ProfileProps> = ({ userProfile, onUpdateProfile, 
               </div>
             )}
 
-            <div className="pt-4 border-t border-gray-200">
-              <p className="text-sm text-gray-500">
+            <div className="pt-4 border-t border-hairline-soft">
+              <p className="text-sm text-muted">
                 Member since {formatDate(userProfile.joinDate)} • 
                 Profile is {userProfile.isPublic ? 'Public' : 'Private'}
               </p>

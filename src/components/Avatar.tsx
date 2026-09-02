@@ -32,7 +32,7 @@ export const Avatar: React.FC<AvatarProps> = ({
   src,
   className = 'w-10 h-10',
   textClassName = 'text-base',
-  gradient = 'from-purple-400 to-blue-500',
+  gradient = 'from-sand to-sand-lo',
   alt = '',
 }) => {
   const [failed, setFailed] = useState(false);

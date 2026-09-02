@@ -118,7 +118,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
             <div className="relative">
               <button
                 onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-                className="flex items-center space-x-2 md:space-x-3 px-2 md:px-4 py-2 rounded-xl transition-all border border-gray-200 hover:bg-gray-100 min-h-[44px]"
+                className="flex items-center space-x-2 md:space-x-3 px-2 md:px-4 py-2 rounded-xl transition-all border border-hairline-soft hover:bg-surface-high min-h-[44px]"
                 style={{
                   ...getButtonFocusStyle()
                 }}
@@ -146,24 +146,24 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                   gradient="from-green-400 to-blue-500"
                 />
                 <div className="text-left hidden md:block">
-                  <p className="font-semibold text-gray-800">{userProfile.username}</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="font-semibold text-ink">{userProfile.username}</p>
+                  <p className="text-sm text-muted">
                     {userProfile.isPublic ? 'Public' : 'Private'} Profile
                   </p>
                 </div>
-                <ChevronDown size={18} className="text-gray-400 hidden md:block" />
+                <ChevronDown size={18} className="text-muted hidden md:block" />
               </button>
               
               {/* Profile Dropdown */}
               {showProfileDropdown && (
-                <div className="absolute left-0 top-full mt-2 bg-white rounded-xl shadow-xl border border-gray-200 z-50 min-w-56">
+                <div className="absolute left-0 top-full mt-2 bg-surface rounded-xl shadow-xl border border-hairline-soft z-50 min-w-56">
                   <div className="p-2">
                     <button
                       onClick={() => {
                         onTabChange('profile');
                         setShowProfileDropdown(false);
                       }}
-                      className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all text-left hover:bg-gray-100"
+                      className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all text-left hover:bg-surface-high"
                       onMouseEnter={(e) => {
                         e.currentTarget.style.borderColor = currentTheme.buttonColor;
                       }}
@@ -188,7 +188,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                         onTabChange('settings');
                         setShowProfileDropdown(false);
                       }}
-                      className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all text-left hover:bg-gray-100"
+                      className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all text-left hover:bg-surface-high"
                       onMouseEnter={(e) => {
                         e.currentTarget.style.borderColor = currentTheme.buttonColor;
                       }}
@@ -208,12 +208,12 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                       <Settings size={18} />
                       <span className="font-medium">Settings</span>
                     </button>
-                    <div className="border-t border-gray-200 my-2"></div>
+                    <div className="border-t border-hairline-soft my-2"></div>
                     <div className="px-4 py-3">
-                      <p className="text-sm text-gray-500 mb-2">Status</p>
+                      <p className="text-sm text-muted mb-2">Status</p>
                       <div className="flex items-center space-x-2">
                         <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                        <span className="text-sm text-gray-600 font-medium">Online</span>
+                        <span className="text-sm text-ink/75 font-medium">Online</span>
                       </div>
                     </div>
                   </div>
@@ -227,7 +227,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
             {showTimerChip && timerState ? (
               <button
                 onClick={() => onTabChange('timer')}
-                className="flex items-center space-x-2 px-3 md:px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all min-h-[44px] animate-pulse"
+                className="flex items-center space-x-2 px-3 md:px-4 py-2 bg-surface-high text-white rounded-xl shadow-lg hover:shadow-xl transition-all min-h-[44px] animate-pulse"
               >
                 {timerState.isPaused ? <Pause size={16} /> : <Play size={16} className="animate-pulse" />}
                 <span className="font-mono font-bold text-sm md:text-base">
@@ -239,10 +239,10 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
               </button>
             ) : (
             <div className="flex items-center space-x-2 md:space-x-3">
-              <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-8 h-8 md:w-10 md:h-10 bg-surface-high rounded-xl flex items-center justify-center shadow-lg">
                 <Clock className="text-white" size={20} />
               </div>
-              <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-xl md:text-3xl font-bold text-ink">
                 StudySphere
               </h1>
             </div>
@@ -262,8 +262,8 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                     onClick={() => onTabChange(tab.id)}
                     className={`flex items-center space-x-2 px-3 md:px-4 py-2 rounded-xl transition-all border border-transparent min-h-[44px] ${
                       isActive
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                        ? 'bg-surface-high text-ink'
+                        : 'text-ink/75 hover:text-ink hover:bg-surface-high'
                     }`}
                     onMouseEnter={(e) => {
                       if (!isActive) {
@@ -311,7 +311,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
           min-h stays at 52px: that is the touch target, and it should not
           shrink.
         */}
-        <div className="lg:hidden border-t border-gray-200">
+        <div className="lg:hidden border-t border-hairline-soft">
           <div className="relative flex items-stretch gap-0.5 py-2 px-1">
             {tabs.map(tab => {
               const Icon = tab.icon;
@@ -323,8 +323,8 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                   onClick={() => onTabChange(tab.id)}
                   className={`${inOverflow ? 'hidden xs:flex' : 'flex'} flex-1 min-w-0 flex-col items-center justify-center gap-1 px-0.5 py-2 rounded-lg transition-all border border-transparent min-h-[52px] ${
                     isActive
-                      ? 'text-blue-700'
-                      : 'text-gray-600'
+                      ? 'text-ink'
+                      : 'text-ink/75'
                   }`}
                   onMouseEnter={(e) => {
                     if (!isActive) {
@@ -368,8 +368,8 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                 aria-label={`More tabs: ${overflowTabs.map(tab => tab.label).join(', ')}`}
                 className={`flex w-full min-w-0 flex-col items-center justify-center gap-1 px-0.5 py-2 rounded-lg transition-all border border-transparent min-h-[52px] ${
                   isOverflowTabActive || showMoreMenu
-                    ? 'text-blue-700'
-                    : 'text-gray-600'
+                    ? 'text-ink'
+                    : 'text-ink/75'
                 }`}
                 onFocus={(e) => {
                   e.currentTarget.style.borderColor = currentTheme.buttonColor;
@@ -387,7 +387,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
               {showMoreMenu && (
                 <div
                   role="menu"
-                  className="absolute right-0 top-full z-50 mt-1 min-w-[10rem] rounded-xl border border-gray-200 bg-white p-2 shadow-xl"
+                  className="absolute right-0 top-full z-50 mt-1 min-w-[10rem] rounded-xl border border-hairline-soft bg-surface p-2 shadow-xl"
                 >
                   {overflowTabs.map(tab => {
                     const Icon = tab.icon;
@@ -402,8 +402,8 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                         }}
                         className={`flex w-full items-center gap-3 px-4 py-3 rounded-lg text-left font-medium transition-all min-h-[44px] ${
                           isActive
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'text-gray-600 hover:bg-gray-100'
+                            ? 'bg-surface-high text-ink'
+                            : 'text-ink/75 hover:bg-surface-high'
                         }`}
                       >
                         <Icon size={18} />
