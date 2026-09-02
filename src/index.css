@@ -316,7 +316,15 @@ textarea:focus {
  * while filling in a form.
  */
 .modal-panel {
-  position: relative;
+  /*
+   * Deliberately sets no position.
+   *
+   * This class is declared after @tailwind utilities, so a position here
+   * outranks the utility on the element — a `position: relative` was
+   * overriding `absolute` on every dropdown, dropping the panel into normal
+   * flow where it widened its container and shoved the bell across the
+   * screen. Elements that need positioning set it themselves.
+   */
   isolation: isolate;
   background-color: var(--void);
   background-image:

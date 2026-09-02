@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Bell, Check, X, UserPlus, Calendar, Star, Users } from 'lucide-react';
 import { Notification } from '../services/notificationService';
 
@@ -56,8 +56,32 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
     return date.toLocaleDateString();
   };
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsOpen(false);
+    };
+
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('touchstart', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('touchstart', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={containerRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 hover:bg-surface-high rounded-lg transition-colors"
@@ -71,12 +95,7 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
       </button>
 
       {isOpen && (
-        <>
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setIsOpen(false)}
-          />
-          <div className="absolute right-0 mt-2 w-96 modal-panel rounded-lg shadow-xl z-20 max-h-96 overflow-hidden flex flex-col">
+        <div className="absolute right-0 mt-2 w-[min(24rem,calc(100vw-1.5rem))] modal-panel rounded-lg shadow-xl z-20 max-h-96 overflow-hidden flex flex-col">
             <div className="p-4 border-b border-hairline-soft flex items-center justify-between bg-surface">
               <h3 className="text-lg font-bold text-ink">Notifications</h3>
               {unreadCount > 0 && (
@@ -158,8 +177,7 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
                 </div>
               )}
             </div>
-          </div>
-        </>
+        </div>
       )}
     </div>
   );

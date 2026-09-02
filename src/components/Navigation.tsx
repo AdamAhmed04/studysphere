@@ -19,6 +19,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const moreMenuRef = useRef<HTMLDivElement>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
 
   // Show notification badge if timer is active
   const [isTimerActive, setIsTimerActive] = useState(false);
@@ -81,15 +82,22 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
    * outside press and on Escape, not only on selection.
    */
   useEffect(() => {
-    if (!showMoreMenu) return;
+    if (!showMoreMenu && !showProfileDropdown) return;
 
     const handlePointerDown = (event: MouseEvent | TouchEvent) => {
-      if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+
+      if (moreMenuRef.current && !moreMenuRef.current.contains(target)) {
         setShowMoreMenu(false);
+      }
+      if (profileMenuRef.current && !profileMenuRef.current.contains(target)) {
+        setShowProfileDropdown(false);
       }
     };
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setShowMoreMenu(false);
+      if (event.key !== 'Escape') return;
+      setShowMoreMenu(false);
+      setShowProfileDropdown(false);
     };
 
     document.addEventListener('mousedown', handlePointerDown);
@@ -100,16 +108,16 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
       document.removeEventListener('touchstart', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [showMoreMenu]);
+  }, [showMoreMenu, showProfileDropdown]);
 
 
   return (
-    <div className="theme-secondary-bg shadow-lg safe-area-top">
+    <div className="theme-secondary-bg shadow-lg safe-area-top relative z-40">
       <div className="max-w-7xl mx-auto px-2 md:px-4">
         <div className="flex items-center h-14 md:h-16">
           {/* Profile Section - Top Left Corner */}
           <div className="flex items-center space-x-2 md:space-x-4 mr-2 md:mr-6">
-            <div className="relative">
+            <div className="relative" ref={profileMenuRef}>
               <button
                 onClick={() => setShowProfileDropdown(!showProfileDropdown)}
                 className="flex items-center justify-center p-1 rounded-full transition-all border border-transparent hover:border-sand/40 min-h-[44px] min-w-[44px]"
@@ -128,7 +136,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
               
               {/* Profile Dropdown */}
               {showProfileDropdown && (
-                <div className="absolute left-0 top-full mt-2 modal-panel rounded-xl shadow-xl z-50 min-w-56">
+                <div className="absolute left-0 top-full mt-2 modal-panel rounded-xl shadow-xl z-50 min-w-56 max-w-[calc(100vw-1rem)]">
                   <div className="p-2">
                     <button
                       onClick={() => {

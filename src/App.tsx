@@ -1039,7 +1039,7 @@ function App() {
             <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
           </button>
         )}
-        <div className="bg-surface rounded-lg shadow-lg p-1 min-h-[44px] min-w-[44px]">
+        <div className="min-h-[44px] min-w-[44px]">
           <NotificationsDropdown
             notifications={notifications}
             unreadCount={unreadCount}
