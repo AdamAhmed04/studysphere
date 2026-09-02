@@ -12,7 +12,7 @@ const SELECTABLE_EVENT_TYPES = ['meeting', 'reminder', 'study', 'exam', 'class']
  * events, reminders and meetings are all flattened to this shape before being
  * rendered together. CalendarEvent is a superset, so it fits without a cast.
  */
-interface AgendaItem {
+export interface AgendaItem {
   id: string;
   title: string;
   description?: string;
@@ -25,6 +25,7 @@ interface AgendaItem {
 import { eventTypeColors, eventTypeLabels, getEventTypeColor } from '../utils/calendarUtils';
 import { parseLocalDate, todayLocalDateString } from '../utils/dates';
 import { Avatar } from './Avatar';
+import { DayDetail } from './DayDetail';
 
 interface CalendarProps {
   events: CalendarEvent[];
@@ -66,6 +67,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   const [showReminderModal, setShowReminderModal] = useState(false);
   const [showMeetingModal, setShowMeetingModal] = useState(false);
   const [showEventDetails, setShowEventDetails] = useState(false);
+  const [showDayDetail, setShowDayDetail] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<AgendaItem | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [eventForm, setEventForm] = useState({
@@ -389,7 +391,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                 }`}
                 onClick={() => {
                   setSelectedDate(day);
-                  setShowEventModal(true);
+                  setShowDayDetail(true);
                 }}
               >
                 <div className={`text-xs sm:text-sm font-medium mb-1 ${
@@ -427,6 +429,24 @@ export const Calendar: React.FC<CalendarProps> = ({
           })}
         </div>
       </div>
+
+      {showDayDetail && selectedDate && (
+        <DayDetail
+          date={selectedDate}
+          items={getEventsForDate(selectedDate)}
+          onClose={() => setShowDayDetail(false)}
+          onSelectItem={(item) => {
+            setShowDayDetail(false);
+            handleEventClick(item);
+          }}
+          onAddEvent={() => {
+            // selectedDate is already the day that was tapped, so the form
+            // opens on it rather than on today.
+            setShowDayDetail(false);
+            setShowEventModal(true);
+          }}
+        />
+      )}
 
       {/* Upcoming Events */}
       <div className="bg-surface rounded-2xl shadow-xl p-6">
