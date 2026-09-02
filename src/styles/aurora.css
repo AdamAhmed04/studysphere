@@ -1,0 +1,95 @@
+/*
+ * The drifting ground. See AuroraGround.tsx for why there is no blur filter
+ * anywhere in here.
+ */
+
+.aurora-ground {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--void);
+  /* Painted once behind everything; nothing in here ever reflows the page. */
+  contain: strict;
+  pointer-events: none;
+}
+
+.aurora-field {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  /*
+   * The softness is the gradient's own falloff. `transparent` in a gradient
+   * interpolates through transparent black in some engines, which greys the
+   * edge — so the final stop is the same colour at zero alpha instead.
+   */
+  will-change: transform;
+}
+
+.aurora-field--plum {
+  width: 78vmax;
+  height: 78vmax;
+  top: -30vmax;
+  left: -22vmax;
+  background: radial-gradient(
+    circle closest-side,
+    rgba(46, 33, 84, 0.95) 0%,
+    rgba(46, 33, 84, 0.55) 45%,
+    rgba(46, 33, 84, 0) 100%
+  );
+}
+
+.aurora-field--teal {
+  width: 68vmax;
+  height: 68vmax;
+  bottom: -26vmax;
+  right: -18vmax;
+  background: radial-gradient(
+    circle closest-side,
+    rgba(16, 57, 75, 0.95) 0%,
+    rgba(16, 57, 75, 0.5) 45%,
+    rgba(16, 57, 75, 0) 100%
+  );
+}
+
+.aurora-field--ember {
+  width: 56vmax;
+  height: 56vmax;
+  top: 30%;
+  left: 38%;
+  background: radial-gradient(
+    circle closest-side,
+    rgba(62, 36, 64, 0.75) 0%,
+    rgba(62, 36, 64, 0.35) 45%,
+    rgba(62, 36, 64, 0) 100%
+  );
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aurora-field--plum  { animation: aurora-drift-1 var(--drift-1) ease-in-out infinite alternate; }
+  .aurora-field--teal  { animation: aurora-drift-2 var(--drift-2) ease-in-out infinite alternate; }
+  .aurora-field--ember { animation: aurora-drift-3 var(--drift-3) ease-in-out infinite alternate; }
+}
+
+/*
+ * translate3d rather than translate: it guarantees the layer is promoted on
+ * engines that still gate promotion on a 3D transform, iOS included.
+ */
+@keyframes aurora-drift-1 {
+  to { transform: translate3d(16vmax, 11vmax, 0) scale(1.18); }
+}
+@keyframes aurora-drift-2 {
+  to { transform: translate3d(-13vmax, -10vmax, 0) scale(1.12); }
+}
+@keyframes aurora-drift-3 {
+  to { transform: translate3d(-18vmax, 13vmax, 0) scale(0.84); }
+}
+
+/*
+ * A tab in the background still burns cycles animating something nobody is
+ * looking at. Browsers throttle hidden tabs, but not consistently inside a
+ * WebView, which is where this ends up under Capacitor.
+ */
+.aurora-ground[data-paused='true'] .aurora-field {
+  animation-play-state: paused;
+}

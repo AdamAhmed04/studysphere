@@ -1,0 +1,63 @@
+/*
+ * Sandglass — the design tokens.
+ *
+ * Every colour, radius and type decision lives here so the look is one file to
+ * change rather than something sprayed across 25 components. Before this there
+ * were 32 accumulated grey and blue values, four competing gradient pairs and
+ * four corner radii used interchangeably.
+ *
+ * The rule that keeps it coherent: SAND IS THE ONLY ACCENT, and it is never
+ * decoration. It means elapsed, live, unread, or due. If something is coloured
+ * and does not mean one of those, it is wrong.
+ */
+
+:root {
+  /* --- ground ------------------------------------------------------- */
+  --void:  #0C0A14;   /* the base everything sits on */
+  --plum:  #2E2154;   /* drifting hue, one */
+  --teal:  #10394B;   /* drifting hue, two */
+  --ember: #3E2440;   /* drifting hue, three — warms toward the accent */
+
+  /* --- accent ------------------------------------------------------- */
+  --sand:    #D8A05F;
+  --sand-lo: #B8814A;
+
+  /* --- ink ---------------------------------------------------------- */
+  --ink:   #F2EFF8;
+  --muted: #A9A2C0;
+  --pearl: #EAE6F4;   /* buttons: off-white carrying a trace of the violet */
+  --on-pearl: #191327;
+
+  /* --- surfaces ------------------------------------------------------
+   * Translucent rather than solid, so the drifting ground shows through and
+   * a row belongs to the background instead of covering it.
+   */
+  --surface:      rgba(234, 230, 244, 0.055);
+  --surface-high: rgba(234, 230, 244, 0.10);
+  --hairline:     rgba(234, 230, 244, 0.11);
+  --hairline-soft: rgba(234, 230, 244, 0.075);
+
+  /* --- radius --------------------------------------------------------
+   * Four values, each with a job. Not the previous four used at random.
+   */
+  --r-sm:   10px;  /* chips, inputs */
+  --r-md:   16px;  /* rows, list items */
+  --r-lg:   22px;  /* panels, modals */
+  --r-pill: 999px; /* buttons */
+
+  /* --- type ----------------------------------------------------------
+   * The serif carries numerals and titles only. Anything you tap or read
+   * quickly stays in the sans — a serif on buttons reads as costume.
+   */
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-ui: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* --- motion --------------------------------------------------------
+   * Mismatched on purpose. Matched cycles visibly loop, and the eye catches
+   * a loop long before it catches drift.
+   */
+  --drift-1: 34s;
+  --drift-2: 44s;
+  --drift-3: 52s;
+  --sweep: 60s;
+}

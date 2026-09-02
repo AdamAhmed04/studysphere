@@ -3,13 +3,22 @@ import { CustomTheme } from '../types';
 import { themeColors } from '../utils/themeColors';
 import { useAuthContext } from '../contexts/AuthContext';
 
+/*
+ * Sandglass. `backgroundColor` is deliberately transparent rather than a
+ * colour: AuroraGround paints the ground now, and a solid value here would
+ * cover the drift completely.
+ *
+ * The theme customiser can still write arbitrary colours over these, which
+ * will fight the palette — that screen needs rethinking as part of the
+ * redesign rather than left able to undo it.
+ */
 const DEFAULT_THEME: CustomTheme = {
   id: 'default',
-  name: 'Default',
-  backgroundColor: '#f8fafc',
-  secondaryBackgroundColor: '#ffffff',
-  textBoxColor: '#ffffff',
-  buttonColor: '#3b82f6',
+  name: 'Sandglass',
+  backgroundColor: 'transparent',
+  secondaryBackgroundColor: 'rgba(234, 230, 244, 0.055)',
+  textBoxColor: 'rgba(234, 230, 244, 0.055)',
+  buttonColor: '#D8A05F',
   isActive: true
 };
 

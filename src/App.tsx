@@ -992,11 +992,20 @@ function App() {
 
   return (
     <Suspense fallback={<AppLoading />}>
-    <div className="min-h-screen theme-bg" style={{
-      background: currentTheme.backgroundColor !== '#f8fafc'
-        ? currentTheme.backgroundColor
-        : 'linear-gradient(to bottom right, #eff6ff, #f3e8ff, #ecfdf5)'
-    }}>
+    {/*
+      * The ground is AuroraGround, mounted once in main.tsx and fixed behind
+      * everything at z-index -1, so every screen shares the same drifting hue
+      * rather than each one painting its own background. The shell stays
+      * transparent unless someone has set a custom theme colour.
+      */}
+    <div
+      className="min-h-screen theme-bg"
+      style={
+        currentTheme.backgroundColor && currentTheme.backgroundColor !== 'transparent'
+          ? { background: currentTheme.backgroundColor }
+          : undefined
+      }
+    >
       <Navigation
         activeTab={activeTab}
         onTabChange={setActiveTab}

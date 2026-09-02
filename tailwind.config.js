@@ -18,7 +18,32 @@ export default {
       xl: '1280px',
       '2xl': '1536px',
     },
-    extend: {},
+    /*
+     * The Sandglass tokens, mirrored as utilities so components can say
+     * `text-sand` rather than an arbitrary hex. The source of truth is
+     * src/styles/tokens.css; these must stay in step with it.
+     */
+    extend: {
+      colors: {
+        void: '#0C0A14',
+        plum: '#2E2154',
+        teal: '#10394B',
+        ember: '#3E2440',
+        sand: { DEFAULT: '#D8A05F', lo: '#B8814A' },
+        ink: '#F2EFF8',
+        muted: '#A9A2C0',
+        pearl: '#EAE6F4',
+      },
+      fontFamily: {
+        display: ['Fraunces', 'Georgia', 'serif'],
+        ui: ['"Instrument Sans"', 'system-ui', 'sans-serif'],
+      },
+      borderRadius: {
+        sm: '10px',
+        md: '16px',
+        lg: '22px',
+      },
+    },
   },
   plugins: [],
 };

@@ -1,0 +1,110 @@
+/* The analog face. See Dial.tsx for why the ticks are drawn this way. */
+
+.dial {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.dial svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * Sixty ticks from one repeating cone, masked to a ring. The mask is what
+ * turns a filled disc into a band of marks — without it this is a solid
+ * striped circle, which is the failure mode to watch for.
+ */
+.dial-ticks {
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(234, 230, 244, 0.42) 0deg 0.45deg,
+    transparent 0.45deg 6deg
+  );
+  -webkit-mask: radial-gradient(circle, transparent 0 43.5%, #000 43.5% 47%, transparent 47%);
+          mask: radial-gradient(circle, transparent 0 43.5%, #000 43.5% 47%, transparent 47%);
+}
+
+/* Heavier marks at the twelve positions, reaching further in. */
+.dial-ticks--major {
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(234, 230, 244, 0.75) 0deg 0.9deg,
+    transparent 0.9deg 30deg
+  );
+  -webkit-mask: radial-gradient(circle, transparent 0 40.5%, #000 40.5% 47%, transparent 47%);
+          mask: radial-gradient(circle, transparent 0 40.5%, #000 40.5% 47%, transparent 47%);
+}
+
+.dial-progress {
+  /* The arc catches up smoothly rather than stepping once a second. */
+  transition: stroke-dashoffset 0.9s linear;
+}
+
+.dial-hand {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+  pointer-events: none;
+}
+
+.dial-hand::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 6.7%;
+  width: 1.5px;
+  height: 12.5%;
+  transform: translateX(-50%);
+  background: var(--pearl);
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(234, 230, 244, 0.75);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dial-hand[data-running='true'] {
+    animation: dial-sweep var(--sweep) linear infinite;
+  }
+}
+
+@keyframes dial-sweep {
+  to { transform: rotate(360deg); }
+}
+
+.dial-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.dial-time {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: 3.05rem;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.dial-label {
+  margin-top: 0.7rem;
+  font-family: var(--font-ui);
+  font-size: 0.59rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--sand);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dial-progress { transition: none; }
+}
