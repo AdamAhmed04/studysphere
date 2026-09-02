@@ -12,9 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 22, not 20. Some transitive binaries declare
+      # `^20.19.0 || >=22.12.0`, so a bare 20 sits on the edge of what the
+      # dependency tree accepts, and GitHub is deprecating Node 20 on runners
+      # anyway. 22 is comfortably inside both.
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - run: npm ci
