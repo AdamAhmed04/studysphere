@@ -8,6 +8,7 @@
 @import './styles/tokens.css';
 @import './styles/aurora.css';
 @import './styles/dial.css';
+@import './styles/wheel.css';
 
 @tailwind base;
 @tailwind components;

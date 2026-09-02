@@ -2,10 +2,28 @@ import React, { useState } from 'react';
 import { Play, Pause, Square, BookOpen, RotateCcw, Maximize, Minimize } from 'lucide-react';
 import { useTimerContext } from '../contexts/TimerContext';
 import { AuroraGround } from './AuroraGround';
+import { WheelPicker } from './WheelPicker';
 import { Celebration } from './Celebration';
 import { Dial } from './Dial';
-import { useTheme } from '../hooks/useTheme';
 import { isNotificationSupported, getNotificationPermission } from '../utils/safeNotification';
+/*
+ * Wheel ranges. Minutes go 0-59 and hours 0-8 rather than one long list of
+ * minutes: scrolling to 90 through a single column is a lot of flicking, and
+ * hours-plus-minutes is how every clock people already use is set.
+ */
+const HOUR_VALUES = Array.from({ length: 9 }, (_, i) => i);
+const MINUTE_VALUES = Array.from({ length: 60 }, (_, i) => i);
+const BREAK_COUNT_VALUES = Array.from({ length: 11 }, (_, i) => i);
+const BREAK_LENGTH_VALUES = Array.from({ length: 30 }, (_, i) => i + 1);
+
+const formatDuration = (minutes: number) => {
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  if (hours && rest) return `${hours}h ${rest}m`;
+  if (hours) return `${hours}h`;
+  return `${rest}m`;
+};
+
 interface TimerProps {
   onSessionComplete: (duration: number, subject: string, startTime: Date, endTime: Date) => void;
 }
@@ -25,7 +43,6 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
     completedSession
   } = useTimerContext();
   const [subject, setSubject] = useState('');
-  const { currentTheme } = useTheme();
   const [showDurationPicker, setShowDurationPicker] = useState(false);
   const [customMinutes, setCustomMinutes] = useState(25);
   const [breakCount, setBreakCount] = useState(0);
@@ -283,108 +300,118 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
           )}
         </div>
 
-        {/* Duration picker modal */}
+        {/*
+          * Duration picker.
+          *
+          * The number inputs this replaces coerced an empty field back to a
+          * value on every keystroke — `parseInt(e.target.value) || 1` — so the
+          * field could never be cleared and 20 had to be reached by nudging 1
+          * up to 2 and typing a 0 after it. Wheels have no empty state to
+          * mishandle, so the bug cannot recur here.
+          */}
         {showDurationPicker && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-surface rounded-2xl p-6 max-w-sm w-full mx-4">
-              <h4 className="text-xl font-bold text-ink mb-4">Set Study Duration</h4>
-              <div className="mb-6">
-                <label htmlFor="timer-study-duration-minutes" className="block text-sm font-medium text-ink/75 mb-2">
-                  Study Duration (minutes)
-                </label>
-                <input id="timer-study-duration-minutes"
-                  type="number"
-                  min="1"
-                  max="480"
-                  value={customMinutes}
-                  onChange={(e) => setCustomMinutes(parseInt(e.target.value) || 1)}
-                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent text-center text-2xl font-mono"
-                />
-                <div className="mt-2 flex justify-center space-x-2">
+          <div
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
+            role="presentation"
+            onClick={() => setShowDurationPicker(false)}
+          >
+            {/* Solid, with the hue behind it: a translucent panel over a
+                drifting ground made the numbers hard to read. */}
+            <div className="absolute inset-0 bg-void/70" />
+
+            <div
+              className="relative w-full sm:max-w-sm rounded-t-lg sm:rounded-lg overflow-hidden border border-hairline shadow-2xl"
+              onClick={(event) => event.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="duration-picker-title"
+            >
+              <AuroraGround />
+
+              <div className="p-6">
+                <h4 id="duration-picker-title" className="text-lg font-display font-light text-ink mb-6">
+                  Session length
+                </h4>
+
+                <div className="flex items-center gap-2 mb-4">
+                  <WheelPicker
+                    label="Hours"
+                    unit="h"
+                    values={HOUR_VALUES}
+                    value={Math.floor(customMinutes / 60)}
+                    onChange={(hours) => setCustomMinutes(hours * 60 + (customMinutes % 60))}
+                  />
+                  <WheelPicker
+                    label="Minutes"
+                    unit="min"
+                    values={MINUTE_VALUES}
+                    value={customMinutes % 60}
+                    onChange={(minutes) => setCustomMinutes(Math.floor(customMinutes / 60) * 60 + minutes)}
+                  />
+                </div>
+
+                <div className="flex flex-wrap justify-center gap-2 mb-7">
                   {[15, 25, 45, 60, 90].map(minutes => (
                     <button
                       key={minutes}
                       type="button"
                       onClick={() => setCustomMinutes(minutes)}
-                      className="px-3 py-1 text-sm bg-surface-high text-ink/75 rounded-lg hover:bg-gray-200 transition-colors"
+                      className={`px-3 py-1.5 text-xs rounded-pill border transition-colors ${
+                        customMinutes === minutes
+                          ? 'border-sand text-sand'
+                          : 'border-hairline text-ink/75'
+                      }`}
                     >
                       {minutes}m
                     </button>
                   ))}
+                  <button
+                    type="button"
+                    onClick={() => setCustomMinutes(0)}
+                    className="px-3 py-1.5 text-xs rounded-pill border border-hairline text-muted transition-colors"
+                  >
+                    Reset
+                  </button>
                 </div>
-              </div>
-              
-              <div className="mb-6">
-                <label htmlFor="timer-number-of-breaks" className="block text-sm font-medium text-ink/75 mb-2">
-                  Number of Breaks
-                </label>
-                <input id="timer-number-of-breaks"
-                  type="number"
-                  min="0"
-                  max="10"
-                  value={breakCount}
-                  onChange={(e) => setBreakCount(parseInt(e.target.value) || 0)}
-                  className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent text-center text-xl font-mono"
-                />
-                <div className="mt-2 flex justify-center space-x-2">
-                  {[0, 1, 2, 3, 4].map(count => (
-                    <button
-                      key={count}
-                      type="button"
-                      onClick={() => setBreakCount(count)}
-                      className="px-3 py-1 text-sm bg-surface-high text-ink/75 rounded-lg hover:bg-gray-200 transition-colors"
-                    >
-                      {count}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              
-              {breakCount > 0 && (
-                <div className="mb-6">
-                  <label htmlFor="timer-break-duration-minutes" className="block text-sm font-medium text-ink/75 mb-2">
-                    Break Duration (minutes)
-                  </label>
-                  <input id="timer-break-duration-minutes"
-                    type="number"
-                    min="1"
-                    max="30"
-                    value={breakDuration}
-                    onChange={(e) => setBreakDuration(parseInt(e.target.value) || 5)}
-                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent text-center text-xl font-mono theme-textbox"
-                  />
-                  <div className="mt-2 flex justify-center space-x-2">
-                    {[5, 10, 15, 20].map(minutes => (
-                      <button
-                        key={minutes}
-                        type="button"
-                        onClick={() => setBreakDuration(minutes)}
-                        className="px-3 py-1 text-sm bg-surface-high text-ink/75 rounded-lg hover:bg-gray-200 transition-colors"
-                      >
-                        {minutes}m
-                      </button>
-                    ))}
+
+                <div className="mb-7">
+                  <p className="text-xs uppercase tracking-[0.15em] text-muted mb-2">Breaks</p>
+                  <div className="flex items-center gap-2">
+                    <WheelPicker
+                      label="Number of breaks"
+                      values={BREAK_COUNT_VALUES}
+                      value={breakCount}
+                      onChange={setBreakCount}
+                    />
+                    {breakCount > 0 && (
+                      <WheelPicker
+                        label="Break length in minutes"
+                        unit="min"
+                        values={BREAK_LENGTH_VALUES}
+                        value={breakDuration}
+                        onChange={setBreakDuration}
+                      />
+                    )}
                   </div>
                 </div>
-              )}
-              
-              <div className="flex space-x-3">
-                <button
-                  onClick={() => setShowDurationPicker(false)}
-                  className="flex-1 px-4 py-2 border border-hairline text-ink/75 rounded-lg hover:bg-surface transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDurationChange}
-                  className="flex-1 px-4 py-2 rounded-lg transition-colors btn-primary"
-                  style={{
-                    backgroundColor: currentTheme.buttonColor,
-                    color: getContrastTextColor(currentTheme.buttonColor)
-                  }}
-                >
-                  Set Duration
-                </button>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowDurationPicker(false)}
+                    className="flex-1 px-4 py-3 rounded-pill border border-hairline text-ink text-sm font-medium min-h-[48px]"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleDurationChange}
+                    disabled={customMinutes < 1}
+                    className="flex-1 px-4 py-3 rounded-pill bg-pearl text-on-pearl text-sm font-medium min-h-[48px] disabled:opacity-40"
+                  >
+                    {customMinutes < 1
+                      ? 'Set a length'
+                      : `Start ${formatDuration(customMinutes)}`}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -472,14 +499,4 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
       </div>
     </div>
   );
-};
-
-// Helper function
-const getContrastTextColor = (backgroundColor: string): string => {
-  const hex = backgroundColor.replace('#', '');
-  const r = parseInt(hex.substr(0, 2), 16);
-  const g = parseInt(hex.substr(2, 2), 16);
-  const b = parseInt(hex.substr(4, 2), 16);
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-  return brightness > 128 ? '#1f2937' : '#ffffff';
 };

@@ -1,0 +1,92 @@
+/* The scroll wheel. See WheelPicker.tsx for why it is built on scroll-snap. */
+
+.wheel {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+/* The selected row, marked by a band rather than a highlight on the number —
+   so the number itself is never tinted by the accent. */
+.wheel-band {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 40px;
+  transform: translateY(-50%);
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  pointer-events: none;
+}
+
+.wheel-list {
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  /*
+   * Fades the ends rather than cropping them, so the wheel reads as a
+   * cylinder that continues past the window instead of a clipped list.
+   */
+  -webkit-mask: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 26%,
+    #000 74%,
+    transparent 100%
+  );
+          mask: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 26%,
+    #000 74%,
+    transparent 100%
+  );
+}
+
+.wheel-list::-webkit-scrollbar { display: none; }
+
+.wheel-list:focus-visible {
+  outline: 2px solid var(--sand);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+.wheel-item {
+  scroll-snap-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 1.4rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s ease, opacity 0.2s ease;
+  opacity: 0.5;
+}
+
+.wheel-item.is-selected {
+  color: var(--ink);
+  opacity: 1;
+}
+
+.wheel-unit {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  color: var(--muted);
+  align-self: center;
+  padding-top: 0.35rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wheel-list { scroll-behavior: auto; }
+}

@@ -49,6 +49,7 @@ export default {
         sm: '10px',
         md: '16px',
         lg: '22px',
+        pill: '999px',
       },
     },
   },
