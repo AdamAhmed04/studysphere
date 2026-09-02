@@ -41,8 +41,17 @@ class AuthService {
         email: userData.email,
         password: userData.password,
         options: {
-          // Everything the on_auth_user_created trigger needs to build the
-          // profile row server-side.
+          /*
+           * Everything the on_auth_user_created trigger needs to build the
+           * profile row server-side. This is the only route that works during
+           * signup: the trigger fires as the auth row is created, so it needs
+           * no session, where a follow-up UPDATE would need auth.uid() and
+           * gets nothing when email confirmation is on.
+           *
+           * toLocalDateString yields '' for a missing date; safe_date() turns
+           * that, and anything else unparseable, into NULL rather than
+           * aborting the signup.
+           */
           data: {
             name: userData.name,
             bio: userData.bio,
@@ -51,6 +60,8 @@ class AuthService {
             grade: userData.grade,
             interests: userData.interests,
             is_public: userData.isPublic,
+            date_of_birth: toLocalDateString(userData.dateOfBirth),
+            graduation_date: toLocalDateString(userData.graduationDate),
           }
         }
       });
@@ -59,54 +70,40 @@ class AuthService {
       if (!authData.user) throw new Error('Failed to create user');
 
       /*
-       * The two date fields need an authenticated session: the profile UPDATE
-       * policy keys off auth.uid(). When email confirmation is on signUp()
-       * returns no session, so they are skipped and the user sets them from
-       * Profile after confirming. Never fail signup over them.
+       * The avatar is the one field that cannot go through metadata, because
+       * it is a file rather than a string. It needs a session: both the
+       * storage policy and the profile UPDATE policy key off auth.uid().
        */
       const avatarDataUrl = await this.prepareAvatar(userData.avatar);
 
-      if (authData.session) {
-        const patch: Record<string, unknown> = {
-          date_of_birth: toLocalDateString(userData.dateOfBirth),
-          graduation_date: toLocalDateString(userData.graduationDate),
-        };
-
-        if (avatarDataUrl) {
+      if (avatarDataUrl) {
+        if (authData.session) {
           try {
-            patch.avatar_url = await this.uploadAvatar(
+            const avatarUrl = await this.uploadAvatar(
               authData.user.id,
               dataUrlToBlob(avatarDataUrl),
             );
+
+            const { error: patchError } = await supabase
+              .from('user_profiles')
+              .update({ avatar_url: avatarUrl })
+              .eq('user_id', authData.user.id);
+
+            if (patchError) throw patchError;
           } catch (avatarError) {
             // Park it rather than drop it, so the next load retries.
             console.error('Avatar upload failed, deferring to first load:', avatarError);
             stashPendingAvatar(authData.user.id, avatarDataUrl);
           }
+        } else {
+          /*
+           * No session means confirmation is pending, so there is no
+           * auth.uid() for the storage policy to match. Park the photo;
+           * applyPendingAvatar uploads it on the first load that has a
+           * session, which is the redirect back from the confirmation email.
+           */
+          stashPendingAvatar(authData.user.id, avatarDataUrl);
         }
-
-        // Drop empty strings as well as undefined: toLocalDateString returns
-        // '' for a missing date, and '' is not a valid value for a date column.
-        const cleaned = Object.fromEntries(
-          Object.entries(patch).filter(([, v]) => v !== undefined && v !== '')
-        );
-
-        if (Object.keys(cleaned).length > 0) {
-          const { error: patchError } = await supabase
-            .from('user_profiles')
-            .update(cleaned)
-            .eq('user_id', authData.user.id);
-
-          if (patchError) console.error('Post-signup profile update failed:', patchError);
-        }
-      } else if (avatarDataUrl) {
-        /*
-         * No session means confirmation is pending, so there is no auth.uid()
-         * for the storage policy to match. Park the photo; applyPendingAvatar
-         * uploads it on the first load that has a session, which is the
-         * redirect back from the confirmation email.
-         */
-        stashPendingAvatar(authData.user.id, avatarDataUrl);
       }
 
       // The profile, stats and presence rows are all created by the

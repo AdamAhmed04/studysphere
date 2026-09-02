@@ -99,9 +99,15 @@ logged. They are cheap to reintroduce by accident.
   inside `if (authData.session)` and never ran: the photo picked at signup was
   discarded, silently, on every single account. Storage held zero files. The
   photo is now downscaled and parked in `localStorage`, and
-  `applyPendingAvatar` uploads it on the first load that has a session. The
-  same trap still applies to `date_of_birth` and `graduation_date`, which are
-  dropped for the same reason and are not yet fixed.
+  `applyPendingAvatar` uploads it on the first load that has a session.
+  `date_of_birth` and `graduation_date` were dropped the same way and are
+  fixed differently: they are strings, so they travel in
+  `signUp({ options: { data } })` and the `handle_new_user` trigger writes
+  them as the row is created, needing no session at all. **Anything that can
+  go through signup metadata should**; only a file needs the parking trick.
+  Metadata is client-supplied, so the trigger parses dates through
+  `safe_date()`, which yields NULL rather than aborting the signup on
+  anything malformed.
 - **Every screen that draws a person must render `avatar_url`.** The services
   all fetch and map it correctly; nine of the eleven screens then dropped it
   and rendered an initial, so a photo showed on Profile and nowhere else -
