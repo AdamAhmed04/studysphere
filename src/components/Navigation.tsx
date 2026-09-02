@@ -128,7 +128,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
               
               {/* Profile Dropdown */}
               {showProfileDropdown && (
-                <div className="absolute left-0 top-full mt-2 bg-surface rounded-xl shadow-xl border border-hairline-soft z-50 min-w-56">
+                <div className="absolute left-0 top-full mt-2 modal-panel rounded-xl shadow-xl z-50 min-w-56">
                   <div className="p-2">
                     <button
                       onClick={() => {
@@ -283,7 +283,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
               {showMoreMenu && (
                 <div
                   role="menu"
-                  className="absolute right-0 top-full z-50 mt-1 min-w-[10rem] rounded-xl border border-hairline-soft bg-surface p-2 shadow-xl"
+                  className="absolute right-0 top-full z-50 mt-1 min-w-[10rem] rounded-xl modal-panel p-2 shadow-xl"
                 >
                   {overflowTabs.map(tab => {
                     const Icon = tab.icon;

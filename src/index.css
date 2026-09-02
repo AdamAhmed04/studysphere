@@ -299,7 +299,10 @@ textarea:focus {
 }
 
 /*
- * Modal panels are opaque.
+ * Floating panels are opaque.
+ *
+ * Dialogs, dropdowns and menus — anything that floats over the page rather
+ * than sitting in it.
  *
  * Every surface in this app is translucent on purpose, so the drifting ground
  * shows through and a row belongs to the background rather than covering it.

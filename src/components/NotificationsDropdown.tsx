@@ -76,7 +76,7 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 mt-2 w-96 bg-surface rounded-lg shadow-xl border border-hairline-soft z-20 max-h-96 overflow-hidden flex flex-col">
+          <div className="absolute right-0 mt-2 w-96 modal-panel rounded-lg shadow-xl z-20 max-h-96 overflow-hidden flex flex-col">
             <div className="p-4 border-b border-hairline-soft flex items-center justify-between bg-surface">
               <h3 className="text-lg font-bold text-ink">Notifications</h3>
               {unreadCount > 0 && (
