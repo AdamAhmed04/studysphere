@@ -178,8 +178,8 @@ export const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-surface rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-void/80 flex items-center justify-center z-50 p-4">
+      <div className="modal-panel rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b border-hairline-soft bg-surface-high">
           <div className="flex items-center space-x-3">
             <Calendar className="text-white" size={24} />

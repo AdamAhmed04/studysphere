@@ -41,8 +41,8 @@ export const FriendRequestsModal: React.FC<FriendRequestsModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-surface rounded-2xl max-w-lg w-full max-h-[80vh] overflow-hidden">
+    <div className="fixed inset-0 bg-void/80 flex items-center justify-center z-50 p-4">
+      <div className="modal-panel rounded-2xl max-w-lg w-full max-h-[80vh] overflow-hidden">
         <div className="p-6 border-b border-hairline-soft ">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">

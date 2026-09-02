@@ -190,8 +190,8 @@ export const JumpingGame: React.FC<JumpingGameProps> = ({ isOpen, onClose }) => 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-surface rounded-2xl max-w-lg w-full max-h-[90vh] overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 bg-void/80 flex items-center justify-center z-50 p-4">
+      <div className="modal-panel rounded-2xl max-w-lg w-full max-h-[90vh] overflow-hidden shadow-2xl">
         {/* Header */}
         <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 text-white">
           <div className="flex items-center justify-between">
@@ -273,7 +273,7 @@ export const JumpingGame: React.FC<JumpingGameProps> = ({ isOpen, onClose }) => 
 
             {/* Game Over Overlay */}
             {gameOver && (
-              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+              <div className="absolute inset-0 bg-void/80 flex items-center justify-center">
                 <div className="bg-surface rounded-xl p-6 text-center shadow-xl">
                   <Trophy className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
                   <h4 className="text-xl font-bold text-ink mb-2">Game Over!</h4>

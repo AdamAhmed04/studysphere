@@ -282,6 +282,30 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(216, 160, 95, 0.18) !important;
 }
 
+/*
+ * Modal panels are opaque.
+ *
+ * Every surface in this app is translucent on purpose, so the drifting ground
+ * shows through and a row belongs to the background rather than covering it.
+ * That is right for a list and wrong for a dialog: at 5.5% opacity the screen
+ * underneath showed straight through the form, so a calendar grid sat behind
+ * the labels and there was no telling which control belonged to which layer.
+ *
+ * Panels get their own solid ground with the same hue baked in as a static
+ * gradient — the look of the aurora without a second animated layer running
+ * behind every modal, which would cost battery for something nobody looks at
+ * while filling in a form.
+ */
+.modal-panel {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--void);
+  background-image:
+    radial-gradient(125% 95% at 6% 0%, rgba(46, 33, 84, 0.95) 0%, rgba(46, 33, 84, 0) 60%),
+    radial-gradient(115% 85% at 100% 100%, rgba(16, 57, 75, 0.85) 0%, rgba(16, 57, 75, 0) 58%);
+  border: 1px solid var(--hairline);
+}
+
 /* Hover animations */
 .hover-lift {
   transition: transform 0.2s ease-in-out;

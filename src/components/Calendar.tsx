@@ -302,7 +302,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Calendar Header */}
-      <div className="bg-surface rounded-2xl shadow-xl p-6">
+      <div className="modal-panel rounded-2xl shadow-xl p-6">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <div className="flex items-center space-x-3">
             <CalendarIcon className="text-sand" size={28} />
@@ -449,7 +449,7 @@ export const Calendar: React.FC<CalendarProps> = ({
       )}
 
       {/* Upcoming Events */}
-      <div className="bg-surface rounded-2xl shadow-xl p-6">
+      <div className="modal-panel rounded-2xl shadow-xl p-6">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <h3 className="text-xl font-bold text-ink">Upcoming Events</h3>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
@@ -530,8 +530,8 @@ export const Calendar: React.FC<CalendarProps> = ({
 
       {/* Event Modal */}
       {showEventModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-surface rounded-2xl p-6 max-w-md w-full mx-4">
+        <div className="fixed inset-0 bg-void/80 flex items-center justify-center z-50">
+          <div className="modal-panel rounded-2xl p-6 max-w-md w-full mx-4">
             <h4 className="text-xl font-bold text-ink mb-4">Create Event</h4>
             <div className="space-y-4">
               <div>
@@ -658,8 +658,8 @@ export const Calendar: React.FC<CalendarProps> = ({
 
       {/* Reminder Modal */}
       {showReminderModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-surface rounded-2xl p-6 max-w-md w-full mx-4">
+        <div className="fixed inset-0 bg-void/80 flex items-center justify-center z-50">
+          <div className="modal-panel rounded-2xl p-6 max-w-md w-full mx-4">
             <h4 className="text-xl font-bold text-ink mb-4">Create Reminder</h4>
             <div className="space-y-4">
               <div>
@@ -741,8 +741,8 @@ export const Calendar: React.FC<CalendarProps> = ({
 
       {/* Meeting Modal */}
       {showMeetingModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-surface rounded-2xl p-6 max-w-md w-full mx-4">
+        <div className="fixed inset-0 bg-void/80 flex items-center justify-center z-50">
+          <div className="modal-panel rounded-2xl p-6 max-w-md w-full mx-4">
             <h4 className="text-xl font-bold text-ink mb-4">Schedule Meeting</h4>
             <div className="space-y-4">
               <div>
@@ -810,8 +810,8 @@ export const Calendar: React.FC<CalendarProps> = ({
 
       {/* Event Details Modal */}
       {showEventDetails && selectedEvent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-surface rounded-2xl p-6 max-w-md w-full mx-4">
+        <div className="fixed inset-0 bg-void/80 flex items-center justify-center z-50">
+          <div className="modal-panel rounded-2xl p-6 max-w-md w-full mx-4">
             <div className="flex items-center justify-between mb-6">
               <h4 className="text-xl font-bold text-ink">Event Details</h4>
               <button

@@ -48,7 +48,7 @@ export const ProfilePreview: React.FC<ProfilePreviewProps> = ({ user, onAddFrien
       role="presentation"
     >
       <div
-        className="w-full max-w-md max-h-[90vh] overflow-y-auto bg-surface rounded-2xl shadow-xl"
+        className="w-full max-w-md max-h-[90vh] overflow-y-auto modal-panel rounded-2xl shadow-xl"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
