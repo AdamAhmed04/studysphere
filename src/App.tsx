@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
+import { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import { Clock } from 'lucide-react';
 
 
@@ -34,26 +34,27 @@ import { NotificationsDropdown } from './components/NotificationsDropdown';
 
 import { groupService } from './services/groupService';
 import { notificationService } from './services/notificationService';
-const BubblePopGame = lazy(() => import('./components/BubblePopGame').then(module => ({ default: module.BubblePopGame })));
-const BlockDropGame = lazy(() => import('./components/BlockDropGame').then(module => ({ default: module.BlockDropGame })));
-const JumpingGame = lazy(() => import('./components/JumpingGame').then(module => ({ default: module.JumpingGame })));
-const AuthPage = lazy(() => import('./components/AuthPage').then(module => ({ default: module.AuthPage })));
-const ResetPassword = lazy(() => import('./components/ResetPassword').then(module => ({ default: module.ResetPassword })));
-const Calendar = lazy(() => import('./components/Calendar').then(module => ({ default: module.Calendar })));
-const SearchPage = lazy(() => import('./components/SearchPage').then(module => ({ default: module.SearchPage })));
-const ChatList = lazy(() => import('./components/ChatList').then(module => ({ default: module.ChatList })));
-const GroupChat = lazy(() => import('./components/GroupChat').then(module => ({ default: module.GroupChat })));
-const FriendsList = lazy(() => import('./components/FriendsList').then(module => ({ default: module.FriendsList })));
-const Settings = lazy(() => import('./components/Settings').then(module => ({ default: module.Settings })));
-const Profile = lazy(() => import('./components/Profile').then(module => ({ default: module.Profile })));
-const CreateGroupModal = lazy(() => import('./components/CreateGroupModal').then(module => ({ default: module.CreateGroupModal })));
-const ScheduleMeetingModal = lazy(() => import('./components/ScheduleMeetingModal').then(module => ({ default: module.ScheduleMeetingModal })));
-const FriendRequestsModal = lazy(() => import('./components/FriendRequestsModal').then(module => ({ default: module.FriendRequestsModal })));
+const BubblePopGame = lazyWithReload(() => import('./components/BubblePopGame').then(module => ({ default: module.BubblePopGame })));
+const BlockDropGame = lazyWithReload(() => import('./components/BlockDropGame').then(module => ({ default: module.BlockDropGame })));
+const JumpingGame = lazyWithReload(() => import('./components/JumpingGame').then(module => ({ default: module.JumpingGame })));
+const AuthPage = lazyWithReload(() => import('./components/AuthPage').then(module => ({ default: module.AuthPage })));
+const ResetPassword = lazyWithReload(() => import('./components/ResetPassword').then(module => ({ default: module.ResetPassword })));
+const Calendar = lazyWithReload(() => import('./components/Calendar').then(module => ({ default: module.Calendar })));
+const SearchPage = lazyWithReload(() => import('./components/SearchPage').then(module => ({ default: module.SearchPage })));
+const ChatList = lazyWithReload(() => import('./components/ChatList').then(module => ({ default: module.ChatList })));
+const GroupChat = lazyWithReload(() => import('./components/GroupChat').then(module => ({ default: module.GroupChat })));
+const FriendsList = lazyWithReload(() => import('./components/FriendsList').then(module => ({ default: module.FriendsList })));
+const Settings = lazyWithReload(() => import('./components/Settings').then(module => ({ default: module.Settings })));
+const Profile = lazyWithReload(() => import('./components/Profile').then(module => ({ default: module.Profile })));
+const CreateGroupModal = lazyWithReload(() => import('./components/CreateGroupModal').then(module => ({ default: module.CreateGroupModal })));
+const ScheduleMeetingModal = lazyWithReload(() => import('./components/ScheduleMeetingModal').then(module => ({ default: module.ScheduleMeetingModal })));
+const FriendRequestsModal = lazyWithReload(() => import('./components/FriendRequestsModal').then(module => ({ default: module.FriendRequestsModal })));
 import { studySessionService } from './services/studySessionService';
 import { toLocalDateString } from './utils/dates';
 import { orUndefined, orEmpty, orFalse } from './utils/rows';
 import type { StudySession, ChatMessage, Friend, User, StudyGroup, TodoItem } from './types';
 import type { UserProfile } from './lib/supabase';
+import { lazyWithReload } from './utils/lazyWithReload';
 
 // Date reviver function to convert ISO strings back to Date objects
 
