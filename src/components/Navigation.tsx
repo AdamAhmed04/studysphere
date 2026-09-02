@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Clock, Users, MessageSquare, BarChart3, Settings, User, Calendar, Search, Play, Pause, MoreHorizontal } from 'lucide-react';
+import { Clock, Users, MessageSquare, BarChart3, Settings, User, Calendar, Search, Play, Pause } from 'lucide-react';
 import { Avatar } from './Avatar';
 
 interface NavigationProps {
@@ -17,8 +17,6 @@ interface NavigationProps {
 
 export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, userProfile, timerState, formatTime }) => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-  const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const moreMenuRef = useRef<HTMLDivElement>(null);
   const profileMenuRef = useRef<HTMLDivElement>(null);
 
   // Show notification badge if timer is active
@@ -52,52 +50,33 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
     { id: 'friends', label: 'Friends', icon: Users },
     { id: 'chat', label: 'Chat', icon: MessageSquare },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
-    { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
   /*
-   * Below 360px seven full-word labels do not fit. "Calendar" needs 38.8px at
-   * a 9px font and only 42.3px is available even with zero button padding and
-   * zero gaps, so the row cannot be tuned into fitting - something has to come
-   * out of it.
+   * Six tabs, and six fit. Settings lives in the profile menu instead, where
+   * it was already reachable, which is what took the count from seven to six.
    *
-   * The last two collapse behind a "More" button, leaving five tabs plus More.
-   * At 320px that gives each button 47.7px, and the longest label still on the
-   * bar ("Friends", 35.6px) roughly 8px of slack.
-   *
-   * Why these two: Settings loses least by moving, because it is already
-   * reachable from the profile dropdown above. Calendar follows because it
-   * owns the longest label, which is what breaks the row in the first place.
-   *
-   * The split is CSS-only ('hidden xs:flex'), so no viewport is measured in
-   * JS and there is no resize listener to keep in sync.
+   * Seven full-word labels did not fit below 360px, so the last two used to
+   * collapse behind a "More" button. That is gone with the seventh: measured
+   * at 320px, no label overflows its button and the page does not scroll
+   * sideways, so a "More" button would now reveal nothing.
    */
-  const OVERFLOW_TAB_IDS = ['calendar', 'settings'];
-  const overflowTabs = tabs.filter(tab => OVERFLOW_TAB_IDS.includes(tab.id));
-  const isOverflowTabActive = OVERFLOW_TAB_IDS.includes(activeTab);
 
   /*
-   * A menu that cannot be dismissed is worse than no menu, and on a 320px
-   * screen there is very little bare background left to tap. So it closes on
-   * outside press and on Escape, not only on selection.
+   * A menu that cannot be dismissed is worse than no menu, and on a phone
+   * there is very little bare background left to tap. So it closes on outside
+   * press and on Escape, not only on selection.
    */
   useEffect(() => {
-    if (!showMoreMenu && !showProfileDropdown) return;
+    if (!showProfileDropdown) return;
 
     const handlePointerDown = (event: MouseEvent | TouchEvent) => {
-      const target = event.target as Node;
-
-      if (moreMenuRef.current && !moreMenuRef.current.contains(target)) {
-        setShowMoreMenu(false);
-      }
-      if (profileMenuRef.current && !profileMenuRef.current.contains(target)) {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
         setShowProfileDropdown(false);
       }
     };
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return;
-      setShowMoreMenu(false);
-      setShowProfileDropdown(false);
+      if (event.key === 'Escape') setShowProfileDropdown(false);
     };
 
     document.addEventListener('mousedown', handlePointerDown);
@@ -108,7 +87,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
       document.removeEventListener('touchstart', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [showMoreMenu, showProfileDropdown]);
+  }, [showProfileDropdown]);
 
 
   return (
@@ -248,12 +227,11 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
             {tabs.map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
-              const inOverflow = OVERFLOW_TAB_IDS.includes(tab.id);
               return (
                 <button
                   key={tab.id}
                   onClick={() => onTabChange(tab.id)}
-                  className={`${inOverflow ? 'hidden xs:flex' : 'flex'} flex-1 min-w-0 flex-col items-center justify-center gap-1 px-0.5 py-2 rounded-lg transition-all border border-transparent hover:border-sand/40 min-h-[52px] ${
+                  className={`flex flex-1 min-w-0 flex-col items-center justify-center gap-1 px-0.5 py-2 rounded-lg transition-all border border-transparent hover:border-sand/40 min-h-[52px] ${
                     isActive
                       ? 'text-ink'
                       : 'text-ink/75'
@@ -264,60 +242,6 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                 </button>
               );
             })}
-
-            {/*
-              Rendered only below the xs breakpoint, and the whole wrapper -
-              button and menu together - is what hides above it, so a menu left
-              open cannot survive the viewport widening past the point where
-              its tabs are back on the bar.
-            */}
-            <div ref={moreMenuRef} className="relative flex xs:hidden flex-1 min-w-0">
-              <button
-                type="button"
-                onClick={() => setShowMoreMenu(open => !open)}
-                aria-haspopup="menu"
-                aria-expanded={showMoreMenu}
-                aria-label={`More tabs: ${overflowTabs.map(tab => tab.label).join(', ')}`}
-                className={`flex w-full min-w-0 flex-col items-center justify-center gap-1 px-0.5 py-2 rounded-lg transition-all border border-transparent hover:border-sand/40 min-h-[52px] ${
-                  isOverflowTabActive || showMoreMenu
-                    ? 'text-ink'
-                    : 'text-ink/75'
-                }`}
-              >
-                <MoreHorizontal size={22} className="shrink-0" />
-                <span className="text-[10px] font-medium leading-none">More</span>
-              </button>
-
-              {showMoreMenu && (
-                <div
-                  role="menu"
-                  className="absolute right-0 top-full z-50 mt-1 min-w-[10rem] rounded-xl modal-panel p-2 shadow-xl"
-                >
-                  {overflowTabs.map(tab => {
-                    const Icon = tab.icon;
-                    const isActive = activeTab === tab.id;
-                    return (
-                      <button
-                        key={tab.id}
-                        role="menuitem"
-                        onClick={() => {
-                          onTabChange(tab.id);
-                          setShowMoreMenu(false);
-                        }}
-                        className={`flex w-full items-center gap-3 px-4 py-3 rounded-lg text-left font-medium transition-all min-h-[44px] ${
-                          isActive
-                            ? 'bg-surface-high text-ink'
-                            : 'text-ink/75 hover:bg-surface-high'
-                        }`}
-                      >
-                        <Icon size={18} />
-                        <span>{tab.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </div>
