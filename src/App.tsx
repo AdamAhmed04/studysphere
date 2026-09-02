@@ -1024,7 +1024,12 @@ function App() {
         formatTime={formatTime}
       />
 
-      <div className="fixed top-2 right-2 md:top-4 md:right-4 z-50 flex flex-col md:flex-row items-end md:items-center space-y-2 md:space-y-0 md:space-x-4">
+      {/*
+        * Fixed to the viewport, so it does not inherit body's safe-area
+        * padding and has to clear the status bar itself — without this the
+        * bell sat on top of the battery icon.
+        */}
+      <div className="fixed top-[max(0.5rem,env(safe-area-inset-top))] right-2 md:right-4 z-50 flex flex-col md:flex-row items-end md:items-center gap-2 md:gap-4">
         {pendingRequests.length > 0 && (
           <button
             onClick={() => setShowFriendRequests(true)}

@@ -114,11 +114,11 @@ export const UpcomingMeetings: React.FC<UpcomingMeetingsProps> = ({
               key={meeting.id}
               className={`p-4 rounded-xl border-2 transition-all hover:shadow-md ${
                 startingSoon 
-                  ? 'border-orange-300 bg-sand/10' 
+                  ? 'border-sand/40 bg-sand/10' 
                   : 'border-hairline-soft hover:border-sand/40'
               }`}
             >
-              <div className="flex items-start justify-between">
+              <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-2">
                     <h4 className="font-semibold text-ink">{meeting.title}</h4>
@@ -177,12 +177,12 @@ export const UpcomingMeetings: React.FC<UpcomingMeetingsProps> = ({
                   </div>
                 </div>
 
-                <div className="flex flex-col space-y-2 ml-4 min-w-[100px]">
+                <div className="flex flex-row sm:flex-col flex-wrap gap-2 sm:min-w-[100px]">
                   <button
                     onClick={() => onJoinMeeting(meeting.id)}
                     className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                       startingSoon
-                        ? 'bg-orange-600 text-white hover:bg-orange-700 shadow-lg'
+                        ? 'bg-sand text-on-pearl hover:bg-sand-lo shadow-lg'
                         : 'btn-primary'
                     }`}
                   >

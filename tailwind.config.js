@@ -45,10 +45,15 @@ export default {
         display: ['Fraunces', 'Georgia', 'serif'],
         ui: ['"Instrument Sans"', 'system-ui', 'sans-serif'],
       },
+      /*
+       * Only `pill` is added. sm, md and lg are Tailwind's own scale, and
+       * redefining them silently changed every existing `rounded-lg` in the
+       * app — 192 of them — from 8px to 22px, which is why calendar cells
+       * rendered as tall capsules and everything looked blobby. New surfaces
+       * take their radius from the tokens in CSS; the Tailwind scale is left
+       * exactly as the rest of the app already expects it.
+       */
       borderRadius: {
-        sm: '10px',
-        md: '16px',
-        lg: '22px',
         pill: '999px',
       },
     },

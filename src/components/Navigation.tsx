@@ -122,12 +122,6 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                 style={{
                   ...getButtonFocusStyle()
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = currentTheme.buttonColor;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = '#d1d5db';
-                }}
                 onFocus={(e) => {
                   e.currentTarget.style.borderColor = currentTheme.buttonColor;
                   e.currentTarget.style.boxShadow = `0 0 0 3px ${currentTheme.buttonColor}20`;
@@ -164,12 +158,6 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                         setShowProfileDropdown(false);
                       }}
                       className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all text-left hover:bg-surface-high"
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = currentTheme.buttonColor;
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = 'transparent';
-                      }}
                       onFocus={(e) => {
                         e.currentTarget.style.borderColor = currentTheme.buttonColor;
                         e.currentTarget.style.boxShadow = `0 0 0 2px ${currentTheme.buttonColor}20`;
@@ -189,12 +177,6 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                         setShowProfileDropdown(false);
                       }}
                       className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all text-left hover:bg-surface-high"
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = currentTheme.buttonColor;
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = 'transparent';
-                      }}
                       onFocus={(e) => {
                         e.currentTarget.style.borderColor = currentTheme.buttonColor;
                         e.currentTarget.style.boxShadow = `0 0 0 2px ${currentTheme.buttonColor}20`;
@@ -260,21 +242,11 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                     <button
                     key={tab.id}
                     onClick={() => onTabChange(tab.id)}
-                    className={`flex items-center space-x-2 px-3 md:px-4 py-2 rounded-xl transition-all border border-transparent min-h-[44px] ${
+                    className={`flex items-center space-x-2 px-3 md:px-4 py-2 rounded-xl transition-all border border-transparent hover:border-sand/40 min-h-[44px] ${
                       isActive
                         ? 'bg-surface-high text-ink'
                         : 'text-ink/75 hover:text-ink hover:bg-surface-high'
                     }`}
-                    onMouseEnter={(e) => {
-                      if (!isActive) {
-                        e.currentTarget.style.borderColor = currentTheme.buttonColor;
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isActive) {
-                        e.currentTarget.style.borderColor = 'transparent';
-                      }
-                    }}
                     onFocus={(e) => {
                       e.currentTarget.style.borderColor = currentTheme.buttonColor;
                       e.currentTarget.style.boxShadow = `0 0 0 3px ${currentTheme.buttonColor}20`;
@@ -321,21 +293,11 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                 <button
                   key={tab.id}
                   onClick={() => onTabChange(tab.id)}
-                  className={`${inOverflow ? 'hidden xs:flex' : 'flex'} flex-1 min-w-0 flex-col items-center justify-center gap-1 px-0.5 py-2 rounded-lg transition-all border border-transparent min-h-[52px] ${
+                  className={`${inOverflow ? 'hidden xs:flex' : 'flex'} flex-1 min-w-0 flex-col items-center justify-center gap-1 px-0.5 py-2 rounded-lg transition-all border border-transparent hover:border-sand/40 min-h-[52px] ${
                     isActive
                       ? 'text-ink'
                       : 'text-ink/75'
                   }`}
-                  onMouseEnter={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.borderColor = currentTheme.buttonColor;
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.borderColor = 'transparent';
-                    }
-                  }}
                   onFocus={(e) => {
                     e.currentTarget.style.borderColor = currentTheme.buttonColor;
                     e.currentTarget.style.boxShadow = `0 0 0 2px ${currentTheme.buttonColor}20`;
@@ -366,7 +328,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
                 aria-haspopup="menu"
                 aria-expanded={showMoreMenu}
                 aria-label={`More tabs: ${overflowTabs.map(tab => tab.label).join(', ')}`}
-                className={`flex w-full min-w-0 flex-col items-center justify-center gap-1 px-0.5 py-2 rounded-lg transition-all border border-transparent min-h-[52px] ${
+                className={`flex w-full min-w-0 flex-col items-center justify-center gap-1 px-0.5 py-2 rounded-lg transition-all border border-transparent hover:border-sand/40 min-h-[52px] ${
                   isOverflowTabActive || showMoreMenu
                     ? 'text-ink'
                     : 'text-ink/75'

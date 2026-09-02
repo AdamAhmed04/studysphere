@@ -69,7 +69,7 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Settings Navigation */}
       <div className="theme-secondary-bg rounded-2xl shadow-xl p-6">
-        <div className="flex space-x-1 bg-surface-high rounded-lg p-1">
+        <div className="flex flex-wrap gap-1 bg-surface-high rounded-lg p-1">
           <button
             onClick={() => setActiveSection('profile')}
             className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${

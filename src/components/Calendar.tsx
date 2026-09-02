@@ -301,18 +301,18 @@ export const Calendar: React.FC<CalendarProps> = ({
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Calendar Header */}
       <div className="bg-surface rounded-2xl shadow-xl p-6">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <div className="flex items-center space-x-3">
             <CalendarIcon className="text-sand" size={28} />
             <h2 className="text-2xl font-bold text-ink">Calendar</h2>
           </div>
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => {
                 setSelectedDate(new Date());
                 setShowEventModal(true);
               }}
-              className="flex items-center space-x-2 px-4 py-2 bg-sand text-white rounded-lg hover:bg-sand-lo transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-sand text-on-pearl rounded-lg hover:bg-sand-lo transition-colors"
             >
               <Plus size={16} />
               <span>Add Event</span>
@@ -322,7 +322,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                 setSelectedDate(new Date());
                 setShowReminderModal(true);
               }}
-              className="flex items-center space-x-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 border border-hairline text-ink rounded-lg hover:bg-surface-high transition-colors"
             >
               <Bell size={16} />
               <span>Add Reminder</span>
