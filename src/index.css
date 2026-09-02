@@ -52,22 +52,40 @@ body {
  * being tuned to the 13 Pro Max in particular.
  */
 @supports (padding: max(0px)) {
+  /*
+   * No top padding on body.
+   *
+   * Padding here pushed the whole app down and left a dark strip above the
+   * nav — the app looking cut off below the island, which is the opposite of
+   * covering the screen. The nav clears the inset itself instead, so its own
+   * background runs to the very top edge and only its contents sit below the
+   * camera.
+   */
   body {
-    padding-top: max(0px, env(safe-area-inset-top));
     padding-left: max(0px, env(safe-area-inset-left));
     padding-right: max(0px, env(safe-area-inset-right));
     padding-bottom: max(0px, env(safe-area-inset-bottom));
   }
 
+  /* Top chrome: background to the edge, content below the island. */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
   /*
    * A fixed overlay is positioned against the viewport, not against body, so
    * it does not inherit the padding above and has to clear the insets itself.
+   *
+   * The horizontal values are a real gap rather than max(0px, ...): this rule
+   * is declared after @tailwind utilities, so it outranks any px-* class on
+   * the same element. Setting it to zero was what pushed the title, wheels
+   * and buttons hard against the edges on both a phone and a laptop.
    */
   .safe-inset {
-    padding-top: max(1rem, env(safe-area-inset-top));
-    padding-bottom: max(1rem, env(safe-area-inset-bottom));
-    padding-left: max(0px, env(safe-area-inset-left));
-    padding-right: max(0px, env(safe-area-inset-right));
+    padding-top: max(1.75rem, env(safe-area-inset-top));
+    padding-bottom: max(1.75rem, env(safe-area-inset-bottom));
+    padding-left: max(1.75rem, env(safe-area-inset-left));
+    padding-right: max(1.75rem, env(safe-area-inset-right));
   }
 }
 

@@ -321,7 +321,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
               * of the timer, which is neither one thing nor the other.
               */}
             <div
-              className="relative flex flex-col w-full sm:h-auto sm:max-w-sm sm:rounded-lg overflow-hidden sm:border sm:border-hairline shadow-2xl"
+              className="relative flex flex-col w-full sm:h-auto sm:max-w-md sm:rounded-lg overflow-hidden sm:border sm:border-hairline shadow-2xl"
               onClick={(event) => event.stopPropagation()}
               role="dialog"
               aria-modal="true"
@@ -329,12 +329,12 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
             >
               <AuroraGround />
 
-              <div className="safe-inset px-6 flex-1 flex flex-col justify-center sm:block sm:py-6">
-                <h4 id="duration-picker-title" className="text-lg font-display font-light text-ink mb-6">
+              <div className="safe-inset flex-1 flex flex-col justify-center sm:block">
+                <h4 id="duration-picker-title" className="text-xl font-display font-light text-ink mb-8">
                   Session length
                 </h4>
 
-                <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center gap-3 mb-6">
                   <WheelPicker
                     label="Hours"
                     unit="h"
@@ -351,7 +351,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
                   />
                 </div>
 
-                <div className="flex flex-wrap justify-center gap-2 mb-7">
+                <div className="flex flex-wrap justify-center gap-2 mb-10">
                   {[15, 25, 45, 60, 90].map(minutes => (
                     <button
                       key={minutes}
@@ -375,9 +375,9 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
                   </button>
                 </div>
 
-                <div className="mb-7">
-                  <p className="text-xs uppercase tracking-[0.15em] text-muted mb-2">Breaks</p>
-                  <div className="flex items-center gap-2">
+                <div className="mb-10">
+                  <p className="text-xs uppercase tracking-[0.15em] text-muted mb-3">Breaks</p>
+                  <div className="flex items-center gap-3">
                     <WheelPicker
                       label="Number of breaks"
                       values={BREAK_COUNT_VALUES}

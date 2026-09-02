@@ -110,7 +110,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onTabChange, 
     boxShadow: `0 0 0 3px ${currentTheme.buttonColor}20`
   });
   return (
-    <div className="theme-secondary-bg shadow-lg">
+    <div className="theme-secondary-bg shadow-lg safe-area-top">
       <div className="max-w-7xl mx-auto px-2 md:px-4">
         <div className="flex items-center h-14 md:h-16">
           {/* Profile Section - Top Left Corner */}
