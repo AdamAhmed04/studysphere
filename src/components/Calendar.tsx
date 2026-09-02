@@ -302,7 +302,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Calendar Header */}
-      <div className="modal-panel rounded-2xl shadow-xl p-6">
+      <div className="bg-surface rounded-2xl shadow-xl p-6">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <div className="flex items-center space-x-3">
             <CalendarIcon className="text-sand" size={28} />
@@ -449,7 +449,7 @@ export const Calendar: React.FC<CalendarProps> = ({
       )}
 
       {/* Upcoming Events */}
-      <div className="modal-panel rounded-2xl shadow-xl p-6">
+      <div className="bg-surface rounded-2xl shadow-xl p-6">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <h3 className="text-xl font-bold text-ink">Upcoming Events</h3>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
