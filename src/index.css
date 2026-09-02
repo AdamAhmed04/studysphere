@@ -38,12 +38,36 @@ body {
   touch-action: manipulation;
 }
 
-/* Safe area support for devices with notches */
+/*
+ * Safe areas.
+ *
+ * The top inset was missing, which is why the nav sat underneath the status
+ * bar and the notch on an iPhone. Padding goes on body rather than on a
+ * wrapper so the background still paints edge to edge — a background paints
+ * across its own padding — and AuroraGround is fixed to the viewport, so the
+ * hue reaches under the Dynamic Island while the content clears it.
+ *
+ * env() returns 0 where there is no inset, so this costs nothing on a laptop
+ * and adapts on its own to whatever shape a future phone has, rather than
+ * being tuned to the 13 Pro Max in particular.
+ */
 @supports (padding: max(0px)) {
   body {
+    padding-top: max(0px, env(safe-area-inset-top));
     padding-left: max(0px, env(safe-area-inset-left));
     padding-right: max(0px, env(safe-area-inset-right));
     padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+
+  /*
+   * A fixed overlay is positioned against the viewport, not against body, so
+   * it does not inherit the padding above and has to clear the insets itself.
+   */
+  .safe-inset {
+    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
   }
 }
 

@@ -311,16 +311,17 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
           */}
         {showDurationPicker && (
           <div
-            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
+            className="fixed inset-0 z-50 flex items-stretch sm:items-center justify-center"
             role="presentation"
             onClick={() => setShowDurationPicker(false)}
           >
-            {/* Solid, with the hue behind it: a translucent panel over a
-                drifting ground made the numbers hard to read. */}
-            <div className="absolute inset-0 bg-void/70" />
-
+            {/*
+              * Full screen on a phone, a panel on a laptop. A sheet covering
+              * part of the screen left the picker floating over a dimmed copy
+              * of the timer, which is neither one thing nor the other.
+              */}
             <div
-              className="relative w-full sm:max-w-sm rounded-t-lg sm:rounded-lg overflow-hidden border border-hairline shadow-2xl"
+              className="relative flex flex-col w-full sm:h-auto sm:max-w-sm sm:rounded-lg overflow-hidden sm:border sm:border-hairline shadow-2xl"
               onClick={(event) => event.stopPropagation()}
               role="dialog"
               aria-modal="true"
@@ -328,7 +329,7 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
             >
               <AuroraGround />
 
-              <div className="p-6">
+              <div className="safe-inset px-6 flex-1 flex flex-col justify-center sm:block sm:py-6">
                 <h4 id="duration-picker-title" className="text-lg font-display font-light text-ink mb-6">
                   Session length
                 </h4>
@@ -405,11 +406,17 @@ export const Timer: React.FC<TimerProps> = ({ onSessionComplete }) => {
                   <button
                     onClick={handleDurationChange}
                     disabled={customMinutes < 1}
-                    className="flex-1 px-4 py-3 rounded-pill bg-pearl text-on-pearl text-sm font-medium min-h-[48px] disabled:opacity-40"
+                    className={`flex-1 px-4 py-3 rounded-pill text-sm font-medium min-h-[48px] ${
+                      customMinutes < 1
+                        ? 'bg-surface-high text-muted'
+                        : 'bg-pearl text-on-pearl'
+                    }`}
                   >
-                    {customMinutes < 1
-                      ? 'Set a length'
-                      : `Start ${formatDuration(customMinutes)}`}
+                    <span key={customMinutes < 1 ? 'empty' : 'set'}>
+                      {customMinutes < 1
+                        ? 'Set a length'
+                        : `Start ${formatDuration(customMinutes)}`}
+                    </span>
                   </button>
                 </div>
               </div>
