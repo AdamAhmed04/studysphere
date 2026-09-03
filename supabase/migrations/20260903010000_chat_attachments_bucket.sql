@@ -16,7 +16,8 @@ values (
   'chat-attachments',
   'chat-attachments',
   false,
-  10485760, -- 10MB, enforced by storage itself rather than only by the client
+  52428800, -- 50MB, the Free plan's per-file ceiling; enforced by storage
+            -- itself rather than only by the client
   array[
     'image/jpeg','image/png','image/gif','image/webp','image/heic','image/heif',
     'application/pdf',

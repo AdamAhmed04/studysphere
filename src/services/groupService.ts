@@ -16,8 +16,15 @@ const MESSAGE_TYPES = ['text', 'note', 'resource'] as const;
  */
 const ATTACHMENT_BUCKET = 'chat-attachments';
 
-/** Matches the bucket's own limit, so the client fails fast and says why. */
-export const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
+/*
+ * Matches the bucket's own limit, so the client refuses immediately and says
+ * why, rather than uploading for a minute and being rejected at the end.
+ *
+ * 50MB is the per-file ceiling the Free plan allows. The tighter constraint
+ * is the 1GB of storage the plan includes: at this size, twenty files fill
+ * it, and the app has no way to reclaim space yet.
+ */
+export const MAX_ATTACHMENT_BYTES = 50 * 1024 * 1024;
 
 export interface GroupMessage {
   id: string;
@@ -304,7 +311,7 @@ class GroupService {
     requireUuid(groupId, 'group id');
 
     if (file.size > MAX_ATTACHMENT_BYTES) {
-      throw new Error('That file is larger than 10MB.');
+      throw new Error('That file is larger than 50MB.');
     }
 
     // Keep something readable for the download name, but never trust it as a

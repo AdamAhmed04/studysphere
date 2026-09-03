@@ -102,8 +102,8 @@ export const GroupChat: React.FC<GroupChatProps> = ({
     if (tooBig.length) {
       toast.error(
         tooBig.length === 1
-          ? `${tooBig[0].name} is larger than 10MB.`
-          : `${tooBig.length} files are larger than 10MB.`
+          ? `${tooBig[0].name} is larger than 50MB.`
+          : `${tooBig.length} files are larger than 50MB.`
       );
     }
 
