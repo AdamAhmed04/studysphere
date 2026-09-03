@@ -990,6 +990,14 @@ function App() {
     }
   };
 
+  /*
+   * An open conversation is a full-screen layer at z-40, and the floating
+   * controls below sit at z-50 — so they hovered over the chat's own header,
+   * putting two surfaces' buttons in the same corner. A conversation has its
+   * own header and its own back button; these come back on the way out.
+   */
+  const inConversation = activeTab === 'chat' && !!selectedGroupId;
+
   return (
     <Suspense fallback={<AppLoading />}>
     {/*
@@ -1029,6 +1037,7 @@ function App() {
         * padding and has to clear the status bar itself — without this the
         * bell sat on top of the battery icon.
         */}
+      {!inConversation && (
       <div className="fixed top-[max(0.5rem,env(safe-area-inset-top))] right-2 md:right-4 z-50 flex flex-col md:flex-row items-end md:items-center gap-2 md:gap-4">
         {pendingRequests.length > 0 && (
           <button
@@ -1049,6 +1058,7 @@ function App() {
           />
         </div>
       </div>
+      )}
       
       <main className="container mx-auto px-3 md:px-4 py-4 md:py-8 pb-20 md:pb-8">
         {renderContent()}
