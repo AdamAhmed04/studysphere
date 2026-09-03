@@ -20,8 +20,15 @@ const DAILY_API = 'https://api.daily.co/v1';
 /** Long enough for a study session, short enough that a leaked token dies. */
 const TOKEN_TTL_SECONDS = 4 * 60 * 60;
 
-/** Rooms are disposable: Daily deletes them once nobody has used them. */
-const ROOM_TTL_SECONDS = 12 * 60 * 60;
+/*
+ * Rooms expire, and everyone still in one is ejected when they do.
+ *
+ * Matched to the token lifetime rather than left longer, because Daily bills
+ * per participant-minute with no hard cap: a call somebody forgets to leave
+ * bills until something ends it. Four hours bounds that to a few pence per
+ * forgotten room instead of a day of it.
+ */
+const ROOM_TTL_SECONDS = TOKEN_TTL_SECONDS;
 
 /*
  * supabase.functions.invoke() sends apikey and x-client-info alongside the
