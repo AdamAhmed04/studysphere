@@ -134,6 +134,17 @@ logged. They are cheap to reintroduce by accident.
 - **Realtime publishes nothing by default on a new project.** Tables must be
   added to `supabase_realtime` explicitly; `friends` also needs
   `REPLICA IDENTITY FULL` for filtered DELETE events.
+- **`vitest` stays on 3.x while `vite` is on 5.x.** vitest 4 requires
+  `vite ^6 || ^7 || ^8`, so it pulls a second nested vite that needs
+  `esbuild ^0.28`. A routine `npm update` reintroduces this, and it does not
+  fail here: the local `node_modules` keeps resolving against the hoisted
+  vite 5, tests pass, and `@vitest/mocker` is silently never installed. CI
+  computes the tree honestly and stops at `npm ci` with
+  `Missing: esbuild@0.28.2 from lock file`, which names a package nothing in
+  the repo asks for. `@vitest/coverage-v8` has to move with vitest. If the
+  test runner is ever upgraded, vite goes with it — and that is a major bump
+  on the path that builds the app, so it is a deliberate job rather than a
+  version bump.
 
 ### Outstanding, in priority order
 
