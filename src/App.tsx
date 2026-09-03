@@ -55,6 +55,8 @@ import { orUndefined, orEmpty, orFalse } from './utils/rows';
 import type { StudySession, ChatMessage, Friend, User, StudyGroup, TodoItem } from './types';
 import type { UserProfile } from './lib/supabase';
 import { lazyWithReload } from './utils/lazyWithReload';
+import { VideoCall } from './components/VideoCall';
+import { groupCallRoom, meetingCallRoom, isExternalLink } from './utils/videoCall';
 
 // Date reviver function to convert ISO strings back to Date objects
 
@@ -195,6 +197,8 @@ function App() {
   );
 
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+  /** The call currently on screen, if any. */
+  const [activeCall, setActiveCall] = useState<{ room: string; title: string } | null>(null);
   const [groupMessagesCache, setGroupMessagesCache] = useState<{ [key: string]: ChatMessage[] }>({});
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [showScheduleMeeting, setShowScheduleMeeting] = useState(false);
@@ -375,8 +379,32 @@ function App() {
     setShowScheduleMeeting(true);
   };
 
-  const handleStartVideoCall = () => {
-    toast.info("Video calling isn't built yet.");
+  const handleStartVideoCall = async () => {
+    if (!selectedGroupId) return;
+
+    const group = studyGroups.find(g => g.id === selectedGroupId);
+    setActiveCall({ room: groupCallRoom(selectedGroupId), title: group?.name ?? 'Video call' });
+
+    /*
+     * Say so in the chat, or nobody else knows a call is happening.
+     *
+     * The room is derived from the group id, so everyone who presses the
+     * camera lands in the same place — this message exists to tell them there
+     * is a reason to press it. It goes through the ordinary chat path, so it
+     * arrives live for anyone with the conversation open.
+     *
+     * The call opens either way: failing to announce it is not a reason to
+     * refuse to start it.
+     */
+    try {
+      await groupService.sendMessage(
+        selectedGroupId,
+        '📹 Started a video call — tap the camera icon above to join',
+        'text',
+      );
+    } catch (error) {
+      console.error('Could not announce the call in chat:', error);
+    }
   };
 
   const handleCreateGroup = async (groupData: {
@@ -551,7 +579,18 @@ function App() {
         await updateMeeting(meetingId, { status: 'active' });
 
         if (meeting.meetingType === 'video') {
-          toast.info(`Video calling isn't built yet — "${meeting.title}" is marked as active.`);
+          /*
+           * A meeting can carry a link to somewhere else — Zoom, Teams, a room
+           * someone pasted in. Those open in a new tab, because they are not
+           * ours to embed and most refuse to be framed. Anything else gets our
+           * own room, named from the meeting id so every participant arrives
+           * in the same one.
+           */
+          if (isExternalLink(meeting.meetingLink)) {
+            window.open(meeting.meetingLink, '_blank', 'noopener,noreferrer');
+          } else {
+            setActiveCall({ room: meetingCallRoom(meeting.id), title: meeting.title });
+          }
         } else if (meeting.meetingType === 'phone') {
           toast.info(`Phone calls aren't built yet — "${meeting.title}" is marked as active.`);
         } else {
@@ -1086,6 +1125,15 @@ function App() {
         {renderContent()}
       </main>
       
+      {activeCall && (
+        <VideoCall
+          room={activeCall.room}
+          title={activeCall.title}
+          displayName={legacyUser.name || legacyUser.username}
+          onClose={() => setActiveCall(null)}
+        />
+      )}
+
       <CreateGroupModal
         isOpen={showCreateGroup}
         onClose={() => setShowCreateGroup(false)}
