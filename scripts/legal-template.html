@@ -139,7 +139,11 @@
     text-transform: uppercase;
     color: var(--muted);
     margin: 0 0 0.9rem;
+    list-style: none;
   }
+
+  /* On a wide screen this is a heading, not a control. */
+  .toc-head::-webkit-details-marker { display: none; }
 
   .toc ol {
     list-style: none;
@@ -237,13 +241,54 @@
   footer.foot a { color: var(--sand); }
 
   @media (max-width: 800px) {
+    /*
+     * The contents become a disclosure rather than a permanent box.
+     *
+     * Left open with an inner scroll it stood 243px tall on a 375px-wide
+     * phone — a third of the screen, showing 5 of 16 sections, and a region
+     * that swallows a finger swipe before the page moves. Collapsed, the
+     * document starts straight away; opened, the whole list is there and the
+     * page scrolls it.
+     */
     /* minmax(0, …) rather than 1fr: a bare 1fr takes its minimum from the
        widest content, and the tables set a min-width, which would stretch
        the column — and the contents rail with it — past the screen. */
     .doc { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
-    .toc { position: static; border: 1px solid var(--hairline); border-radius: 12px; padding: 1rem 1.15rem; }
-    .toc ol { max-height: 11rem; overflow-y: auto; }
     .prose { max-width: none; }
+
+    .toc {
+      position: static;
+      border: 1px solid var(--hairline);
+      border-radius: 12px;
+      padding: 0.9rem 1.15rem;
+    }
+
+    .toc ol { margin-top: 0.9rem; }
+    .toc[open] .toc-head { color: var(--pearl); }
+
+    /* This is the control that opens the list, so it needs a fingertip of
+       its own — as a heading it was 19px tall. */
+    .toc-head {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .home { min-height: 44px; }
+    .swap a { padding-top: 0.68rem; padding-bottom: 0.68rem; }
+    footer.foot a { display: inline-flex; align-items: center; min-height: 44px; }
+
+    /* These were 28px tall, well under a fingertip. Set the floor rather than
+       padding a guess: a wrapped two-line entry needs to grow past it. */
+    .toc a {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      padding-top: 0.45rem;
+      padding-bottom: 0.45rem;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -265,12 +310,12 @@
   </header>
 
   <div class="doc">
-    <nav class="toc" aria-label="Contents">
-      <p class="toc-head">Contents</p>
+    <details class="toc" id="toc" open>
+      <summary class="toc-head">Contents</summary>
       <ol>
         __TOC__
       </ol>
-    </nav>
+    </details>
 
     <main class="prose">
       __BODY__
@@ -298,6 +343,18 @@
   }, { rootMargin: '-15% 0px -70% 0px' });
 
   document.querySelectorAll('.prose h2[id]').forEach(h => spy.observe(h));
+
+  /*
+   * Collapse the contents on a narrow screen, where it otherwise pushes the
+   * document a third of a screen down. Open in the markup rather than closed,
+   * so without JS nothing is hidden from anyone.
+   */
+  const toc = document.getElementById('toc');
+  const wide = matchMedia('(min-width: 801px)');
+  const fit = () => { toc.open = wide.matches; };
+
+  fit();
+  wide.addEventListener('change', fit);
 </script>
 </body>
 </html>
