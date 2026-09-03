@@ -23,9 +23,17 @@ const TOKEN_TTL_SECONDS = 4 * 60 * 60;
 /** Rooms are disposable: Daily deletes them once nobody has used them. */
 const ROOM_TTL_SECONDS = 12 * 60 * 60;
 
+/*
+ * supabase.functions.invoke() sends apikey and x-client-info alongside the
+ * authorization header. Any header the preflight does not name is refused by
+ * the browser, and it refuses the POST rather than the header — so the
+ * function boots for the OPTIONS, logs nothing, and the caller sees a generic
+ * failure with no trace on the server explaining it.
+ */
 const CORS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, content-type',
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type, x-supabase-api-version',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
