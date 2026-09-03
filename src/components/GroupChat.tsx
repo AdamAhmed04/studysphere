@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, Paperclip, Video, Calendar, Users, ArrowLeft } from 'lucide-react';
 import { ChatMessage } from '../types';
+import { AuroraGround } from './AuroraGround';
 import { Avatar } from './Avatar';
 
 interface GroupChatProps {
@@ -86,43 +87,54 @@ export const GroupChat: React.FC<GroupChatProps> = ({
   };
 
   return (
-    <div className="bg-surface rounded-2xl shadow-xl overflow-hidden">
-      <div className="bg-surface-high p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+    <div className="fixed inset-0 z-40 flex flex-col">
+      <AuroraGround />
+
+      {/* safe-area-top on the bar itself, so its background runs under the
+          camera while the controls sit below it. */}
+      <header className="shrink-0 safe-area-top bg-surface-high border-b border-hairline-soft">
+        <div className="flex items-center justify-between gap-3 p-3 md:p-4">
+          <div className="flex items-center gap-2 md:gap-3 min-w-0">
             <button
               onClick={onBackToList}
-              className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-all"
+              className="shrink-0 p-2 -ml-1 rounded-lg text-ink hover:bg-surface-high transition-colors"
+              aria-label="Back to conversations"
             >
               <ArrowLeft size={20} />
             </button>
-            <Users className="text-white" size={24} />
-            <div>
-              <h3 className="text-xl font-bold text-white">{groupName}</h3>
-              <p className="text-blue-100 text-sm">
+            <Users className="shrink-0 text-muted" size={22} />
+            {/* min-w-0 and truncate, or a long group name pushes the call and
+                calendar buttons off the right edge on a phone. */}
+            <div className="min-w-0">
+              <h3 className="text-lg md:text-xl font-semibold text-ink truncate">{groupName}</h3>
+              <p className="text-xs md:text-sm text-muted truncate">
                 {groupSubject ? `${groupSubject} • ${memberCount} members` : `${memberCount} members • Share notes and resources`}
               </p>
             </div>
           </div>
-          
-          <div className="flex space-x-2">
+
+          <div className="flex shrink-0 gap-1 md:gap-2">
             <button
               onClick={onStartVideoCall}
-              className="p-2 bg-surface bg-opacity-20 text-white rounded-lg hover:bg-opacity-30 transition-all"
+              className="p-2 rounded-lg text-ink/75 hover:bg-surface-high transition-colors"
+              aria-label="Start a video call"
             >
               <Video size={20} />
             </button>
             <button
               onClick={onScheduleMeeting}
-              className="p-2 bg-surface bg-opacity-20 text-white rounded-lg hover:bg-opacity-30 transition-all"
+              className="p-2 rounded-lg text-ink/75 hover:bg-surface-high transition-colors"
+              aria-label="Schedule a meeting"
             >
               <Calendar size={20} />
             </button>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div ref={scrollRef} onScroll={handleScroll} className="h-96 overflow-y-auto p-4 space-y-4">
+      {/* min-h-0 is what lets this shrink inside the flex column; without it
+          the messages push the composer off the bottom of the screen. */}
+      <div ref={scrollRef} onScroll={handleScroll} className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4">
         {messages.map(message => (
           <div key={message.id} className={`p-3 rounded-lg ${getMessageStyle(message.type)}`}>
             <div className="flex items-start space-x-3">
@@ -159,7 +171,10 @@ export const GroupChat: React.FC<GroupChatProps> = ({
         )}
       </div>
 
-      <form onSubmit={handleSend} className="p-4 border-t border-hairline-soft">
+      <form
+        onSubmit={handleSend}
+        className="shrink-0 border-t border-hairline-soft bg-surface p-3 md:p-4 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+      >
         <div className="flex items-center space-x-3 mb-3">
           <select 
             value={messageType} 
@@ -179,18 +194,20 @@ export const GroupChat: React.FC<GroupChatProps> = ({
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder={`Type a ${messageType}...`}
             maxLength={2000}
-            className="flex-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent theme-textbox"
+            className="flex-1 min-w-0 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent theme-textbox"
           />
           <button
             type="button"
-            className="p-3 text-ink/75 hover:bg-surface-high rounded-lg transition-colors"
+            className="shrink-0 p-3 text-ink/75 hover:bg-surface-high rounded-lg transition-colors"
+            aria-label="Attach a file"
           >
             <Paperclip size={20} />
           </button>
           <button
             type="submit"
             disabled={!newMessage.trim()}
-            className="px-6 py-3 rounded-lg disabled:cursor-not-allowed transition-colors btn-primary"
+            className="shrink-0 px-5 md:px-6 py-3 rounded-lg disabled:cursor-not-allowed transition-colors btn-primary"
+            aria-label="Send"
           >
             <Send size={20} />
           </button>

@@ -889,7 +889,7 @@ function App() {
       
       case 'chat':
         return (
-          <div className="max-w-4xl mx-auto">
+          <div className={selectedGroupId ? '' : 'max-w-4xl mx-auto'}>
             {selectedGroupId ? (
               <GroupChat
                 groupName={studyGroups.find(g => g.id === selectedGroupId)?.name}
