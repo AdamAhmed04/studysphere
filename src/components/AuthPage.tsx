@@ -2,8 +2,19 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, Clock, BookOpen, Users, Trophy, Globe, Camera, Upload, X } from 'lucide-react';
 import { useAuthContext } from '../contexts/AuthContext';
 import { errorMessage } from '../utils/errors';
+import { ageInYears, latestDobForAge } from '../utils/dates';
 
 // No props: everything comes from the auth context.
+/*
+ * You must be 16 to sign up. Sixteen rather than 13 because it is the highest
+ * digital-consent age any EU member state sets, so it needs no parental
+ * consent flow anywhere we operate — and no such flow exists.
+ *
+ * Declared here so the check, the date picker's limit and the wording on the
+ * form all read from one number.
+ */
+const MINIMUM_AGE = 16;
+
 export const AuthPage: React.FC = () => {
   const { signIn, signUp, resetPassword, loading, error } = useAuthContext();
   const [isSignUp, setIsSignUp] = useState(false);
@@ -80,6 +91,27 @@ export const AuthPage: React.FC = () => {
 
     if (isSignUp && formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
+    }
+
+    /*
+     * The date of birth is required, and is only collected to run this check.
+     * It was optional and unvalidated before, which left the minimum age in
+     * the terms as a claim the form did nothing to support.
+     *
+     * Step 2 only, because that is where the field is. Validating it on step 1
+     * blocks the Next button on an error with nothing on screen to explain it,
+     * which makes signing up impossible and looks like the button is dead.
+     */
+    if (isSignUp && signUpStep === 2) {
+      const age = ageInYears(formData.dateOfBirth);
+
+      if (age === undefined) {
+        newErrors.dateOfBirth = 'Please enter your date of birth';
+      } else if (age < MINIMUM_AGE) {
+        newErrors.dateOfBirth = `You need to be ${MINIMUM_AGE} or over to use StudySphere`;
+      } else if (age > 120) {
+        newErrors.dateOfBirth = 'Please check this date';
+      }
     }
 
     setErrors(newErrors);
@@ -495,12 +527,20 @@ export const AuthPage: React.FC = () => {
                       <label htmlFor="authpage-date-of-birth" className="block text-sm font-medium text-ink/75 mb-2">
                         Date of Birth
                       </label>
+                      {/* max stops the picker offering a date the form is
+                          only going to reject. */}
                       <input id="authpage-date-of-birth"
                         type="date"
                         value={formData.dateOfBirth}
+                        max={latestDobForAge(MINIMUM_AGE)}
                         onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+                        aria-invalid={!!errors.dateOfBirth}
+                        aria-describedby={errors.dateOfBirth ? 'authpage-dob-error' : undefined}
                         className="w-full px-4 py-3 border border-hairline rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent"
                       />
+                      {errors.dateOfBirth && (
+                        <p id="authpage-dob-error" className="mt-1 text-sm text-red-300">{errors.dateOfBirth}</p>
+                      )}
                     </div>
 
                     <div>
@@ -772,6 +812,19 @@ export const AuthPage: React.FC = () => {
                   </div>
                   {errors.confirmPassword && <p className="mt-1 text-sm text-red-300">{errors.confirmPassword}</p>}
                 </div>
+              )}
+
+              {isSignUp && (
+                <p className="text-sm text-ink/75">
+                  You must be {MINIMUM_AGE} or over. By creating an account you agree to our{' '}
+                  <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-sand underline underline-offset-2">
+                    Terms of Service
+                  </a>{' '}
+                  and{' '}
+                  <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-sand underline underline-offset-2">
+                    Privacy Policy
+                  </a>.
+                </p>
               )}
 
               {/* Navigation Buttons */}

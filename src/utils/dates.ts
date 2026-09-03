@@ -29,3 +29,32 @@ export const toLocalDateString = (date?: Date): string => {
 
 /** Today as "YYYY-MM-DD" locally — for the `min` attribute on date inputs. */
 export const todayLocalDateString = (): string => toLocalDateString(new Date());
+
+/**
+ * Whole years between a "YYYY-MM-DD" birth date and today, in local time.
+ *
+ * Counts a birthday as reached on the day itself, so somebody born exactly
+ * sixteen years ago today is sixteen, not fifteen.
+ *
+ * Returns undefined for a missing or unparseable value rather than a number,
+ * so a caller cannot mistake "no date given" for an age of zero.
+ */
+export const ageInYears = (value?: string | null, on: Date = new Date()): number | undefined => {
+  const born = parseLocalDate(value);
+  if (!born) return undefined;
+
+  let age = on.getFullYear() - born.getFullYear();
+
+  const monthDiff = on.getMonth() - born.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && on.getDate() < born.getDate())) age -= 1;
+
+  return age;
+};
+
+/**
+ * The most recent birth date that still meets a minimum age — for the `max`
+ * attribute on a date input, so the picker will not offer a date that the
+ * form is only going to reject.
+ */
+export const latestDobForAge = (years: number, on: Date = new Date()): string =>
+  toLocalDateString(new Date(on.getFullYear() - years, on.getMonth(), on.getDate()));

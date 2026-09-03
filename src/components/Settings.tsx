@@ -410,7 +410,15 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
         <div className="mt-8 pt-6 border-t border-hairline">
           <h4 className="text-base font-semibold text-ink mb-1">Your data</h4>
           <p className="text-sm text-ink/75 mb-4">
-            Download everything StudySphere holds about you.
+            Download everything StudySphere holds about you. Our{' '}
+            <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-sand underline underline-offset-2">
+              Privacy Policy
+            </a>{' '}
+            explains what that is and who can see it; the{' '}
+            <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-sand underline underline-offset-2">
+              Terms of Service
+            </a>{' '}
+            cover the rest.
           </p>
 
           <button

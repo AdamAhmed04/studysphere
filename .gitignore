@@ -41,3 +41,8 @@ attached_assets
 
 # TypeScript build info
 *.tsbuildinfo
+
+# Generated from docs/*.md by scripts/build-legal-pages.mjs on every
+# dev run and build. Not committed, so no stale copy can drift from the source.
+public/privacy.html
+public/terms.html

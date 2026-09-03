@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>__TITLE__ · StudySphere</title>
+<meta name="description" content="__DESCRIPTION__">
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
+<link rel="preload" href="/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /*
+   * Standalone pages rather than routes in the app.
+   *
+   * Nothing here needs React, a session or a database round trip, and these
+   * are the two pages someone may need to read when the app itself will not
+   * load — or before they have an account at all. Serving them as plain files
+   * keeps them reachable and instant, and keeps them out of the bundle.
+   *
+   * Generated from docs/*.md by scripts/build-legal-pages.mjs. Edit the
+   * markdown, not this.
+   */
+
+  @font-face {
+    font-family: 'Fraunces';
+    font-style: normal;
+    font-weight: 200 500;
+    font-display: swap;
+    src: url('/fonts/fraunces-latin.woff2') format('woff2');
+  }
+
+  @font-face {
+    font-family: 'Instrument Sans';
+    font-style: normal;
+    font-weight: 400 600;
+    font-display: swap;
+    src: url('/fonts/instrument-sans-latin.woff2') format('woff2');
+  }
+
+  :root {
+    --void:      #0C0A14;
+    --raised:    #171326;
+    --pearl:     #EAE6F4;
+    --muted:     #A9A2C0;
+    --sand:      #D8A05F;
+    --hairline:  rgba(234, 230, 244, 0.11);
+    --hair-soft: rgba(234, 230, 244, 0.06);
+    --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --sans:  'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--void);
+    color: var(--pearl);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .ground {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(60rem 34rem at 12% -8%, rgba(96, 62, 130, 0.32), transparent 62%),
+      radial-gradient(46rem 28rem at 96% 4%, rgba(216, 160, 95, 0.10), transparent 60%);
+  }
+
+  .wrap {
+    position: relative;
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 0 1.5rem 6rem;
+    padding-left: max(1.5rem, env(safe-area-inset-left));
+    padding-right: max(1.5rem, env(safe-area-inset-right));
+  }
+
+  header.mast {
+    padding: calc(2.5rem + env(safe-area-inset-top)) 0 0;
+    margin-bottom: 2.5rem;
+  }
+
+  .home {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sand);
+    text-decoration: none;
+  }
+
+  .home:hover { color: var(--pearl); }
+  .home:focus-visible { outline: 2px solid var(--sand); outline-offset: 4px; border-radius: 3px; }
+
+  .swap {
+    margin-top: 2rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .swap a {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+    padding: 0.45rem 1.1rem;
+    transition: color 0.18s, background-color 0.18s;
+  }
+
+  .swap a:hover { color: var(--pearl); background: var(--hair-soft); }
+  .swap a:focus-visible { outline: 2px solid var(--sand); outline-offset: 3px; }
+  .swap a.on { color: var(--void); background: var(--sand); border-color: var(--sand); }
+
+  .doc {
+    display: grid;
+    grid-template-columns: 14rem minmax(0, 1fr);
+    gap: 3.5rem;
+    align-items: start;
+  }
+
+  .toc { position: sticky; top: 2rem; }
+
+  .toc-head {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.9rem;
+  }
+
+  .toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.15rem;
+    border-left: 1px solid var(--hairline);
+  }
+
+  .toc a {
+    display: block;
+    padding: 0.28rem 0 0.28rem 0.9rem;
+    margin-left: -1px;
+    border-left: 1px solid transparent;
+    font-size: 0.83rem;
+    line-height: 1.4;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .toc a:hover { color: var(--pearl); }
+  .toc a.here { color: var(--sand); border-left-color: var(--sand); }
+  .toc a:focus-visible { outline: 2px solid var(--sand); outline-offset: 2px; }
+
+  .prose { max-width: 40rem; min-width: 0; }
+
+  .prose h1 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(1.8rem, 4.5vw, 2.4rem);
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    margin: 0 0 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .prose h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.4rem;
+    text-wrap: balance;
+    margin: 3.25rem 0 1rem;
+    scroll-margin-top: 2rem;
+  }
+
+  .prose h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--sand);
+    margin: 2rem 0 0.6rem;
+  }
+
+  .prose p { margin: 0 0 1.15rem; }
+  .prose strong { font-weight: 600; color: #F6F3FC; }
+  .prose a { color: var(--sand); text-underline-offset: 3px; }
+  .prose a:focus-visible { outline: 2px solid var(--sand); outline-offset: 3px; }
+
+  .prose ul, .prose ol { margin: 0 0 1.25rem; padding-left: 1.3rem; display: grid; gap: 0.55rem; }
+  .prose li { padding-left: 0.2rem; }
+  .prose li::marker { color: var(--sand); }
+
+  .scroller { overflow-x: auto; margin: 0 0 1.5rem; }
+
+  table { border-collapse: collapse; width: 100%; min-width: 30rem; font-size: 0.88rem; }
+
+  th, td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.7rem 0.9rem;
+    border-bottom: 1px solid var(--hair-soft);
+  }
+
+  th {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom-color: var(--hairline);
+  }
+
+  td:first-child { color: #DCD7EC; }
+
+  footer.foot {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--hairline);
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  footer.foot a { color: var(--sand); }
+
+  @media (max-width: 800px) {
+    /* minmax(0, …) rather than 1fr: a bare 1fr takes its minimum from the
+       widest content, and the tables set a min-width, which would stretch
+       the column — and the contents rail with it — past the screen. */
+    .doc { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+    .toc { position: static; border: 1px solid var(--hairline); border-radius: 12px; padding: 1rem 1.15rem; }
+    .toc ol { max-height: 11rem; overflow-y: auto; }
+    .prose { max-width: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; scroll-behavior: auto !important; }
+  }
+
+  html { scroll-behavior: smooth; }
+</style>
+</head>
+<body>
+<div class="ground"></div>
+
+<div class="wrap">
+  <header class="mast">
+    <a class="home" href="/">&larr; StudySphere</a>
+    <nav class="swap">
+      __SWAP__
+    </nav>
+  </header>
+
+  <div class="doc">
+    <nav class="toc" aria-label="Contents">
+      <p class="toc-head">Contents</p>
+      <ol>
+        __TOC__
+      </ol>
+    </nav>
+
+    <main class="prose">
+      __BODY__
+    </main>
+  </div>
+
+  <footer class="foot">
+    <a href="/">Back to StudySphere</a>
+  </footer>
+</div>
+
+<script>
+  /* Mark the section being read, so a long document says where you are. */
+  const links = new Map();
+  document.querySelectorAll('.toc a[href^="#"]').forEach(a => links.set(a.getAttribute('href').slice(1), a));
+
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const link = links.get(entry.target.id);
+      if (!link) return;
+      document.querySelectorAll('.toc a.here').forEach(a => a.classList.remove('here'));
+      link.classList.add('here');
+    });
+  }, { rootMargin: '-15% 0px -70% 0px' });
+
+  document.querySelectorAll('.prose h2[id]').forEach(h => spy.observe(h));
+</script>
+</body>
+</html>

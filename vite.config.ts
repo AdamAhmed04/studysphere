@@ -1,9 +1,29 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+
+/*
+ * Serves /privacy and /terms from public/privacy.html and public/terms.html
+ * in dev, which is what `cleanUrls` in vercel.json does in production.
+ *
+ * Without this the two behave differently: Vite's SPA fallback would answer
+ * an extensionless /privacy with index.html, so the link would quietly render
+ * the app instead of the policy — and only in dev, which is the worst place
+ * for a difference to hide.
+ */
+const cleanUrls = (): Plugin => ({
+  name: 'legal-clean-urls',
+  configureServer(server) {
+    server.middlewares.use((req, _res, next) => {
+      const path = req.url?.split('?')[0];
+      if (path === '/privacy' || path === '/terms') req.url = path + '.html';
+      next();
+    });
+  },
+});
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), cleanUrls()],
   optimizeDeps: {
     exclude: ['lucide-react'],
   },

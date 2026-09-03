@@ -10,7 +10,10 @@
     "typecheck": "tsc -b",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "predev": "node scripts/build-legal-pages.mjs",
+    "prebuild": "node scripts/build-legal-pages.mjs",
+    "build:legal": "node scripts/build-legal-pages.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
