@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { User, Lock, Globe, Bell, Save, Paintbrush, LogOut } from 'lucide-react';
+import { User, Lock, Globe, Bell, Save, Paintbrush, LogOut, Download, Trash2 } from 'lucide-react';
 import { useAuthContext } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
+import { accountService } from '../services/accountService';
 import { isNotificationSupported, getNotificationPermission, requestNotificationPermission } from '../utils/safeNotification';
 
 interface UserProfileSummary {
@@ -21,8 +23,13 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
   const [activeSection, setActiveSection] = useState<'profile' | 'privacy' | 'theme'>('profile');
 
   const { signOut } = useAuthContext();
+  const toast = useToast();
   const [confirmingSignOut, setConfirmingSignOut] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const [deleting, setDeleting] = useState(false);
 
   const notificationsSupported = isNotificationSupported();
   const [notificationPermission, setNotificationPermission] =
@@ -41,6 +48,53 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
       console.error('Sign out failed:', error);
       setSigningOut(false);
       setConfirmingSignOut(false);
+    }
+  };
+
+  /*
+   * The file is built in the browser and handed straight to the download,
+   * rather than uploaded somewhere and linked to — a copy of everything about
+   * a person is the last thing that should acquire a URL.
+   */
+  const handleExport = async () => {
+    setExporting(true);
+
+    try {
+      const payload = await accountService.exportMyData();
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `studysphere-my-data-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      // Revoking straight away cancels the download in some browsers.
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+      toast.success('Your data has been downloaded.');
+    } catch (error) {
+      toast.error('Could not export your data.', error);
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+
+    try {
+      await accountService.deleteAccount();
+      /*
+       * Sign out afterwards so the app is not left holding a session for an
+       * account that no longer exists, which reads as a broken app rather
+       * than a completed request.
+       */
+      await signOut();
+    } catch (error) {
+      toast.error('Could not delete your account.', error);
+      setDeleting(false);
     }
   };
 
@@ -341,12 +395,90 @@ export const Settings: React.FC<SettingsProps> = ({ userProfile, onUpdateProfile
         ) : (
           <button
             onClick={() => setConfirmingSignOut(true)}
-            className="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium border border-red-300 text-red-300 hover:bg-red-500/10 transition-colors"
+            className="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium border border-hairline text-ink hover:bg-surface-high transition-colors"
           >
             <LogOut size={16} />
             <span>Sign out</span>
           </button>
         )}
+
+        {/*
+          Everything held about a person, as a file they can keep or take
+          elsewhere. Read under RLS in the browser, so the database decides
+          what it contains — the same rule the rest of the app runs under.
+        */}
+        <div className="mt-8 pt-6 border-t border-hairline">
+          <h4 className="text-base font-semibold text-ink mb-1">Your data</h4>
+          <p className="text-sm text-ink/75 mb-4">
+            Download everything StudySphere holds about you.
+          </p>
+
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium border border-hairline text-ink hover:bg-surface-high disabled:text-muted disabled:cursor-not-allowed transition-colors"
+          >
+            <Download size={16} />
+            <span>{exporting ? 'Preparing…' : 'Download my data'}</span>
+          </button>
+        </div>
+
+        {/*
+          Deletion is irreversible and cascades, so it asks for the word to be
+          typed rather than accepting a single tap. The note underneath is the
+          honest version of what goes — including the part that does not.
+        */}
+        <div className="mt-8 pt-6 border-t border-hairline">
+          <h4 className="text-base font-semibold text-ink mb-1">Delete your account</h4>
+          <p className="text-sm text-ink/75 mb-2">
+            This removes your profile, study sessions, to-dos, calendar, reminders,
+            notifications, messages and friendships. It cannot be undone.
+          </p>
+          <p className="text-sm text-muted mb-4">
+            Study groups you created stay for the people still in them, without you.
+          </p>
+
+          {confirmingDelete ? (
+            <div className="space-y-3">
+              <label htmlFor="delete-confirmation" className="block text-sm text-ink/75">
+                Type <span className="font-semibold text-ink">DELETE</span> to confirm.
+              </label>
+              <input
+                id="delete-confirmation"
+                type="text"
+                value={deleteConfirmation}
+                onChange={(e) => setDeleteConfirmation(e.target.value)}
+                autoComplete="off"
+                disabled={deleting}
+                className="w-full max-w-xs px-4 py-2 border border-hairline rounded-lg"
+              />
+              <div className="flex flex-wrap gap-3">
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={deleting || deleteConfirmation !== 'DELETE'}
+                  className="px-4 py-2 rounded-lg text-sm font-medium bg-red-600 text-white hover:bg-red-700 disabled:bg-surface-high disabled:text-muted disabled:cursor-not-allowed transition-colors"
+                >
+                  {deleting ? 'Deleting…' : 'Delete my account'}
+                </button>
+                <button
+                  onClick={() => { setConfirmingDelete(false); setDeleteConfirmation(''); }}
+                  disabled={deleting}
+                  className="px-4 py-2 rounded-lg text-sm font-medium border border-hairline text-ink/75 hover:bg-surface transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => setConfirmingDelete(true)}
+              className="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium border border-red-300 text-red-300 hover:bg-red-500/10 transition-colors"
+            >
+              <Trash2 size={16} />
+              <span>Delete my account</span>
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

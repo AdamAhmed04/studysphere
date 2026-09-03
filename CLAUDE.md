@@ -79,6 +79,32 @@ and the schema rewritten from scratch rather than patched.
   trigger. The client must not insert them; it passes fields via
   `signUp({ options: { data } })`.
 
+### Account deletion and data export
+
+Settings carries both. They are the two things a person is entitled to do with
+their own data, and neither can be bolted on later without a schema argument.
+
+- **Export runs in the browser, under RLS.** Every query is an ordinary select
+  the person could make anyway, so the database decides what the file contains
+  — one set of rules rather than a second copy living in a function that drifts
+  from it. The table list is `OWNED_TABLES` in `accountService`; a new
+  user-keyed table is one line. `friends` and `meetings` are separate because
+  they key on `friend_user_id`/`host_id` rather than `user_id`.
+- **Deletion goes through the `delete-account` function**, because removing an
+  auth user needs the service role. The id comes from the verified JWT and
+  never from the request body, so there is no account to name but your own.
+- **Storage is cleaned before the rows are deleted.** Chat attachment paths
+  live on the message rows, so deleting the account first leaves the files
+  unreachable. Failures there are logged, not fatal — an orphaned file must
+  never be what stops somebody closing their account.
+- **Two tables deliberately do not cascade.** `study_groups.created_by` and
+  `meetings.host_id` are `ON DELETE SET NULL`: cascading them would delete a
+  whole group, its chat and everyone else's messages because one member left.
+  13 tables cascade, those 2 orphan. `freeze_group_creator()` had to be
+  narrowed to allow the release to NULL — before that, anyone who had ever
+  created a group could not delete their account, and nothing said why. That
+  was caught by running the delete, not by reading the schema.
+
 ### Do not regress these
 
 Each of these was a real bug that was silent — nothing errored and nothing
@@ -148,14 +174,18 @@ logged. They are cheap to reintroduce by accident.
 
 ### Outstanding, in priority order
 
-1. Leaked-password protection is disabled, and cannot currently be enabled:
+1. Privacy policy and terms are unwritten. The app now honours access,
+   portability and erasure in code, but nothing tells people what is collected,
+   why, or on what lawful basis. Also unsettled: a minimum age, a retention
+   period, a breach plan, and DPAs with Supabase and Vercel.
+2. Leaked-password protection is disabled, and cannot currently be enabled:
    it needs the Pro plan and this project's organisation is on Free. It is a
    dashboard setting rather than anything in the codebase, so there is nothing
    to change here until the plan changes. The signup form already requires 8+
    characters with upper, lower, digit and symbol — the strongest server-side
    password rules Supabase offers — so the specific gap is the
    HaveIBeenPwned check, which no client-side code can stand in for.
-2. **Video calling is built and switched off, on purpose.** It is deferred
+3. **Video calling is built and switched off, on purpose.** It is deferred
    until the rest of the app is finished, because Daily will not run a room
    without a card on the account — even inside the free allowance — and
    without one the camera button opens a Daily page reading "Missing payment
@@ -185,7 +215,7 @@ logged. They are cheap to reintroduce by accident.
    which cost two rounds: a prejoin screen rendering is not evidence that
    joining works, and a vendor's docs are not evidence of what their billing
    will do.
-3. Direct messages are unbuilt and show an honest toast rather than faking it.
+4. Direct messages are unbuilt and show an honest toast rather than faking it.
    DMs would mean two-member private groups reusing the existing chat.
 
 Not a fix but a decision that should be made before launch: StudySphere is a web
