@@ -469,11 +469,33 @@ function App() {
     }
   };
 
-  const handleSendGroupMessage = async (message: string, type: 'text' | 'note' | 'resource') => {
+  const handleSendGroupMessage = async (
+    message: string,
+    type: 'text' | 'note' | 'resource',
+    files?: File[],
+  ) => {
     if (!selectedGroupId) return;
 
     try {
-      await groupService.sendMessage(selectedGroupId, message, type);
+      /*
+       * Files go up before the message row is written, so a message never
+       * refers to an attachment that failed to upload. Sequential rather than
+       * parallel: three photos from a phone on mobile data are better sent one
+       * at a time than three half-finished at once, and a failure then names
+       * the file it stopped on.
+       */
+      const paths: string[] = [];
+
+      for (const file of files ?? []) {
+        try {
+          paths.push(await groupService.uploadAttachment(selectedGroupId, file));
+        } catch (uploadError) {
+          toast.error(`Could not upload ${file.name}.`, uploadError);
+          return;
+        }
+      }
+
+      await groupService.sendMessage(selectedGroupId, message, type, paths);
     } catch (error) {
       toast.error('Message not sent.', error);
     }

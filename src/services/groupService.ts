@@ -1,9 +1,23 @@
 import { supabase } from '../lib/supabase';
 import { sanitizeInput } from '../utils/sanitize';
 import { orUndefined, orEmpty, orFalse, asOneOf } from '../utils/rows';
+import { requireUuid } from '../utils/ids';
 
 /** Allowed chat message kinds, matching the CHECK constraint on the column. */
 const MESSAGE_TYPES = ['text', 'note', 'resource'] as const;
+
+/*
+ * Chat files live in a private bucket, unlike avatars.
+ *
+ * An avatar is shown to anyone who can see the person; a file dropped in a
+ * group called "Private" is not, and a public bucket makes every object
+ * readable by anyone holding the URL. So reads are signed per view rather
+ * than served from a permanent path.
+ */
+const ATTACHMENT_BUCKET = 'chat-attachments';
+
+/** Matches the bucket's own limit, so the client fails fast and says why. */
+export const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
 
 export interface GroupMessage {
   id: string;
@@ -226,14 +240,21 @@ class GroupService {
     }
   }
 
-  async sendMessage(groupId: string, message: string, type: 'text' | 'note' | 'resource' = 'text'): Promise<GroupMessage> {
+  async sendMessage(
+    groupId: string,
+    message: string,
+    type: 'text' | 'note' | 'resource' = 'text',
+    attachments?: string[],
+  ): Promise<GroupMessage> {
     if (!supabase) throw new Error('Supabase not configured');
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
     const sanitizedMessage = sanitizeInput(message, 2000);
-    if (!sanitizedMessage.trim()) {
+
+    // A message carrying a file needs no words.
+    if (!sanitizedMessage.trim() && !attachments?.length) {
       throw new Error('Message cannot be empty');
     }
 
@@ -243,7 +264,8 @@ class GroupService {
         group_id: groupId,
         user_id: user.id,
         message: sanitizedMessage,
-        type
+        type,
+        attachments: attachments?.length ? attachments : null,
       })
       .select('*, discoverable_profiles(name, avatar_url)')
       .single();
@@ -266,6 +288,60 @@ class GroupService {
       user_name: orUndefined(messageData.discoverable_profiles?.name),
       user_avatar: orUndefined(messageData.discoverable_profiles?.avatar_url)
     };
+  }
+
+  /*
+   * Uploads one file and returns its storage path.
+   *
+   * The path opens with the group id because that is exactly what the storage
+   * policies read: they take the first segment and ask whether the caller is a
+   * member of that group. The random segment after it stops two people
+   * uploading "notes.pdf" in the same minute from colliding, without having to
+   * trust the filename.
+   */
+  async uploadAttachment(groupId: string, file: File): Promise<string> {
+    if (!supabase) throw new Error('Supabase not configured');
+    requireUuid(groupId, 'group id');
+
+    if (file.size > MAX_ATTACHMENT_BYTES) {
+      throw new Error('That file is larger than 10MB.');
+    }
+
+    // Keep something readable for the download name, but never trust it as a
+    // path: strip anything that could climb out of the folder.
+    const safeName = (file.name || 'file')
+      .replace(/[^\w.\- ]+/g, '_')
+      .replace(/^\.+/, '')
+      .slice(-80) || 'file';
+
+    const path = `${groupId}/${crypto.randomUUID()}/${safeName}`;
+
+    const { error } = await supabase.storage
+      .from(ATTACHMENT_BUCKET)
+      .upload(path, file, { contentType: file.type || undefined, upsert: false });
+
+    if (error) throw error;
+    return path;
+  }
+
+  /*
+   * The bucket is private, so there is no permanent URL to store — only the
+   * path is. A link is minted per view and expires; somebody removed from the
+   * group simply cannot mint another.
+   */
+  async signedAttachmentUrl(path: string, expiresInSeconds = 3600): Promise<string | null> {
+    if (!supabase) return null;
+
+    const { data, error } = await supabase.storage
+      .from(ATTACHMENT_BUCKET)
+      .createSignedUrl(path, expiresInSeconds);
+
+    if (error) {
+      console.error('Could not sign attachment URL:', error);
+      return null;
+    }
+
+    return data?.signedUrl ?? null;
   }
 
   subscribeToGroupMessages(groupId: string, callback: (message: GroupMessage) => void) {

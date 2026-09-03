@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Paperclip, Video, Calendar, Users, ArrowLeft } from 'lucide-react';
+import { Send, Paperclip, Video, Calendar, Users, ArrowLeft, X, Loader2 } from 'lucide-react';
 import { ChatMessage } from '../types';
 import { AuroraGround } from './AuroraGround';
+import { ChatAttachment } from './ChatAttachment';
+import { MAX_ATTACHMENT_BYTES } from '../services/groupService';
+import { useToast } from '../contexts/ToastContext';
 import { Avatar } from './Avatar';
 
 interface GroupChatProps {
@@ -9,7 +12,11 @@ interface GroupChatProps {
   groupSubject?: string;
   memberCount?: number;
   messages: ChatMessage[];
-  onSendMessage: (message: string, type: 'text' | 'note' | 'resource') => void;
+  onSendMessage: (
+    message: string,
+    type: 'text' | 'note' | 'resource',
+    files?: File[],
+  ) => void | Promise<void>;
   onScheduleMeeting: () => void;
   onStartVideoCall: () => void;
   onBackToList: () => void;
@@ -27,6 +34,10 @@ export const GroupChat: React.FC<GroupChatProps> = ({
 }) => {
   const [newMessage, setNewMessage] = useState('');
   const [messageType, setMessageType] = useState<'text' | 'note' | 'resource'>('text');
+  const [pending, setPending] = useState<File[]>([]);
+  const [sending, setSending] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const toast = useToast();
 
   const scrollRef = useRef<HTMLDivElement>(null);
   // Whether the view is currently following the newest message. Set false as
@@ -60,16 +71,48 @@ export const GroupChat: React.FC<GroupChatProps> = ({
     scrollToBottom();
   }, [groupName]);
 
-  const handleSend = (e: React.FormEvent) => {
+  const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newMessage.trim()) {
-      onSendMessage(newMessage.trim(), messageType);
+    if (sending) return;
+
+    const text = newMessage.trim();
+    // A file on its own is a message; empty text with no file is not.
+    if (!text && pending.length === 0) return;
+
+    setSending(true);
+
+    try {
+      await onSendMessage(text, messageType, pending);
       setNewMessage('');
+      setPending([]);
       // Sending is an explicit intent to be at the bottom, even if the reader
       // had scrolled up before typing.
       pinnedToBottom.current = true;
+    } finally {
+      setSending(false);
     }
   };
+
+  const handleFilesChosen = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const chosen = Array.from(event.target.files ?? []);
+    // Reset immediately, or picking the same file twice in a row is ignored.
+    event.target.value = '';
+
+    const tooBig = chosen.filter(f => f.size > MAX_ATTACHMENT_BYTES);
+    if (tooBig.length) {
+      toast.error(
+        tooBig.length === 1
+          ? `${tooBig[0].name} is larger than 10MB.`
+          : `${tooBig.length} files are larger than 10MB.`
+      );
+    }
+
+    const accepted = chosen.filter(f => f.size <= MAX_ATTACHMENT_BYTES);
+    if (accepted.length) setPending(current => [...current, ...accepted]);
+  };
+
+  const removePending = (index: number) =>
+    setPending(current => current.filter((_, i) => i !== index));
 
   const formatTime = (date: Date) => {
     return new Date(date).toLocaleTimeString('en-US', { 
@@ -157,7 +200,11 @@ export const GroupChat: React.FC<GroupChatProps> = ({
                     </span>
                   )}
                 </div>
-                <p className="text-ink/75">{message.message}</p>
+                {message.message && <p className="text-ink/75">{message.message}</p>}
+
+                {message.attachments?.map(path => (
+                  <ChatAttachment key={path} path={path} />
+                ))}
               </div>
             </div>
           </div>
@@ -175,6 +222,27 @@ export const GroupChat: React.FC<GroupChatProps> = ({
         onSubmit={handleSend}
         className="shrink-0 border-t border-hairline-soft bg-surface p-3 md:p-4 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
       >
+        {pending.length > 0 && (
+          <ul className="flex flex-wrap gap-2 mb-3">
+            {pending.map((file, index) => (
+              <li
+                key={file.name + index}
+                className="flex items-center gap-2 max-w-full pl-3 pr-2 py-1.5 rounded-pill bg-surface-high border border-hairline-soft"
+              >
+                <span className="text-xs text-ink truncate max-w-[10rem]">{file.name}</span>
+                <button
+                  type="button"
+                  onClick={() => removePending(index)}
+                  className="shrink-0 text-muted hover:text-ink transition-colors"
+                  aria-label={`Remove ${file.name}`}
+                >
+                  <X size={14} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
         <div className="flex items-center space-x-3 mb-3">
           <select 
             value={messageType} 
@@ -196,20 +264,30 @@ export const GroupChat: React.FC<GroupChatProps> = ({
             maxLength={2000}
             className="flex-1 min-w-0 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sand focus:border-transparent theme-textbox"
           />
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*,.pdf,.txt,.csv,.md,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+            className="sr-only"
+            onChange={handleFilesChosen}
+          />
           <button
             type="button"
-            className="shrink-0 p-3 text-ink/75 hover:bg-surface-high rounded-lg transition-colors"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={sending}
+            className="shrink-0 p-3 text-ink/75 hover:bg-surface-high rounded-lg transition-colors disabled:opacity-50"
             aria-label="Attach a file"
           >
             <Paperclip size={20} />
           </button>
           <button
             type="submit"
-            disabled={!newMessage.trim()}
+            disabled={sending || (!newMessage.trim() && pending.length === 0)}
             className="shrink-0 px-5 md:px-6 py-3 rounded-lg disabled:cursor-not-allowed transition-colors btn-primary"
             aria-label="Send"
           >
-            <Send size={20} />
+            {sending ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
           </button>
         </div>
       </form>
