@@ -155,9 +155,20 @@ logged. They are cheap to reintroduce by accident.
    characters with upper, lower, digit and symbol — the strongest server-side
    password rules Supabase offers — so the specific gap is the
    HaveIBeenPwned check, which no client-side code can stand in for.
-2. Direct messages and video calling are unbuilt; both show an honest toast
-   rather than faking it. DMs would mean two-member private groups reusing the
-   existing chat.
+2. **Video calling needs two secrets set before it works.** The
+   `create-call-room` edge function is deployed and the client calls it, but
+   it answers "Video calling is not configured yet" until `DAILY_API_KEY` and
+   `DAILY_DOMAIN` exist in the function's environment. The key must never
+   reach the browser: anyone holding it can create rooms and spend the
+   account's minutes.
+
+   It runs on Daily rather than Jitsi. The first attempt used meet.jit.si and
+   looked right — a fresh room rendered a join screen with no sign-in — but
+   *joining* one demands a moderator log in, and iOS interposes an
+   app-download screen. Neither is configurable from the client. The lesson:
+   a prejoin screen rendering is not evidence that joining works.
+3. Direct messages are unbuilt and show an honest toast rather than faking it.
+   DMs would mean two-member private groups reusing the existing chat.
 
 Not a fix but a decision that should be made before launch: StudySphere is a web
 app, and neither app store accepts it as-is. It needs a native shell —

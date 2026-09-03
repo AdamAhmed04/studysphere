@@ -1,27 +1,25 @@
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
-import { callUrl } from '../utils/videoCall';
 
 interface VideoCallProps {
-  room: string;
+  /** Already carries the entry token, so it is per person and short-lived. */
+  url: string;
   title: string;
-  displayName?: string;
   onClose: () => void;
 }
 
 /*
  * The call, filling the screen.
  *
- * Jitsi is loaded in an iframe rather than through its JavaScript API: the API
- * would pull a script from their domain into the page, and the only things
- * this needs from it are a URL and a way to leave — both of which a plain
- * frame already gives.
+ * Daily's prebuilt room is loaded in an iframe rather than through their
+ * JavaScript SDK: the SDK is a sizeable dependency, and the only things this
+ * needs are a URL and a way to leave — both of which a plain frame gives.
  *
  * The `allow` list is what actually grants the camera and microphone to the
  * frame. Without it the call loads and then cannot see or hear anything, which
  * looks like a broken call rather than a missing permission.
  */
-export const VideoCall: React.FC<VideoCallProps> = ({ room, title, displayName, onClose }) => {
+export const VideoCall: React.FC<VideoCallProps> = ({ url, title, onClose }) => {
   /*
    * The page behind must not scroll while a call is up — on a phone, dragging
    * on the video would otherwise move the app underneath it.
@@ -58,7 +56,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ room, title, displayName, 
 
       <iframe
         title={title}
-        src={callUrl(room, displayName)}
+        src={url}
         className="flex-1 w-full border-0"
         allow="camera; microphone; fullscreen; display-capture; autoplay; clipboard-write"
       />

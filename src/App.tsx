@@ -56,7 +56,7 @@ import type { StudySession, ChatMessage, Friend, User, StudyGroup, TodoItem } fr
 import type { UserProfile } from './lib/supabase';
 import { lazyWithReload } from './utils/lazyWithReload';
 import { VideoCall } from './components/VideoCall';
-import { groupCallRoom, meetingCallRoom, isExternalLink } from './utils/videoCall';
+import { requestCallRoom, isExternalLink } from './utils/videoCall';
 
 // Date reviver function to convert ISO strings back to Date objects
 
@@ -198,7 +198,9 @@ function App() {
 
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   /** The call currently on screen, if any. */
-  const [activeCall, setActiveCall] = useState<{ room: string; title: string } | null>(null);
+  const [activeCall, setActiveCall] = useState<{ url: string; title: string } | null>(null);
+  /** Stops a second press opening a second room while the first is in flight. */
+  const [startingCall, setStartingCall] = useState(false);
   const [groupMessagesCache, setGroupMessagesCache] = useState<{ [key: string]: ChatMessage[] }>({});
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [showScheduleMeeting, setShowScheduleMeeting] = useState(false);
@@ -380,10 +382,29 @@ function App() {
   };
 
   const handleStartVideoCall = async () => {
-    if (!selectedGroupId) return;
+    if (!selectedGroupId || startingCall) return;
 
     const group = studyGroups.find(g => g.id === selectedGroupId);
-    setActiveCall({ room: groupCallRoom(selectedGroupId), title: group?.name ?? 'Video call' });
+    setStartingCall(true);
+
+    /*
+     * The room is asked for before anything is shown, so a refusal — not
+     * configured, not a member — arrives as a message rather than as an empty
+     * frame the person has to work out for themselves.
+     */
+    const { room, error } = await requestCallRoom(
+      'group',
+      selectedGroupId,
+      legacyUser.name || legacyUser.username,
+    );
+    setStartingCall(false);
+
+    if (!room) {
+      toast.error(error ?? 'Could not start the call.');
+      return;
+    }
+
+    setActiveCall({ url: room.url, title: group?.name ?? 'Video call' });
 
     /*
      * Say so in the chat, or nobody else knows a call is happening.
@@ -589,7 +610,14 @@ function App() {
           if (isExternalLink(meeting.meetingLink)) {
             window.open(meeting.meetingLink, '_blank', 'noopener,noreferrer');
           } else {
-            setActiveCall({ room: meetingCallRoom(meeting.id), title: meeting.title });
+            const { room, error } = await requestCallRoom(
+              'meeting',
+              meeting.id,
+              legacyUser.name || legacyUser.username,
+            );
+
+            if (room) setActiveCall({ url: room.url, title: meeting.title });
+            else toast.error(error ?? 'Could not start the call.');
           }
         } else if (meeting.meetingType === 'phone') {
           toast.info(`Phone calls aren't built yet — "${meeting.title}" is marked as active.`);
@@ -1127,9 +1155,8 @@ function App() {
       
       {activeCall && (
         <VideoCall
-          room={activeCall.room}
+          url={activeCall.url}
           title={activeCall.title}
-          displayName={legacyUser.name || legacyUser.username}
           onClose={() => setActiveCall(null)}
         />
       )}

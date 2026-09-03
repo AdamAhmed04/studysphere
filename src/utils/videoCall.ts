@@ -1,57 +1,74 @@
-/*
- * Video calls run on Jitsi's public service at meet.jit.si.
- *
- * Chosen over building WebRTC directly because roughly one connection in five
- * cannot go device-to-device without a relay server, and a relay costs money
- * every month. Jitsi needs no account, no API key and no server code — a URL
- * is the entire integration. Verified against a fresh room: it opens straight
- * to a join screen with no sign-in.
- *
- * The trade is that it is a free public service with no uptime guarantee, and
- * the media passes through their servers rather than between the two phones.
- * Worth revisiting if calls become something people rely on.
- */
-
-const JITSI_HOST = 'https://meet.jit.si';
+import { supabase } from '../lib/supabase';
 
 /*
- * The room name is the whole access control, so it has to be unguessable.
+ * Video calls run on Daily.
  *
- * Both ids here are UUIDs — 122 bits of randomness — so a room cannot be found
- * by trying names, and everyone opening the same chat or the same meeting
- * lands in the same place without anything having to be stored or exchanged.
+ * The first attempt used Jitsi's public service, which looked right until a
+ * call was actually joined: meet.jit.si requires the first participant to log
+ * in as moderator, and on iOS it interposes an app-download screen. Neither is
+ * configurable from our side. The lesson recorded here so it is not repeated:
+ * a prejoin screen rendering is not evidence that joining works.
  *
- * The known limit: someone who was once in the group has seen the id, and the
- * room name never changes, so they could rejoin later. Fixing that means
- * rotating room names and telling everyone the new one, which needs a place to
- * put that message — worth doing when there is a reason to remove people.
+ * Rooms are private and entry needs a token, which is issued by the
+ * create-call-room function only after the database confirms the caller is in
+ * the group or on the meeting. The API key that mints those tokens never
+ * reaches the browser.
  */
-export const groupCallRoom = (groupId: string) => `studysphere-group-${groupId}`;
-export const meetingCallRoom = (meetingId: string) => `studysphere-meeting-${meetingId}`;
+
+export interface CallRoom {
+  /** Includes the entry token, so it is short-lived and per person. */
+  url: string;
+}
 
 /**
- * Builds the URL to load in the call frame.
+ * Asks the server for a room and a way into it.
  *
- * The display name is passed so people show up as themselves rather than
- * "Fellow Jitster", and the prejoin screen is left on deliberately: it lets
- * someone check their camera and mic before anyone sees them, which matters
- * more than saving a tap.
+ * Returns a message rather than throwing for the two cases a person can act
+ * on — calling not set up yet, and not being in the group — because both want
+ * showing rather than logging.
  */
-export const callUrl = (room: string, displayName?: string): string => {
-  const config = ['config.prejoinPageEnabled=true'];
+export const requestCallRoom = async (
+  kind: 'group' | 'meeting',
+  id: string,
+  displayName?: string,
+): Promise<{ room?: CallRoom; error?: string }> => {
+  if (!supabase) return { error: 'Video calling is not available right now.' };
 
-  if (displayName) {
-    // The fragment is read as JS values, so the name has to arrive quoted.
-    config.push(`userInfo.displayName=${encodeURIComponent(JSON.stringify(displayName))}`);
+  const { data, error } = await supabase.functions.invoke('create-call-room', {
+    body: { kind, id, displayName },
+  });
+
+  if (error) {
+    console.error('Could not start the call:', error);
+
+    /*
+     * invoke() reports any non-2xx as a generic FunctionsHttpError, so the
+     * body has to be read for the reason. Without this every failure reads
+     * "could not start", including the one that just needs a key setting.
+     */
+    const context = (error as { context?: Response }).context;
+
+    if (context && typeof context.json === 'function') {
+      try {
+        const body = await context.json();
+        if (typeof body?.error === 'string') return { error: body.error };
+      } catch {
+        // Body was not JSON; the generic message below is the honest answer.
+      }
+    }
+
+    return { error: 'Could not start the call.' };
   }
 
-  return `${JITSI_HOST}/${encodeURIComponent(room)}#${config.join('&')}`;
+  if (!data?.url) return { error: 'Could not start the call.' };
+
+  return { room: { url: data.url as string } };
 };
 
 /**
  * True when a meeting carries a link to somewhere else — Zoom, Teams, a room
  * someone pasted in. Those open in a new tab rather than in our frame, because
- * they are not ours to embed and most of them refuse to be framed anyway.
+ * they are not ours to embed and most refuse to be framed anyway.
  */
 export const isExternalLink = (link?: string): boolean =>
-  !!link && /^https?:\/\//i.test(link.trim()) && !link.includes('meet.jit.si');
+  !!link && /^https?:\/\//i.test(link.trim()) && !/\.daily\.co\//i.test(link);
