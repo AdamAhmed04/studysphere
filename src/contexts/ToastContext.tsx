@@ -80,9 +80,9 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
 };
 
 const STYLES: Record<ToastVariant, { wrap: string; icon: typeof Info }> = {
-  success: { wrap: 'bg-surface border-emerald-500/30 text-ink', icon: CheckCircle2 },
-  error:   { wrap: 'bg-surface border-red-500/30 text-ink',   icon: AlertTriangle },
-  info:    { wrap: 'bg-surface border-hairline text-ink',  icon: Info },
+  success: { wrap: 'toast-surface border-emerald-500/40 text-ink', icon: CheckCircle2 },
+  error:   { wrap: 'toast-surface border-red-500/50 text-ink',     icon: AlertTriangle },
+  info:    { wrap: 'toast-surface border-hairline text-ink',       icon: Info },
 };
 
 const ICON_COLOR: Record<ToastVariant, string> = {

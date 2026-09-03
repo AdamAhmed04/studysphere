@@ -32,6 +32,10 @@
    * Translucent rather than solid, so the drifting ground shows through and
    * a row belongs to the background instead of covering it.
    */
+  /* Opaque, unlike the surfaces below it: for something that floats over
+   * arbitrary content and cannot let it show through. */
+  --raised:       #171326;
+
   --surface:      rgba(234, 230, 244, 0.055);
   --surface-high: rgba(234, 230, 244, 0.10);
   --hairline:     rgba(234, 230, 244, 0.11);

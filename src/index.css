@@ -333,6 +333,23 @@ textarea:focus {
   border: 1px solid var(--hairline);
 }
 
+/*
+ * The toast surface.
+ *
+ * Same problem the dialogs had: a toast appears over whatever the page is
+ * showing, and at 5.5% opacity the content behind it read straight through
+ * the message — worst on an error, which is the one you most need to read.
+ *
+ * Background only, deliberately. No border, so each variant keeps its own
+ * coloured edge, which is the thing telling you whether this went well or
+ * badly. No position either — this class is declared after @tailwind
+ * utilities and would outrank the utility on the element, which is exactly
+ * how .modal-panel once dropped every dropdown into normal flow.
+ */
+.toast-surface {
+  background-color: var(--raised);
+}
+
 /* Hover animations */
 .hover-lift {
   transition: transform 0.2s ease-in-out;
