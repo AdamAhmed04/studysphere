@@ -155,18 +155,36 @@ logged. They are cheap to reintroduce by accident.
    characters with upper, lower, digit and symbol — the strongest server-side
    password rules Supabase offers — so the specific gap is the
    HaveIBeenPwned check, which no client-side code can stand in for.
-2. **Video calling needs two secrets set before it works.** The
-   `create-call-room` edge function is deployed and the client calls it, but
-   it answers "Video calling is not configured yet" until `DAILY_API_KEY` and
-   `DAILY_DOMAIN` exist in the function's environment. The key must never
-   reach the browser: anyone holding it can create rooms and spend the
-   account's minutes.
+2. **Video calling is built and switched off, on purpose.** It is deferred
+   until the rest of the app is finished, because Daily will not run a room
+   without a card on the account — even inside the free allowance — and
+   without one the camera button opens a Daily page reading "Missing payment
+   method", which reads as a broken app rather than an unfinished feature.
+
+   Everything else is done and verified: `create-call-room` is deployed,
+   `DAILY_API_KEY` and `DAILY_DOMAIN` are set, and a real call returned 200
+   with the whole chain working — auth, the group-membership check against
+   the database, room creation, token minting.
+
+   **Turning it on is two steps, both outside the code.** Add a payment
+   method at dashboard.daily.co, then set `VITE_VIDEO_CALLS_ENABLED=true` in
+   Vercel and redeploy. The flag is build-time because there is nothing to
+   probe at runtime: the secrets are set, the function answers 200, and the
+   refusal only appears afterwards inside Daily's own page.
+
+   Costs, so the decision is informed: 10,000 free participant-minutes a
+   month — people times minutes, so a 30-minute call between two people
+   spends 60 — then $0.004 each with **no hard cap**. Rooms expire after four
+   hours and eject whoever is still in them, which bounds what one forgotten
+   call can bill.
 
    It runs on Daily rather than Jitsi. The first attempt used meet.jit.si and
    looked right — a fresh room rendered a join screen with no sign-in — but
    *joining* one demands a moderator log in, and iOS interposes an
-   app-download screen. Neither is configurable from the client. The lesson:
-   a prejoin screen rendering is not evidence that joining works.
+   app-download screen. Neither is configurable from the client. The lesson,
+   which cost two rounds: a prejoin screen rendering is not evidence that
+   joining works, and a vendor's docs are not evidence of what their billing
+   will do.
 3. Direct messages are unbuilt and show an honest toast rather than faking it.
    DMs would mean two-member private groups reusing the existing chat.
 

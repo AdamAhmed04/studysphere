@@ -15,6 +15,26 @@ import { supabase } from '../lib/supabase';
  * reaches the browser.
  */
 
+/*
+ * Off until there is a payment method on the Daily account.
+ *
+ * Daily refuses to run a room without one, even inside the free allowance, so
+ * with this on and no card the camera button opens a Daily page reading
+ * "Missing payment method" — a dead end that looks like the app is broken
+ * rather than a feature that is not switched on yet.
+ *
+ * Everything behind this flag is built and verified: the edge function
+ * authenticates the caller, checks group membership against the database,
+ * creates the room and mints a token. Turning it on is two steps, both
+ * outside the code — add a card at dashboard.daily.co, then set
+ * VITE_VIDEO_CALLS_ENABLED=true in Vercel and redeploy.
+ *
+ * Deliberately build-time rather than a runtime probe: there is nothing to
+ * probe. The secrets are already set, so the function answers 200 and the
+ * refusal only appears afterwards, inside Daily's own page.
+ */
+const VIDEO_CALLS_ENABLED = import.meta.env.VITE_VIDEO_CALLS_ENABLED === 'true';
+
 export interface CallRoom {
   /** Includes the entry token, so it is short-lived and per person. */
   url: string;
@@ -32,6 +52,10 @@ export const requestCallRoom = async (
   id: string,
   displayName?: string,
 ): Promise<{ room?: CallRoom; error?: string }> => {
+  if (!VIDEO_CALLS_ENABLED) {
+    return { error: "Video calling isn't switched on yet." };
+  }
+
   if (!supabase) return { error: 'Video calling is not available right now.' };
 
   const { data, error } = await supabase.functions.invoke('create-call-room', {
